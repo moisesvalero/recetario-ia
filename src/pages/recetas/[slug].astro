@@ -17,82 +17,84 @@ const { recipe } = Astro.props;
 const { Content } = await render(recipe);
 ---
 
-<Layout title={`${recipe.data.title} | Recetario IA`}>
-  <article class="space-y-8">
-    <header
-      class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-    >
-      <a
-        href="/recetas"
-        class="text-sm text-[var(--muted)] hover:text-[var(--text)]"
+<Layout title={`${recipe.data.title} | Recetario IA`} active="recetas">
+  <div class="px-4 py-8 sm:px-8 lg:px-10">
+    <article class="space-y-8">
+      <header
+        class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
       >
-        ← Volver al listado
-      </a>
-      <div class="mt-4 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 class="text-3xl font-semibold tracking-tight">
-            {recipe.data.title}
-          </h1>
-          <p class="mt-2 max-w-2xl text-[var(--muted)]">
-            {recipe.data.description}
-          </p>
-        </div>
-        <span
-          class="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-medium text-[var(--accent)]"
+        <a
+          href="/recetas"
+          class="text-sm text-[var(--muted)] hover:text-[var(--text)]"
         >
-          {recipe.data.difficulty}
-        </span>
-      </div>
+          ← Volver al listado
+        </a>
+        <div class="mt-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 class="text-3xl font-semibold tracking-tight">
+              {recipe.data.title}
+            </h1>
+            <p class="mt-2 max-w-2xl text-[var(--muted)]">
+              {recipe.data.description}
+            </p>
+          </div>
+          <span
+            class="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-medium text-[var(--accent)]"
+          >
+            {recipe.data.difficulty}
+          </span>
+        </div>
 
-      <dl class="mt-6 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-        <div class="rounded-xl bg-stone-50 p-3">
-          <dt class="text-[var(--muted)]">Prep</dt>
-          <dd class="font-semibold">{recipe.data.prepMinutes} min</dd>
-        </div>
-        <div class="rounded-xl bg-stone-50 p-3">
-          <dt class="text-[var(--muted)]">Cocción</dt>
-          <dd class="font-semibold">{recipe.data.cookMinutes} min</dd>
-        </div>
-        <div class="rounded-xl bg-stone-50 p-3">
-          <dt class="text-[var(--muted)]">Total</dt>
-          <dd class="font-semibold">
-            {recipe.data.prepMinutes + recipe.data.cookMinutes} min
-          </dd>
-        </div>
-        <div class="rounded-xl bg-stone-50 p-3">
-          <dt class="text-[var(--muted)]">Porciones</dt>
-          <dd class="font-semibold">{recipe.data.servings}</dd>
-        </div>
-      </dl>
-    </header>
+        <dl class="mt-6 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+          <div class="rounded-xl bg-stone-50 p-3">
+            <dt class="text-[var(--muted)]">Prep</dt>
+            <dd class="font-semibold">{recipe.data.prepMinutes} min</dd>
+          </div>
+          <div class="rounded-xl bg-stone-50 p-3">
+            <dt class="text-[var(--muted)]">Cocción</dt>
+            <dd class="font-semibold">{recipe.data.cookMinutes} min</dd>
+          </div>
+          <div class="rounded-xl bg-stone-50 p-3">
+            <dt class="text-[var(--muted)]">Total</dt>
+            <dd class="font-semibold">
+              {recipe.data.prepMinutes + recipe.data.cookMinutes} min
+            </dd>
+          </div>
+          <div class="rounded-xl bg-stone-50 p-3">
+            <dt class="text-[var(--muted)]">Porciones</dt>
+            <dd class="font-semibold">{recipe.data.servings}</dd>
+          </div>
+        </dl>
+      </header>
 
-    <section class="grid gap-8 md:grid-cols-2">
-      <div
-        class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-      >
-        <h2 class="text-lg font-semibold">Ingredientes</h2>
-        <ul class="mt-4 space-y-2">
-          {
-            recipe.data.ingredients.map((ingredient) => (
-              <li class="flex items-start justify-between gap-4 rounded-lg border border-[var(--border)] px-3 py-2">
-                <span>{ingredient.item}</span>
-                <span class="text-sm text-[var(--muted)]">
-                  {ingredient.amount}
-                </span>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div
-        class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-      >
-        <h2 class="text-lg font-semibold">Preparación</h2>
-        <div class="prose prose-stone mt-4 max-w-none">
-          <Content />
+      <section class="grid gap-8 md:grid-cols-2">
+        <div
+          class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
+        >
+          <h2 class="text-lg font-semibold">Ingredientes</h2>
+          <ul class="mt-4 space-y-2">
+            {
+              recipe.data.ingredients.map((ingredient) => (
+                <li class="flex items-start justify-between gap-4 rounded-lg border border-[var(--border)] px-3 py-2">
+                  <span>{ingredient.item}</span>
+                  <span class="text-sm text-[var(--muted)]">
+                    {ingredient.amount}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
         </div>
-      </div>
-    </section>
-  </article>
+
+        <div
+          class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
+        >
+          <h2 class="text-lg font-semibold">Preparación</h2>
+          <div class="prose prose-stone mt-4 max-w-none">
+            <Content />
+          </div>
+        </div>
+      </section>
+    </article>
+  </div>
 </Layout>

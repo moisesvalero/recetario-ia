@@ -1,0 +1,91 @@
+=== pnpm install ===
+Already up to date
+Done in 429ms using pnpm v11.5.2
+EXIT:0
+=== pnpm build ===
+$ astro build
+5:13:04 PM [vite-plugin-svelte] !!! Support for vite 8 beta in vite-plugin-svelte is experimental (rolldown: 1.1.2, vite: 8.1.0) !!!
+	See https://github.com/sveltejs/vite-plugin-svelte/issues/1143 for a list of known issues and to report feedback.
+17:13:04 [vite] Re-optimizing dependencies because lockfile has changed
+17:13:05 [content] Syncing content
+17:13:05 [content] Synced content
+17:13:05 [types] Generated 972ms
+17:13:05 [build] output: "server"
+17:13:05 [build] mode: "server"
+17:13:05 [build] directory: /home/moi6/webs/Astro/recetario/dist/
+17:13:05 [build] adapter: @astrojs/vercel
+17:13:05 [build] Collecting build info...
+17:13:05 [build] ✓ Completed in 1.07s.
+17:13:05 [build] Building server entrypoints...
+Found 1 warning while optimizing generated CSS:
+
+[2m│   }[22m
+[2m│ }[22m
+[2m│[22m @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+[2m┆[22m        [33m[2m^--[22m @import rules must precede all rules aside from @charset and @layer statements[39m
+[2m┆[22m
+[2m│ :root {[22m
+[2m│   color-scheme: light;[22m
+
+17:13:06 [vite] ✓ built in 293ms
+Found 1 warning while optimizing generated CSS:
+
+[2m│   }[22m
+[2m│ }[22m
+[2m│[22m @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+[2m┆[22m        [33m[2m^--[22m @import rules must precede all rules aside from @charset and @layer statements[39m
+[2m┆[22m
+[2m│ :root {[22m
+[2m│   color-scheme: light;[22m
+
+17:13:06 [vite] ✓ built in 484ms
+17:13:06 [vite] ✓ built in 262ms
+
+ prerendering static routes 
+17:13:06   ├─ /recetas/arroz-salteado-verduras/index.html (+30ms) 
+17:13:06   ├─ /recetas/brownies-chocolate/index.html (+3ms) 
+17:13:06   ├─ /recetas/crema-calabacin/index.html (+3ms) 
+17:13:06   ├─ /recetas/ensalada-garbanzos/index.html (+3ms) 
+17:13:06   ├─ /recetas/pasta-limon-ajo/index.html (+3ms) 
+17:13:06   ├─ /recetas/pollo-horno-limon/index.html (+4ms) 
+17:13:06   ├─ /recetas/tortilla-patatas/index.html (+3ms) 
+17:13:06   ├─ /recetas/index.html (+5ms) 
+17:13:07 ✓ Completed in 161ms.
+
+17:13:07 [build] Rearranging server assets...
+17:13:07 [build] ✓ Completed in 1.29s.
+17:13:07 [@astrojs/vercel] Bundling function ../../../../dist/server/entry.mjs
+17:13:09 [@astrojs/vercel] Copying static files to .vercel/output/static
+17:13:09 [build] Server built in 4.69s
+17:13:09 [build] Complete!
+EXIT:0
+=== pnpm test ===
+$ vitest run
+
+ RUN  v3.2.6 /home/moi6/webs/Astro/recetario
+
+ ✓ src/lib/recipe-schema.test.ts (2 tests) 4ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  17:13:10
+   Duration  357ms (transform 41ms, setup 0ms, collect 47ms, tests 4ms, environment 0ms, prepare 78ms)
+
+EXIT:0
+=== playwright install chromium ===
+EXIT:0
+=== capture screenshot ===
+node:internal/process/per_thread:277
+      throw new ErrnoException(err, 'kill');
+            ^
+
+Error: kill ESRCH
+    at process.kill (node:internal/process/per_thread:277:13)
+    at file:///home/moi6/webs/Astro/recetario/scripts/capture-screenshot.mjs:32:11 {
+  errno: -3,
+  code: 'ESRCH',
+  syscall: 'kill'
+}
+
+Node.js v24.16.0
+EXIT:1

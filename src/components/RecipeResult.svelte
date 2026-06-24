@@ -1,24 +1,28 @@
 <script lang="ts">
-  import type { Recipe, StoredRecipe } from "../lib/recipe-schema";
+  import type { Recipe } from "../lib/recipe-schema";
   import CookMode from "./CookMode.svelte";
   import RecipeCard from "./RecipeCard.svelte";
 
   let { recipe }: { recipe: Recipe } = $props();
 
+  let viewMode = $state<"steps" | "cook">("steps");
   let cooking = $state(false);
+
+  function startCooking() {
+    cooking = true;
+    viewMode = "cook";
+  }
 </script>
 
 <section class="space-y-4">
   {#if cooking}
     <CookMode steps={recipe.steps} onClose={() => (cooking = false)} />
   {:else}
-    <RecipeCard {recipe} />
-    <button
-      type="button"
-      class="w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
-      onclick={() => (cooking = true)}
-    >
-      Modo cocinar
-    </button>
+    <RecipeCard
+      {recipe}
+      {viewMode}
+      onViewModeChange={(mode) => (viewMode = mode)}
+      onStartCooking={startCooking}
+    />
   {/if}
 </section>

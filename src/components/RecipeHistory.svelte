@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { StoredRecipe } from "../lib/recipe-schema";
+  import { getRecipeImageUrl } from "../lib/recipe-image";
 
   let {
     items,
@@ -12,27 +13,40 @@
 
 {#if items.length > 0}
   <section
-    class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm"
+    id="historial"
+    class="scroll-mt-6 rounded-[var(--radius-lg)] border border-[var(--border)] bg-white p-5 shadow-[var(--shadow-sm)]"
   >
     <div class="mb-4 flex items-center justify-between gap-3">
-      <h2 class="text-lg font-semibold">Historial</h2>
-      <span class="text-sm text-[var(--muted)]">{items.length} recetas</span>
+      <h2 class="text-lg font-bold">Historial</h2>
+      <span
+        class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-[var(--muted)]"
+        >{items.length}</span
+      >
     </div>
-    <ul class="space-y-2">
+    <ul class="grid gap-3 sm:grid-cols-2">
       {#each items as item}
         <li>
           <button
             type="button"
-            class="flex w-full items-center justify-between gap-4 rounded-xl border border-[var(--border)] px-4 py-3 text-left hover:bg-stone-50"
+            class="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] p-3 text-left transition hover:border-orange-200 hover:bg-orange-50/50"
             onclick={() => onSelect(item)}
           >
-            <span>
-              <span class="block font-medium">{item.title}</span>
-              <span class="text-sm text-[var(--muted)]">
-                {new Date(item.createdAt).toLocaleString("es-ES")}
+            <img
+              src={getRecipeImageUrl(
+                item.title,
+                item.ingredients.map((i) => i.item),
+              )}
+              alt=""
+              class="h-14 w-14 shrink-0 rounded-lg object-cover"
+            />
+            <span class="min-w-0 flex-1">
+              <span class="block truncate font-semibold text-sm"
+                >{item.title}</span
+              >
+              <span class="text-xs text-[var(--muted)]">
+                {new Date(item.createdAt).toLocaleDateString("es-ES")}
               </span>
             </span>
-            <span class="text-sm text-[var(--muted)]">{item.difficulty}</span>
           </button>
         </li>
       {/each}

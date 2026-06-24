@@ -10,9 +10,11 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 
-**[Ver demo en vivo](https://recetario-ia.vercel.app)** · [Recetas de ejemplo](/recetas) · [Reportar issue](https://github.com/moisesvalero/recetario-ia/issues)
+**[Ver demo en vivo](https://recetario-eta.vercel.app)** · [Recetas de ejemplo](https://recetario-eta.vercel.app/recetas) · [Reportar issue](https://github.com/moisesvalero/recetario-ia/issues)
 
-![Captura de Recetario IA](./public/screenshot.png)
+![Captura real de Recetario IA](./public/screenshot.png)
+
+> La captura se genera desde la app con Playwright (`pnpm run screenshot`). No es un mockup de IA.
 
 </div>
 
