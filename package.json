@@ -9,9 +9,41 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint": "oxlint",
+    "check": "astro check && tsc --noEmit",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "dependencies": {
-    "astro": "^7.0.2"
+    "@ai-sdk/openai": "^2.0.52",
+    "@astrojs/svelte": "^8.0.0",
+    "@astrojs/vercel": "^11.0.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "ai": "^5.0.76",
+    "astro": "^7.0.2",
+    "svelte": "^5.38.10",
+    "tailwindcss": "^4.1.11",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@types/node": "^24.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "oxlint": "^1.14.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-svelte": "^3.4.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,svelte,astro}": [
+      "oxlint",
+      "prettier --write"
+    ]
   }
 }

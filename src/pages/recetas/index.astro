@@ -1,0 +1,61 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+export const prerender = true;
+
+const recipes = (await getCollection("recipes")).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, "es"),
+);
+---
+
+<Layout title="Recetas de ejemplo | Recetario IA">
+  <section class="space-y-6">
+    <div>
+      <p
+        class="text-sm font-medium uppercase tracking-[0.2em] text-[var(--accent)]"
+      >
+        Bonus
+      </p>
+      <h1 class="mt-2 text-3xl font-semibold tracking-tight">
+        Recetas de ejemplo
+      </h1>
+      <p class="mt-2 max-w-2xl text-[var(--muted)]">
+        Catálogo estático con Content Collections de Astro 7 para practicar
+        rutas, markdown y SEO.
+      </p>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      {
+        recipes.map((recipe) => (
+          <a
+            href={`/recetas/${recipe.id}`}
+            class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <h2 class="text-xl font-semibold">{recipe.data.title}</h2>
+              <span class="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs text-[var(--accent)]">
+                {recipe.data.difficulty}
+              </span>
+            </div>
+            <p class="mt-2 text-sm text-[var(--muted)]">
+              {recipe.data.description}
+            </p>
+            <p class="mt-4 text-sm text-[var(--muted)]">
+              {recipe.data.prepMinutes + recipe.data.cookMinutes} min ·{" "}
+              {recipe.data.servings} porciones
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              {recipe.data.tags.map((tag) => (
+                <span class="rounded-full bg-stone-100 px-2 py-1 text-xs text-stone-600">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Layout>
