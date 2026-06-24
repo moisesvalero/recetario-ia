@@ -41,9 +41,11 @@ try {
   await browser.close();
   console.log(`Screenshot saved to ${OUT}`);
 } finally {
-  try {
-    process.kill(-preview.pid, "SIGTERM");
-  } catch {
-    // preview ya terminado
+  if (preview.pid) {
+    try {
+      process.kill(-preview.pid, "SIGTERM");
+    } catch {
+      // el preview ya terminó solo
+    }
   }
 }

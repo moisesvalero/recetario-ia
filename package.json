@@ -16,6 +16,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "screenshot": "node scripts/capture-screenshot.mjs",
+    "images": "zsh scripts/download-images.sh",
     "prepare": "husky"
   },
   "dependencies": {

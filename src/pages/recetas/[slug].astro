@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection, render } from "astro:content";
+import { getRecipeImageUrl } from "../../lib/recipe-image";
 
 export const prerender = true;
 
@@ -15,11 +16,24 @@ export async function getStaticPaths() {
 
 const { recipe } = Astro.props;
 const { Content } = await render(recipe);
+const coverImage = getRecipeImageUrl(
+  recipe.data.title,
+  recipe.data.ingredients.map((i) => i.item),
+);
 ---
 
 <Layout title={`${recipe.data.title} | Recetario IA`} active="recetas">
   <div class="px-4 py-8 sm:px-8 lg:px-10">
     <article class="space-y-8">
+      <div
+        class="overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-md)]"
+      >
+        <img
+          src={coverImage}
+          alt={recipe.data.title}
+          class="h-56 w-full object-cover sm:h-72"
+        />
+      </div>
       <header
         class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
       >
