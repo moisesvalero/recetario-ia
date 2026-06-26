@@ -19,6 +19,11 @@ export default defineConfig({
         access: "secret",
         optional: true,
       }),
+      GOOGLE_GENERATIVE_AI_API_KEY: envField.string({
+        context: "server",
+        access: "secret",
+        optional: true,
+      }),
     },
   },
 });
