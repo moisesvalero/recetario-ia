@@ -26,6 +26,9 @@ importers:
       ai:
         specifier: ^5.0.76
         version: 5.0.204(zod@3.25.76)
+      appwrite:
+        specifier: ^26.1.0
+        version: 26.1.0
       astro:
         specifier: ^7.0.2
         version: 7.0.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@24.13.2)(@vercel/blob@2.4.0)(@vercel/functions@3.7.2)(jiti@2.7.0)(rollup@4.62.2)(tsx@4.21.0)(yaml@2.9.0)
@@ -2190,6 +2193,10 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
+  appwrite@26.1.0:
+    resolution: {integrity: sha512-BLcSz1/F83V4W0mHAW3SO9kahVfpqStIDI2+m0N0m2UfxIJl7XU5KW/EhPoek8qje+6JPtf3VWoRaPq4k8L86g==}
+    engines: {node: '>=18.0.0'}
+
   arg@4.1.0:
     resolution: {integrity: sha512-ZWc51jO3qegGkVh8Hwpv636EkbesNV5ZNQPCtRa+0qytRYPEs9IYT9qITY9buezqUH5uqyzlWLcufrzU2rffdg==}
 
@@ -2275,6 +2282,9 @@ packages:
   basic-ftp@5.3.1:
     resolution: {integrity: sha512-bopVNp6ugyA150DDuZfPFdt1KZ5a94ZDiwX4hMgZDzF+GttD80lEy8kj98kbyhLXnPvhtIo93mdnLIjpCAeeOw==}
     engines: {node: '>=10.0.0'}
+
+  bignumber.js@9.3.1:
+    resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
@@ -3008,6 +3018,9 @@ packages:
   js-yaml@4.2.0:
     resolution: {integrity: sha512-ePWsvanv0DWuDRsW8dnt+R4jQ31SCRCQ7hhNcPXZPsoBZiemuZNYGf7adZdqX2D86j6rvKp3RpCxVTSb8WQlOw==}
     hasBin: true
+
+  json-bigint@1.0.0:
+    resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
 
   json-schema-to-ts@1.6.4:
     resolution: {integrity: sha512-pR4yQ9DHz6itqswtHCm26mw45FSNfQ9rEQjosaZErhn5J3J2sIViQiz8rDaezjKAhFGpmsoczYVBgGHzFw/stA==}
@@ -6214,6 +6227,10 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.2
 
+  appwrite@26.1.0:
+    dependencies:
+      json-bigint: 1.0.0
+
   arg@4.1.0: {}
 
   argparse@2.0.1: {}
@@ -6350,6 +6367,8 @@ snapshots:
   bare-events@2.9.1: {}
 
   basic-ftp@5.3.1: {}
+
+  bignumber.js@9.3.1: {}
 
   bindings@1.5.0:
     dependencies:
@@ -7119,6 +7138,10 @@ snapshots:
   js-yaml@4.2.0:
     dependencies:
       argparse: 2.0.1
+
+  json-bigint@1.0.0:
+    dependencies:
+      bignumber.js: 9.3.1
 
   json-schema-to-ts@1.6.4:
     dependencies:

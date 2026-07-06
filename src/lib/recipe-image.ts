@@ -1,4 +1,5 @@
-﻿export type ImageCategory =
+export type ImageCategory =
+  | "pollo_limon"
   | "pollo"
   | "arroz"
   | "pasta"
@@ -10,10 +11,29 @@
   | "sopa"
   | "verduras"
   | "legumbres"
+  | "marisco"
+  | "pizza"
+  | "hamburguesa"
+  | "patatas"
+  | "queso"
+  | "fruta"
+  | "desayuno"
+  | "bebida"
   | "default";
 
 /** Palabras clave → imagen local. Orden: más específicas primero. */
 const RULES: { keywords: string[]; image: string }[] = [
+  {
+    keywords: [
+      "pollo al limon",
+      "pollo al limón",
+      "lemon chicken",
+      "chicken lemon",
+      "pollo con limon",
+      "pollo con limón",
+    ],
+    image: "/images/pollo_limon.jpg",
+  },
   {
     keywords: [
       "brownie",
@@ -22,6 +42,8 @@ const RULES: { keywords: string[]; image: string }[] = [
       "tarta",
       "bizcocho",
       "galleta",
+      "tiramisu",
+      "tiramisú",
     ],
     image: "/images/postre.jpg",
   },
@@ -33,6 +55,7 @@ const RULES: { keywords: string[]; image: string }[] = [
       "revuelto",
       "omelette",
       "frittata",
+      "poché",
     ],
     image: "/images/huevo.jpg",
   },
@@ -46,6 +69,7 @@ const RULES: { keywords: string[]; image: string }[] = [
       "pure",
       "gazpacho",
       "caldo",
+      "ramen",
     ],
     image: "/images/sopa.jpg",
   },
@@ -58,11 +82,12 @@ const RULES: { keywords: string[]; image: string }[] = [
       "judia",
       "habas",
       "legumbre",
+      "lentejas",
     ],
     image: "/images/legumbres.jpg",
   },
   {
-    keywords: ["ensalada", "bowl", "verde"],
+    keywords: ["ensalada", "bowl", "verde", "salad"],
     image: "/images/ensalada.jpg",
   },
   {
@@ -74,17 +99,40 @@ const RULES: { keywords: string[]; image: string }[] = [
       "pescado",
       "bacalao",
       "merluza",
-      "gambas",
-      "marisco",
+      "trucha",
     ],
     image: "/images/pescado.jpg",
+  },
+  {
+    keywords: [
+      "gamba",
+      "gambas",
+      "camarón",
+      "camaron",
+      "langostino",
+      "mejillón",
+      "mejillon",
+      "pulpo",
+      "calamar",
+      "marisco",
+    ],
+    image: "/images/marisco.jpg",
   },
   {
     keywords: ["pollo", "muslo", "pechuga", "pavo", "pato", "ave"],
     image: "/images/pollo.jpg",
   },
   {
-    keywords: ["ternera", "cerdo", "carne", "solomillo", "chuleta", "cordero"],
+    keywords: [
+      "ternera",
+      "cerdo",
+      "carne",
+      "solomillo",
+      "chuleta",
+      "cordero",
+      "bistec",
+      "entrecot",
+    ],
     image: "/images/carne.jpg",
   },
   {
@@ -98,12 +146,85 @@ const RULES: { keywords: string[]; image: string }[] = [
       "pasta",
       "ravioli",
       "ñoqui",
+      "tallarines",
     ],
     image: "/images/pasta.jpg",
   },
   {
     keywords: ["arroz", "risotto", "paella", "wok", "salteado", "pilaf"],
     image: "/images/arroz.jpg",
+  },
+  {
+    keywords: ["pizza", "focaccia", "calzone"],
+    image: "/images/pizza.jpg",
+  },
+  {
+    keywords: ["hamburguesa", "burger"],
+    image: "/images/hamburguesa.jpg",
+  },
+  {
+    keywords: [
+      "patata",
+      "patatas",
+      "papas",
+      "patatas fritas",
+      "papas fritas",
+      "boniato",
+    ],
+    image: "/images/patatas.jpg",
+  },
+  {
+    keywords: [
+      "queso",
+      "quesos",
+      "cheese",
+      "fondue",
+      "mozzarella",
+      "parmesano",
+    ],
+    image: "/images/queso.jpg",
+  },
+  {
+    keywords: [
+      "fruta",
+      "frutas",
+      "manzana",
+      "plátano",
+      "platano",
+      "fresa",
+      "naranja",
+      "limón",
+      "limon",
+    ],
+    image: "/images/fruta.jpg",
+  },
+  {
+    keywords: [
+      "desayuno",
+      "tostada",
+      "avena",
+      "pancake",
+      "pancakes",
+      "waffle",
+      "crepe",
+    ],
+    image: "/images/desayuno.jpg",
+  },
+  {
+    keywords: [
+      "bebida",
+      "zumo",
+      "jugo",
+      "smoothie",
+      "batido",
+      "té",
+      "te",
+      "café",
+      "cafe",
+      "cóctel",
+      "coctel",
+    ],
+    image: "/images/bebida.jpg",
   },
   {
     keywords: [
@@ -121,13 +242,10 @@ const RULES: { keywords: string[]; image: string }[] = [
     ],
     image: "/images/verduras.jpg",
   },
-  {
-    keywords: ["patata", "patatas", "boniato"],
-    image: "/images/huevo.jpg",
-  },
 ];
 
 const ALL_IMAGES = [
+  "/images/pollo_limon.jpg",
   "/images/pollo.jpg",
   "/images/arroz.jpg",
   "/images/pasta.jpg",
@@ -139,6 +257,14 @@ const ALL_IMAGES = [
   "/images/sopa.jpg",
   "/images/verduras.jpg",
   "/images/legumbres.jpg",
+  "/images/marisco.jpg",
+  "/images/pizza.jpg",
+  "/images/hamburguesa.jpg",
+  "/images/patatas.jpg",
+  "/images/queso.jpg",
+  "/images/fruta.jpg",
+  "/images/desayuno.jpg",
+  "/images/bebida.jpg",
   "/images/default.jpg",
 ];
 

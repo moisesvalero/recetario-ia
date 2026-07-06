@@ -1,8 +1,11 @@
 import type { APIRoute } from "astro";
-import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject, type LanguageModel } from "ai";
-import { GOOGLE_GENERATIVE_AI_API_KEY, OPENAI_API_KEY } from "astro:env/server";
+import {
+  GOOGLE_GENERATIVE_AI_API_KEY,
+  OPENROUTER_API_KEY,
+} from "astro:env/server";
 import {
   buildRecipePrompt,
   generateRecipeRequestSchema,
@@ -12,24 +15,30 @@ import {
 
 export const prerender = false;
 
+const openrouter = createOpenAI({
+  apiKey: OPENROUTER_API_KEY || "",
+  baseURL: "https://openrouter.ai/api/v1",
+});
+
 const SYSTEM_PROMPT =
   "Eres un cocinero casero práctico. Respondes siempre en español con recetas realistas, claras y ejecutables en una cocina doméstica.";
 
-type ProviderName = "openai" | "google";
+type ProviderName = "google" | "openrouter";
 
 function buildProviderChain(): ProviderName[] {
   const chain: ProviderName[] = [];
-  if (OPENAI_API_KEY) chain.push("openai");
   if (GOOGLE_GENERATIVE_AI_API_KEY) chain.push("google");
+  if (OPENROUTER_API_KEY) chain.push("openrouter");
   return chain;
 }
 
 function resolveModel(provider: ProviderName): LanguageModel {
   switch (provider) {
-    case "openai":
-      return openai("gpt-4o-mini");
     case "google":
-      return google("gemini-2.5-flash");
+      // gemini-2.0-flash es el modelo por defecto robusto y rápido a fecha de julio de 2026.
+      return google("gemini-2.0-flash");
+    case "openrouter":
+      return openrouter("openrouter/free");
   }
 }
 
@@ -54,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(
       JSON.stringify({
         error:
-          "Falta OPENAI_API_KEY y GOOGLE_GENERATIVE_AI_API_KEY. Configura al menos una en .env.",
+          "Falta GOOGLE_GENERATIVE_AI_API_KEY y OPENROUTER_API_KEY. Configura al menos una en .env.",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );

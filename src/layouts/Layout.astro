@@ -1,14 +1,14 @@
 ---
 import "../styles/global.css";
+import Sidebar from "../components/Sidebar.svelte";
+import AuthModal from "../components/AuthModal.svelte";
 
 interface Props {
   title?: string;
   active?: "home" | "recetas";
 }
 
-const { title, active = "home" } = Astro.props;
-const pathname = Astro.url.pathname;
-const isRecetas = active === "recetas" || pathname.startsWith("/recetas");
+const { title } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,65 +25,7 @@ const isRecetas = active === "recetas" || pathname.startsWith("/recetas");
   </head>
   <body class="min-h-screen bg-[var(--bg)]">
     <div class="flex min-h-screen">
-      <aside
-        class="hidden w-64 shrink-0 flex-col border-r border-[var(--border)] bg-[var(--sidebar)] lg:flex"
-      >
-        <div
-          class="flex items-center gap-3 border-b border-[var(--border)] px-5 py-5"
-        >
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-lg"
-          >
-            👨‍🍳
-          </div>
-          <div>
-            <p class="font-bold text-[var(--text)]">Recetario IA</p>
-            <p class="text-xs text-[var(--muted)]">Tu chef inteligente</p>
-          </div>
-        </div>
-
-        <nav class="flex flex-1 flex-col gap-1 p-3">
-          <a
-            href="/"
-            class:list={[
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-              !isRecetas
-                ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                : "text-[var(--muted)] hover:bg-slate-50 hover:text-[var(--text)]",
-            ]}
-          >
-            <span>✨</span> Generar receta
-          </a>
-          <a
-            href="/#historial"
-            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--muted)] transition hover:bg-slate-50 hover:text-[var(--text)]"
-          >
-            <span>🕐</span> Historial
-          </a>
-          <a
-            href="/recetas"
-            class:list={[
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-              isRecetas
-                ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                : "text-[var(--muted)] hover:bg-slate-50 hover:text-[var(--text)]",
-            ]}
-          >
-            <span>📖</span> Recetas de ejemplo
-          </a>
-        </nav>
-
-        <div class="border-t border-[var(--border)] p-4">
-          <div
-            class="rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-4 text-white shadow-md"
-          >
-            <p class="text-sm font-semibold">Astro 7 + OpenAI</p>
-            <p class="mt-1 text-xs text-orange-100">
-              Recetas estructuradas con modo cocinar
-            </p>
-          </div>
-        </div>
-      </aside>
+      <Sidebar client:load />
 
       <div class="flex min-w-0 flex-1 flex-col">
         <header
@@ -100,5 +42,6 @@ const isRecetas = active === "recetas" || pathname.startsWith("/recetas");
         </main>
       </div>
     </div>
+    <AuthModal client:load />
   </body>
 </html>

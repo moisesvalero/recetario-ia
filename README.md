@@ -5,12 +5,13 @@
 ### De lo que tienes en la nevera a una receta lista para cocinar — en segundos.
 
 [![Astro](https://img.shields.io/badge/Astro-7-BC52EE?style=for-the-badge&logo=astro&logoColor=white)](https://astro.build)
-[![OpenAI](https://img.shields.io/badge/OpenAI-gpt--4o--mini-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+[![Gemini](https://img.shields.io/badge/Google_Gemini-gemini--2.0--flash-8E75C2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Appwrite](https://img.shields.io/badge/Appwrite-Cloud-F02E65?style=for-the-badge&logo=appwrite&logoColor=white)](https://appwrite.io)
 [![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 
-**[Ver demo en vivo](https://recetario-eta.vercel.app)** · [Recetas de ejemplo](https://recetario-eta.vercel.app/recetas) · [Reportar issue](https://github.com/moisesvalero/recetario-ia/issues)
+**[Ver demo en vivo](https://recetario.moisesvalero.es)** · [Recetas de ejemplo](https://recetario.moisesvalero.es/recetas) · [Reportar issue](https://github.com/moisesvalero/recetario-ia/issues)
 
 ![Captura real de Recetario IA](./public/screenshot.png)
 
@@ -37,9 +38,10 @@ Abres ChatGPT, escribes _"tengo pollo y arroz"_, y recibes un párrafo largo. Si
 | **Generador inteligente** | Añade ingredientes como chips, define tiempo, porciones, dieta y dificultad |
 | **Recetas estructuradas** | JSON validado con Zod → UI clara, no texto suelto |
 | **Modo cocinar** | Navegación paso a paso con temporizadores integrados |
-| **Historial local** | Tus últimas recetas guardadas en el navegador |
-| **Catálogo estático** | 7 recetas de ejemplo con Content Collections de Astro 7 |
-| **Rendimiento** | Astro 7 + islas Svelte 5: carga mínima en cliente |
+| **Persistencia Híbrida** | Cuentas gratis con **Appwrite Cloud** (sincronizada) y fallback automático a **localStorage** si no se configuran keys |
+| **PDF Bonito** | Descarga e imprime tus recetas favoritas maquetadas en A4 para los usuarios registrados |
+| **Catálogo estático** | Recetas de ejemplo con Content Collections de Astro |
+| **Rendimiento** | Astro + islas Svelte 5: carga mínima en cliente |
 
 ---
 
@@ -47,10 +49,11 @@ Abres ChatGPT, escribes _"tengo pollo y arroz"_, y recibes un párrafo largo. Si
 
 ```
 Astro 7          → SSR, Content Collections (Sätteri), rutas híbridas
-Svelte 5         → Islas interactivas (generador, modo cocinar)
-Tailwind CSS 4   → UI responsive mobile-first
+Svelte 5         → Islas interactivas (generador, modo cocinar, auth, lista de compras)
+Tailwind CSS 4   → UI responsive mobile-first con diseño premium
 Vercel AI SDK    → generateObject + schema Zod
-OpenAI           → gpt-4o-mini
+Google Gemini    → gemini-2.0-flash (principal) + OpenRouter (fallback a openrouter/free)
+Appwrite Cloud   → Autenticación, base de datos y preferencias de usuario en la nube
 Vercel           → Deploy serverless
 ```
 
@@ -62,7 +65,8 @@ Vercel           → Deploy serverless
 
 - Node.js ≥ 22.12
 - pnpm
-- Clave de [OpenAI API](https://platform.openai.com/api-keys)
+- Clave de Google Generative AI (Gemini) o de OpenRouter
+- Proyecto de Appwrite Cloud (opcional, para persistencia en la nube)
 
 ### Instalación
 
@@ -70,7 +74,7 @@ Vercel           → Deploy serverless
 git clone https://github.com/moisesvalero/recetario-ia.git
 cd recetario-ia
 cp .env.example .env
-# Edita .env y añade OPENAI_API_KEY=sk-...
+# Edita .env y añade tus claves de API
 pnpm install
 pnpm dev
 ```
@@ -87,7 +91,7 @@ Abre [http://localhost:4321](http://localhost:4321).
 | `pnpm check` | astro check + tsc |
 | `pnpm lint` | oxlint |
 | `pnpm test` | Vitest |
-| `pnpm format:check` | Prettier |
+| `pnpm format` | Prettier formateado completo |
 
 ---
 
@@ -95,9 +99,12 @@ Abre [http://localhost:4321](http://localhost:4321).
 
 | Variable | Contexto | Descripción |
 |----------|----------|-------------|
-| `OPENAI_API_KEY` | Servidor | Clave de OpenAI para `/api/generate-recipe` |
-
-En Vercel: **Settings → Environment Variables** → añade `OPENAI_API_KEY` en Production y Preview.
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Servidor | Clave de Google AI para el LLM principal |
+| `OPENROUTER_API_KEY` | Servidor | Clave de OpenRouter para el LLM fallback |
+| `PUBLIC_APPWRITE_ENDPOINT` | Cliente | Endpoint de la API de Appwrite Cloud (`https://cloud.appwrite.io/v1`) |
+| `PUBLIC_APPWRITE_PROJECT_ID` | Cliente | ID del proyecto en Appwrite Cloud |
+| `PUBLIC_APPWRITE_DATABASE_ID` | Cliente | ID de la base de datos en Appwrite |
+| `PUBLIC_APPWRITE_COLLECTION_RECETAS` | Cliente | ID de la tabla/colección para recetas guardadas |
 
 ---
 
@@ -107,23 +114,12 @@ En Vercel: **Settings → Environment Variables** → añade `OPENAI_API_KEY` en
 flowchart LR
   User[Usuario] --> UI[Isla Svelte]
   UI -->|POST /api/generate-recipe| API[Endpoint Astro]
-  API --> OpenAI[gpt-4o-mini]
-  OpenAI --> API
+  API --> Gemini[gemini-2.0-flash]
+  Gemini -->|Fallback| OpenRouter[openrouter/free]
   API --> UI
-  UI --> History[localStorage]
+  UI --> Persist[Appwrite Cloud / localStorage]
   Static[Content Collections] --> Pages[/recetas]
 ```
-
----
-
-## Rutas
-
-| Ruta | Tipo | Descripción |
-|------|------|-------------|
-| `/` | SSR + isla | Generador IA |
-| `/recetas` | Estática | Listado de recetas ejemplo |
-| `/recetas/[slug]` | Estática | Detalle de receta |
-| `/api/generate-recipe` | Serverless | Generación con OpenAI |
 
 ---
 
@@ -132,7 +128,7 @@ flowchart LR
 - **Formulario guiado** con restricciones reales (tiempo, dieta, porciones)
 - **Salida tipada** con Zod — siempre la misma estructura
 - **Modo cocinar** con timers — pensado para tener el móvil en la encimera
-- **Historial persistente** sin cuenta ni login
+- **Cuentas gratis** para guardar favoritos, compras y descargar PDF
 - **Recetas estáticas** indexables para SEO
 
 ---
