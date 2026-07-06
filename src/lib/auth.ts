@@ -612,7 +612,7 @@ export async function clearShoppingList(): Promise<void> {
 }
 
 export async function loginWithOAuth(
-  provider: "google" | "github",
+  provider: "google" | "apple",
 ): Promise<void> {
   if (!isAppwriteActive()) {
     throw new Error(
