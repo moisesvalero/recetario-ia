@@ -400,10 +400,13 @@
       {:else}
         <div class="mt-8 grid gap-6 sm:grid-cols-2">
           {#each savedRecipes as item}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabindex="0"
               onclick={() => openHistoryItem(item.recipe)}
-              class="flex items-center gap-4 rounded-3xl border border-slate-100 bg-white p-3 text-left shadow-sm hover:border-orange-200 transition-all"
+              onkeydown={(e) =>
+                e.key === "Enter" && openHistoryItem(item.recipe)}
+              class="flex items-center gap-4 rounded-3xl border border-slate-100 bg-white p-3 text-left shadow-sm hover:border-orange-200 transition-all cursor-pointer"
             >
               <div
                 class="h-16 w-16 shrink-0 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl font-bold border border-orange-100"
@@ -444,7 +447,7 @@
                   <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
                 </svg>
               </button>
-            </button>
+            </div>
           {/each}
         </div>
       {/if}

@@ -610,3 +610,21 @@ export async function clearShoppingList(): Promise<void> {
     localStorage.setItem(STORAGE_KEYS.SHOPPING_LIST, JSON.stringify(filtered));
   } catch {}
 }
+
+export async function loginWithOAuth(
+  provider: "google" | "github",
+): Promise<void> {
+  if (!isAppwriteActive()) {
+    throw new Error(
+      "El inicio de sesión social solo está disponible cuando Appwrite Cloud está configurado.",
+    );
+  }
+  const successRedirect = window.location.origin + "/";
+  const failureRedirect = window.location.origin + "/?oauth_error=true";
+
+  account.createOAuth2Session(
+    provider as any,
+    successRedirect,
+    failureRedirect,
+  );
+}
