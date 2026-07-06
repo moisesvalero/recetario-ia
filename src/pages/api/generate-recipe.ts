@@ -35,10 +35,9 @@ function buildProviderChain(): ProviderName[] {
 function resolveModel(provider: ProviderName): LanguageModel {
   switch (provider) {
     case "google":
-      // gemini-2.0-flash es el modelo por defecto robusto y rápido a fecha de julio de 2026.
-      return google("gemini-2.0-flash");
+      return google("gemini-1.5-flash");
     case "openrouter":
-      return openrouter("openrouter/free");
+      return openrouter("google/gemini-2.0-flash-exp:free");
   }
 }
 
