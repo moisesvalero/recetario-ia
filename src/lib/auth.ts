@@ -611,9 +611,7 @@ export async function clearShoppingList(): Promise<void> {
   } catch {}
 }
 
-export async function loginWithOAuth(
-  provider: "google" | "apple",
-): Promise<void> {
+export async function loginWithOAuth(provider: "google"): Promise<void> {
   if (!isAppwriteActive()) {
     throw new Error(
       "El inicio de sesión social solo está disponible cuando Appwrite Cloud está configurado.",
