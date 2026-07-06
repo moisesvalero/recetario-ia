@@ -45,7 +45,7 @@
       </div>
       <div>
         <p class="font-bold text-slate-800 leading-tight tracking-tight">
-          Recetario IA
+          Umami
         </p>
         <p
           class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider"
