@@ -15,7 +15,7 @@
 
 ![Captura real de Recetario IA](./public/screenshot.png)
 
-> La captura se genera desde la app con Playwright (`pnpm run screenshot`). No es un mockup de IA.
+> Vista previa de la interfaz del generador de recetas.
 
 </div>
 
@@ -118,7 +118,7 @@ flowchart LR
   Gemini -->|Fallback| OpenRouter[openrouter/free]
   API --> UI
   UI --> Persist[Appwrite Cloud / localStorage]
-  Static[Content Collections] --> Pages[/recetas]
+  Static[Content Collections] --> Pages["/recetas"]
 ```
 
 ---
