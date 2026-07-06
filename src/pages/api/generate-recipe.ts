@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject, type LanguageModel } from "ai";
 import {
@@ -14,6 +14,10 @@ import {
 } from "../../lib/recipe-schema";
 
 export const prerender = false;
+
+const googleProvider = createGoogleGenerativeAI({
+  apiKey: GOOGLE_GENERATIVE_AI_API_KEY || "",
+});
 
 const openrouter = createOpenAI({
   apiKey: OPENROUTER_API_KEY || "",
@@ -35,7 +39,7 @@ function buildProviderChain(): ProviderName[] {
 function resolveModel(provider: ProviderName): LanguageModel {
   switch (provider) {
     case "google":
-      return google("gemini-1.5-flash");
+      return googleProvider("gemini-1.5-flash");
     case "openrouter":
       return openrouter("google/gemini-2.0-flash-exp:free");
   }
