@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-06T16:09:50Z",
+  "title": "Design System: Recetario IA",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Naranja Azafrán",
+        "canonical": "oklch(69.83% 0.217 38.53)",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#ffedd5"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Naranja Quemado",
+        "canonical": "oklch(62.6% 0.222 36.83)",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fdba74",
+          "#ffedd5"
+        ]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Crema Slate",
+        "canonical": "oklch(96.93% 0.007 248.88)",
+        "tonalRamp": [
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#94a3b8",
+          "#cbd5e1",
+          "#f1f5f9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Títulos principales y cabeceras de héroe legibles en cocina."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto de las recetas y guías de preparación."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-low",
+        "value": "0 8px 30px rgb(15 23 42 / 0.08)",
+        "purpose": "Elevación física de tarjetas sobre la encimera."
+      },
+      {
+        "name": "tactile-active",
+        "value": "0 20px 50px rgb(15 23 42 / 0.12)",
+        "purpose": "Modales emergentes y popovers de alta interacción."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-quint",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Transición predeterminada de modales y estados."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Boton Primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Botón interactivo principal para enviar formularios y guardar recetas.",
+      "html": "<button class=\"ds-btn-primary\">Guardar Receta</button>",
+      "css": ".ds-btn-primary { background-color: #f97316; color: #ffffff; padding: 12px 24px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600; border: none; border-radius: 20px; transition: background-color 0.2s, transform 0.2s; cursor: pointer; } .ds-btn-primary:hover { background-color: #ea580c; transform: scale(1.02); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El Cuaderno de la Abuela",
+    "overview": "El sistema visual de Recetario IA busca evocar la calidez y la cercanía de la cocina casera tradicional y familiar mediante una interfaz moderna, limpia y funcional. Evita la frialdad corporativa de las plataformas SaaS convencionales mediante el uso de toques analógicos sutiles, curvas amplias orgánicas y una paleta de colores arraigada en tonos tierra y cálidos.",
+    "keyCharacteristics": [
+      "Calidez orgánica: esquinas redondeadas y tonos terrosos/naranjas.",
+      "Enfoque táctil físico: botones grandes para facilitar su uso con manos sucias.",
+      "Flujo secuencial lineal: layouts sencillos paso a paso."
+    ],
+    "rules": [
+      {
+        "name": "La Regla de la Calidez",
+        "body": "El color acento Naranja Azafrán debe aplicarse en <=15% de cualquier pantalla dada.",
+        "section": "colors"
+      },
+      {
+        "name": "La Regla de la Elevación Física",
+        "body": "Las superficies planas a ras de fondo son el valor por defecto. Las sombras y la elevación se reservan para elementos interactivos móviles.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar esquinas de 24px (rounded-3xl) en tarjetas principales.",
+      "Do mantener el tamaño de texto de los pasos de la receta en al menos 16px.",
+      "Do diseñar botones con área de toque mínima de 48px por 48px."
+    ],
+    "donts": [
+      "Don't usar bordes en tira (side-stripe borders) gruesos.",
+      "Don't aplicar gradientes neón o texturas oscuras espaciales de color morado/azul.",
+      "Don't reducir el contraste tipográfico por debajo de 4.5:1."
+    ]
+  }
+}

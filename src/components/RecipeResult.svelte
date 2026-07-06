@@ -16,7 +16,11 @@
 
 <section class="space-y-4">
   {#if cooking}
-    <CookMode steps={recipe.steps} onClose={() => (cooking = false)} />
+    <CookMode
+      steps={recipe.steps}
+      ingredients={recipe.ingredients}
+      onClose={() => (cooking = false)}
+    />
   {:else}
     <RecipeCard
       {recipe}
