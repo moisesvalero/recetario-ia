@@ -39,7 +39,7 @@ function buildProviderChain(): ProviderName[] {
 function resolveModel(provider: ProviderName): LanguageModel {
   switch (provider) {
     case "google":
-      return googleProvider("gemini-1.5-flash");
+      return googleProvider("gemini-2.5-flash");
     case "openrouter":
       return openrouter("google/gemini-2.0-flash-exp:free");
   }
