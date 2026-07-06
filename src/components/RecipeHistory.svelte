@@ -23,9 +23,9 @@
         >{items.length}</span
       >
     </div>
-    <ul class="grid gap-3 sm:grid-cols-2">
+    <ul class="grid gap-3 sm:grid-cols-2 min-w-0">
       {#each items as item}
-        <li>
+        <li class="min-w-0">
           <button
             type="button"
             class="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] p-3 text-left transition hover:border-orange-200 hover:bg-orange-50/50"
