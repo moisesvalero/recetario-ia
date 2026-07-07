@@ -15,8 +15,25 @@
   }
 </script>
 
+<!-- Backdrop para móvil (hace click fuera para cerrar) -->
+{#if navState.mobileMenuOpen}
+  <button
+    type="button"
+    onclick={() => navState.closeMobileMenu()}
+    class="fixed inset-0 z-40 bg-black/45 backdrop-blur-xs lg:hidden border-none outline-none w-full h-full cursor-default"
+    aria-label="Cerrar menú"
+  ></button>
+{/if}
+
 <aside
-  class="hidden w-64 shrink-0 flex-col border-r border-dashed border-[var(--border)] bg-[var(--surface-muted)] lg:flex min-h-screen justify-between py-6 z-20"
+  class="
+    fixed lg:static inset-y-0 left-0 z-50
+    w-64 shrink-0 flex flex-col border-r border-dashed border-[var(--border)] bg-[var(--surface-muted)]
+    h-screen lg:min-h-screen justify-between py-6 transition-transform duration-300 ease-in-out
+    {navState.mobileMenuOpen
+    ? 'translate-x-0'
+    : '-translate-x-full lg:translate-x-0'}
+  "
 >
   <!-- Header / Logo -->
   <div>
@@ -305,5 +322,22 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </button>
+
+    <!-- Enlaces Legales discretos -->
+    <div
+      class="flex items-center justify-center gap-4 mt-2 text-[10px] font-mono font-bold text-[var(--muted)]/60 pb-1"
+    >
+      <a
+        href="/privacidad"
+        onclick={() => navState.closeMobileMenu()}
+        class="hover:text-[var(--text)] transition-colors">Privacidad</a
+      >
+      <span>·</span>
+      <a
+        href="/terminos"
+        onclick={() => navState.closeMobileMenu()}
+        class="hover:text-[var(--text)] transition-colors">Términos</a
+      >
+    </div>
   </div>
 </aside>

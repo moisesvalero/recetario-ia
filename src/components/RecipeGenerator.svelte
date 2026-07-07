@@ -331,7 +331,7 @@
         >
           <!-- Left Column: The Interactive Lined Notebook -->
           <section
-            class="col-span-12 md:col-span-8 notebook-paper p-8 pt-10 relative"
+            class="col-span-12 lg:col-span-8 notebook-paper p-8 pt-10 relative"
           >
             <!-- Header Section -->
             <div class="mb-10 pl-6">
@@ -464,7 +464,9 @@
           </section>
 
           <!-- Right Column: Preferences Sticky Note & CTA -->
-          <aside class="col-span-12 md:col-span-4 flex flex-col gap-6">
+          <aside
+            class="col-span-12 lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-8 lg:self-start"
+          >
             <!-- Polaroid Frame -->
             <div class="polaroid w-full rotate-[1.5deg]">
               <img
@@ -650,24 +652,6 @@
         <div bind:this={recipeEl} class="scroll-mt-6">
           {#if recipe}
             <RecipeResult {recipe} />
-          {:else if !loading}
-            <!-- Card de estado vacío -->
-            {#if showGeneratorForm}
-              <section
-                class="rounded border border-dashed border-[var(--border)] bg-white p-12 text-center shadow-sm"
-              >
-                <span class="text-3xl block mb-3">🍳</span>
-                <h4
-                  class="font-display font-extrabold text-[var(--text)] text-sm"
-                >
-                  Tu receta aparecerá aquí
-                </h4>
-                <p class="mt-1 text-xs text-[var(--muted)] font-medium">
-                  Con foto, ingredientes correctos, pasos numerados y
-                  temporizadores interactivos.
-                </p>
-              </section>
-            {/if}
           {/if}
         </div>
 

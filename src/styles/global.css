@@ -10,7 +10,7 @@
   --muted: #5a6270;
   --accent: #ff7e33;
   --accent-hover: #ff6a14;
-  --accent-soft: #FEF3A7;
+  --accent-soft: #fef3a7;
   --accent-soft-opacity: rgba(254, 243, 167, 0.5);
   --accent-ring: #ff7e33;
   --border: #e2ddd3;
@@ -50,9 +50,9 @@ a {
   --color-paper: #fcfaf2;
   --color-ink: #001e40;
   --color-pencil: #333333;
-  --color-postit: #FEF3A7;
+  --color-postit: #fef3a7;
   --color-marker: #ff7e33;
-  
+
   --font-display: "Bricolage Grotesque", sans-serif;
   --font-body: "Karla", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
@@ -200,7 +200,7 @@ body {
   background-color: #fcfaf2;
   background-image: linear-gradient(#e5e2d9 1px, transparent 1px);
   background-size: 100% 24px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
   border: 1px solid #e0ddd5;
   position: relative;
 }
@@ -218,7 +218,7 @@ body {
 
 .tape {
   background: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(1px);
 }
 
@@ -234,17 +234,17 @@ body {
 }
 
 .post-it {
-  background: #FEF3A7;
-  box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+  background: #fef3a7;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
   transform: rotate(-1deg);
 }
 
 .polaroid {
   background: white;
   padding: 10px 10px 40px 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transform: rotate(2deg);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .marker-btn {
@@ -262,7 +262,10 @@ body {
 }
 
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
   vertical-align: middle;
 }
-
