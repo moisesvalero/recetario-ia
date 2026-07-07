@@ -115,6 +115,14 @@
             <span class="material-symbols-outlined text-base">gavel</span>
             Términos de Uso
           </a>
+
+          <a
+            href="/cookies"
+            class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-bold font-mono rounded-lg hover:bg-[var(--accent-soft)]/30 text-[var(--muted)] transition-colors"
+          >
+            <span class="material-symbols-outlined text-base">cookie</span>
+            Cookies
+          </a>
         </div>
       </div>
     {/if}

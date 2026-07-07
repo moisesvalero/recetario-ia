@@ -37,8 +37,14 @@
 >
   <!-- Header / Logo -->
   <div>
-    <div
-      class="flex items-center gap-3 px-6 pb-6 mb-4 border-b border-dashed border-[var(--border)]"
+    <a
+      href="/"
+      onclick={(e) => {
+        e.preventDefault();
+        navState.setTab("generar");
+        navState.closeMobileMenu();
+      }}
+      class="flex items-center gap-3 px-6 pb-6 mb-4 border-b border-dashed border-[var(--border)] hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer"
     >
       <span class="text-3xl">🍳</span>
       <div>
@@ -53,7 +59,7 @@
           Chef inteligente
         </p>
       </div>
-    </div>
+    </a>
 
     <!-- Navigation Menu -->
     <nav class="flex flex-col gap-2">
@@ -325,19 +331,36 @@
 
     <!-- Enlaces Legales discretos -->
     <div
-      class="flex items-center justify-center gap-4 mt-2 text-[10px] font-mono font-bold text-[var(--muted)]/60 pb-1"
+      class="flex flex-col items-center gap-2 mt-2 text-[10px] font-mono font-bold text-[var(--muted)]/60 pb-1"
     >
-      <a
-        href="/privacidad"
-        onclick={() => navState.closeMobileMenu()}
-        class="hover:text-[var(--text)] transition-colors">Privacidad</a
-      >
-      <span>·</span>
-      <a
-        href="/terminos"
-        onclick={() => navState.closeMobileMenu()}
-        class="hover:text-[var(--text)] transition-colors">Términos</a
-      >
+      <div class="flex items-center gap-3">
+        <a
+          href="/privacidad"
+          onclick={() => navState.closeMobileMenu()}
+          class="hover:text-[var(--text)] transition-colors">Privacidad</a
+        >
+        <span>·</span>
+        <a
+          href="/terminos"
+          onclick={() => navState.closeMobileMenu()}
+          class="hover:text-[var(--text)] transition-colors">Términos</a
+        >
+        <span>·</span>
+        <a
+          href="/cookies"
+          onclick={() => navState.closeMobileMenu()}
+          class="hover:text-[var(--text)] transition-colors">Cookies</a
+        >
+      </div>
+      <div class="text-[9px] text-[var(--muted)]/50 mt-0.5">
+        Desarrollado por <a
+          href="https://github.com/moisesvalero"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-[var(--accent)] underline transition-colors"
+          >Moisés Valero</a
+        >
+      </div>
     </div>
   </div>
 </aside>

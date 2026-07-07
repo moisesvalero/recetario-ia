@@ -3,6 +3,8 @@ import "../styles/global.css";
 import Sidebar from "../components/Sidebar.svelte";
 import MobileHeader from "../components/MobileHeader.svelte";
 import AuthModal from "../components/AuthModal.svelte";
+import CookieConsent from "../components/CookieConsent.svelte";
+import PwaInstallBanner from "../components/PwaInstallBanner.svelte";
 
 interface Props {
   title?: string;
@@ -24,6 +26,12 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#f4f3f8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Umami" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <title>{title ?? "Umami — Tu Chef Inteligente"}</title>
   </head>
   <body class="min-h-screen bg-[var(--bg)] font-body text-[var(--text)]">
@@ -38,5 +46,24 @@ const { title } = Astro.props;
       </div>
     </div>
     <AuthModal client:load />
+    <CookieConsent client:idle />
+    <PwaInstallBanner client:idle />
+
+    <!-- Registro de Service Worker para PWA -->
+    <script is:inline>
+      if (
+        "serviceWorker" in navigator &&
+        window.location.hostname !== "localhost"
+      ) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((reg) => console.log("Service Worker registrado:", reg.scope))
+            .catch((err) =>
+              console.error("Error al registrar el Service Worker:", err),
+            );
+        });
+      }
+    </script>
   </body>
 </html>

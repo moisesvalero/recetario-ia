@@ -33,28 +33,31 @@ Abres ChatGPT, escribes _"tengo pollo y arroz"_, y recibes un párrafo largo. Si
 
 ## Características
 
-| | |
-|---|---|
-| **Generador inteligente** | Añade ingredientes como chips, define tiempo, porciones, dieta y dificultad |
-| **Recetas estructuradas** | JSON validado con Zod → UI clara, no texto suelto |
-| **Modo cocinar** | Navegación paso a paso con temporizadores integrados |
-| **Persistencia Híbrida** | Cuentas gratis con **Appwrite Cloud** (sincronizada) y fallback automático a **localStorage** si no se configuran keys |
-| **PDF Bonito** | Descarga e imprime tus recetas favoritas maquetadas en A4 para los usuarios registrados |
-| **Catálogo estático** | Recetas de ejemplo con Content Collections de Astro |
-| **Rendimiento** | Astro + islas Svelte 5: carga mínima en cliente |
+|                           |                                                                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Generador inteligente** | Añade ingredientes como chips, define tiempo, porciones, dieta y dificultad.                                            |
+| **Recetas estructuradas** | JSON validado con Zod → UI clara, no texto suelto.                                                                      |
+| **Modo cocinar**          | Navegación paso a paso con temporizadores integrados.                                                                   |
+| **Soporte PWA Completo**  | Aplicación Web Progresiva instalable con Service Worker para almacenamiento en caché local offline.                     |
+| **Banners Inteligentes**  | Banners de cookies para cumplimiento legal y banner inteligente de instalación PWA (para iOS y Android).                |
+| **Persistencia Híbrida**  | Cuentas gratis con **Appwrite Cloud** (sincronizada) y fallback automático a **localStorage** si no se configuran keys. |
+| **PDF Bonito**            | Descarga e imprime tus recetas favoritas maquetadas en A4 para los usuarios registrados.                                |
+| **Catálogo estático**     | Recetas de ejemplo con Content Collections de Astro.                                                                    |
+| **Responsive Premium**    | Layout optimizado para pantallas grandes (ajustes sticky) e interfaz móvil/tablet fluida con cajón deslizable.          |
 
 ---
 
 ## Stack técnico
 
 ```
-Astro 7          → SSR, Content Collections (Sätteri), rutas híbridas
-Svelte 5         → Islas interactivas (generador, modo cocinar, auth, lista de compras)
-Tailwind CSS 4   → UI responsive mobile-first con diseño premium
+Astro 7          → SSR, Content Collections, rutas híbridas
+Svelte 5         → Islas interactivas (generador, modo cocinar, auth, banners, lista de compras)
+Tailwind CSS 4   → UI responsive con diseño skeuomorfo de cuaderno
 Vercel AI SDK    → generateObject + schema Zod
-Google Gemini    → gemini-2.0-flash (principal) + OpenRouter (fallback a openrouter/free)
-Appwrite Cloud   → Autenticación, base de datos y preferencias de usuario en la nube
+Google Gemini    → gemini-2.0-flash (principal) + OpenRouter (fallback)
+Appwrite Cloud   → Autenticación, base de datos y preferencias de usuario
 Vercel           → Deploy serverless
+Service Workers  → Caching offline para PWA
 ```
 
 ---
@@ -83,28 +86,28 @@ Abre [http://localhost:4321](http://localhost:4321).
 
 ### Scripts
 
-| Comando | Descripción |
-|---------|-------------|
-| `pnpm dev` | Servidor de desarrollo |
-| `pnpm build` | Build de producción |
-| `pnpm preview` | Previsualizar build |
-| `pnpm check` | astro check + tsc |
-| `pnpm lint` | oxlint |
-| `pnpm test` | Vitest |
-| `pnpm format` | Prettier formateado completo |
+| Comando        | Descripción                  |
+| -------------- | ---------------------------- |
+| `pnpm dev`     | Servidor de desarrollo       |
+| `pnpm build`   | Build de producción          |
+| `pnpm preview` | Previsualizar build          |
+| `pnpm check`   | astro check + tsc            |
+| `pnpm lint`    | oxlint                       |
+| `pnpm test`    | Vitest                       |
+| `pnpm format`  | Prettier formateado completo |
 
 ---
 
 ## Variables de entorno
 
-| Variable | Contexto | Descripción |
-|----------|----------|-------------|
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Servidor | Clave de Google AI para el LLM principal |
-| `OPENROUTER_API_KEY` | Servidor | Clave de OpenRouter para el LLM fallback |
-| `PUBLIC_APPWRITE_ENDPOINT` | Cliente | Endpoint de la API de Appwrite Cloud (`https://cloud.appwrite.io/v1`) |
-| `PUBLIC_APPWRITE_PROJECT_ID` | Cliente | ID del proyecto en Appwrite Cloud |
-| `PUBLIC_APPWRITE_DATABASE_ID` | Cliente | ID de la base de datos en Appwrite |
-| `PUBLIC_APPWRITE_COLLECTION_RECETAS` | Cliente | ID de la tabla/colección para recetas guardadas |
+| Variable                             | Contexto | Descripción                                                           |
+| ------------------------------------ | -------- | --------------------------------------------------------------------- |
+| `GOOGLE_GENERATIVE_AI_API_KEY`       | Servidor | Clave de Google AI para el LLM principal                              |
+| `OPENROUTER_API_KEY`                 | Servidor | Clave de OpenRouter para el LLM fallback                              |
+| `PUBLIC_APPWRITE_ENDPOINT`           | Cliente  | Endpoint de la API de Appwrite Cloud (`https://cloud.appwrite.io/v1`) |
+| `PUBLIC_APPWRITE_PROJECT_ID`         | Cliente  | ID del proyecto en Appwrite Cloud                                     |
+| `PUBLIC_APPWRITE_DATABASE_ID`        | Cliente  | ID de la base de datos en Appwrite                                    |
+| `PUBLIC_APPWRITE_COLLECTION_RECETAS` | Cliente  | ID de la tabla/colección para recetas guardadas                       |
 
 ---
 
