@@ -24,6 +24,14 @@ describe("getRecipeImageUrl", () => {
     expect(getRecipeImageUrl("Arroz salteado", ["arroz", "verduras"])).toBe(
       "/images/arroz.jpg",
     );
+    expect(
+      getRecipeImageUrl("Arroz con Pollo Express, Tomate y Huevo Frito", [
+        "arroz",
+        "pollo",
+        "huevo",
+        "tomate",
+      ]),
+    ).toBe("/images/arroz.jpg");
   });
 
   it("usa fallback variado si no hay match", () => {
