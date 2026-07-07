@@ -115,36 +115,6 @@
       <button
         type="button"
         onclick={() => {
-          if (authState.currentUser) navState.setTab("mis-recetas");
-          else authState.openLogin();
-        }}
-        class="flex w-[calc(100%-16px)] items-center gap-3 rounded-r-2xl pl-6 pr-4 py-3 text-sm font-semibold transition-all select-none {navState.activeTab ===
-        'mis-recetas'
-          ? 'bg-[var(--accent-soft)] text-[var(--text)] font-extrabold shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)] border-y border-r border-[var(--border)]'
-          : 'text-[var(--muted)] hover:bg-[var(--accent-soft)]/20 hover:text-[var(--text)]'}"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4"
-        >
-          <path
-            d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"
-          />
-          <path d="M6 6h10" />
-          <path d="M6 10h10" />
-        </svg>
-        Despensa
-      </button>
-
-      <button
-        type="button"
-        onclick={() => {
           if (authState.currentUser) navState.setTab("favoritos");
           else authState.openLogin();
         }}
@@ -191,7 +161,7 @@
           <circle cx="12" cy="12" r="10" />
           <polyline points="12 6 12 12 16 14" />
         </svg>
-        Planificador
+        Historial
       </button>
 
       <button

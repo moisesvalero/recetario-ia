@@ -14,7 +14,10 @@ class NavState {
   constructor() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const tab = params.get("tab");
+      let tab = params.get("tab");
+      if (tab === "mis-recetas") {
+        tab = "favoritos";
+      }
       if (tab) {
         // Validar que sea un tab válido
         const validTabs = [
@@ -51,11 +54,12 @@ class NavState {
       | "ajustes"
       | "inicio",
   ) {
-    this.activeTab = tab;
+    const targetTab = tab === "mis-recetas" ? "favoritos" : tab;
+    this.activeTab = targetTab;
     this.closeMobileMenu();
     // Si estamos en otra página de Astro y queremos ir a la raíz
     if (typeof window !== "undefined" && window.location.pathname !== "/") {
-      window.location.href = "/?tab=" + tab;
+      window.location.href = "/?tab=" + targetTab;
     }
   }
 }
