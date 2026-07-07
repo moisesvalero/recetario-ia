@@ -326,94 +326,95 @@
   {#if navState.activeTab === "generar" || navState.activeTab === "inicio"}
     <div class="animate-fade-in-up">
       {#if showGeneratorForm}
-        <!-- Hero Header -->
-        <section
-          class="relative overflow-hidden bg-[var(--accent-soft)]/50 border-b border-[var(--border)]/30"
+        <div
+          class="max-w-5xl mx-auto grid grid-cols-12 gap-8 px-6 pt-8 lg:px-12"
         >
-          <!-- Background kitchen image on the right -->
-          <div
-            class="absolute right-0 top-0 bottom-0 w-1/2 bg-cover bg-center hidden md:block opacity-75"
-            style={`background-image: url('${HERO_IMAGE}')`}
-          ></div>
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-[var(--accent-soft)]/95 via-[var(--accent-soft)]/90 to-transparent"
-          ></div>
-
-          <div class="relative px-6 py-12 md:py-16 lg:px-12 max-w-4xl">
-            <h1
-              class="text-3xl font-bold tracking-tight text-[var(--text)] md:text-4xl"
-            >
-              ¡Hola, {authState.currentUser
-                ? authState.currentUser.name
-                : "María"}!
-            </h1>
-            <h2
-              class="mt-2 text-2xl font-extrabold text-[var(--text)] md:text-3xl"
-            >
-              ¿Qué te gustaría cocinar hoy?
-            </h2>
-            <p
-              class="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] font-medium"
-            >
-              Cuéntanos con qué ingredientes cuentas o qué se te antoja y la IA
-              creará la receta perfecta para ti.
-            </p>
-          </div>
-        </section>
-
-        <div class="space-y-8 px-6 lg:px-12 -mt-6">
-          <!-- Input Panel / Form -->
+          <!-- Left Column: The Interactive Lined Notebook -->
           <section
-            class="relative rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-md sm:p-8"
+            class="col-span-12 md:col-span-8 notebook-paper p-8 pt-10 relative"
           >
-            <h3 class="text-xs font-semibold tracking-wide text-[var(--muted)]">
-              Cuéntanos tus ingredientes principales
-            </h3>
+            <!-- Header Section -->
+            <div class="mb-10 pl-6">
+              <h2
+                class="font-handwritten text-4xl font-black text-[var(--text)] leading-tight"
+              >
+                ¡Hola, {authState.currentUser
+                  ? authState.currentUser.name
+                  : "Invitado"}!
+              </h2>
+              <h3
+                class="font-handwritten text-2xl font-bold text-[var(--text)]/80 mt-1"
+              >
+                ¿Qué te gustaría cocinar hoy?
+              </h3>
+              <p
+                class="font-handwritten text-base text-[var(--muted)] mt-4 max-w-lg leading-relaxed"
+              >
+                Cuéntanos con qué ingredientes cuentas o qué se te antoja y la
+                IA creará la receta perfecta para ti.
+              </p>
+            </div>
 
-            <!-- Píldoras de Ingredientes -->
-            <div class="mt-4 flex flex-wrap gap-2.5 items-center">
-              {#each ingredients as item}
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2.5 rounded-2xl border border-[var(--accent-ring)] bg-[var(--accent-soft)] px-4 py-2.5 text-xs font-bold text-[var(--accent-hover)] transition hover:bg-[var(--accent-ring)]"
-                  onclick={() => removeIngredient(item)}
-                  aria-label={`Eliminar ingrediente: ${item}`}
-                >
-                  {item}
-                  <span class="text-[var(--accent)] font-extrabold text-sm"
-                    >×</span
+            <!-- Ingredients Input -->
+            <div class="mb-10 pl-6">
+              <label
+                class="font-handwritten text-xl font-bold text-[var(--text)] mb-4 block"
+              >
+                Cuéntanos tus ingredientes principales
+              </label>
+
+              <div
+                class="flex flex-wrap items-center min-h-[60px] p-2 gap-x-6 gap-y-4"
+              >
+                <!-- Taped Ingredient Tags -->
+                {#each ingredients as item, idx}
+                  {@const rotation = ((idx % 3) - 1.2) * 1.5}
+                  <div
+                    class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-lg rotate-[{rotation}deg] tape shadow-[0_1px_3px_rgba(0,0,0,0.06)] select-none flex items-center gap-2"
                   >
-                </button>
-              {/each}
+                    <div
+                      class="absolute -top-2.5 left-1/2 -translate-x-1/2 w-8 h-3.5 bg-white/40 border border-black/5"
+                    ></div>
+                    <span>{item}</span>
+                    <button
+                      type="button"
+                      onclick={() => removeIngredient(item)}
+                      class="text-xs opacity-50 hover:opacity-100 transition-opacity font-bold cursor-pointer"
+                      aria-label={`Eliminar ${item}`}
+                    >
+                      ×
+                    </button>
+                  </div>
+                {/each}
 
-              <!-- Input Inline con botón punteado -->
-              <div class="flex items-center gap-2 min-w-[220px] flex-1">
-                <input
-                  class="h-11 flex-1 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-xs font-semibold outline-none ring-[var(--accent-ring)]/50 transition focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:ring-4"
-                  placeholder="Escribe un ingrediente..."
-                  aria-label="Escribe un ingrediente para añadir"
-                  bind:value={ingredientInput}
-                  onkeydown={handleIngredientKeydown}
-                />
+                <div class="flex-1 min-w-[200px]">
+                  <input
+                    bind:value={ingredientInput}
+                    onkeydown={handleIngredientKeydown}
+                    class="hand-drawn-border w-full font-handwritten text-lg text-[var(--text)] focus:outline-none placeholder:text-[var(--text)]/50 px-4 py-1.5 bg-white/30"
+                    placeholder="Escribe un ingrediente..."
+                    type="text"
+                    aria-label="Escribe un ingrediente para añadir"
+                  />
+                </div>
+
                 <button
                   type="button"
-                  class="shrink-0 h-11 rounded-2xl border-2 border-dashed border-[var(--border)] px-4 text-xs font-bold text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent-hover)] transition"
                   onclick={addIngredient}
+                  class="font-handwritten text-[var(--text)]/70 border border-dashed border-[var(--text)]/30 px-4 py-2 rounded bg-white/20 hover:bg-[var(--accent-soft)]/20 transition-all text-sm font-bold active:scale-95"
                 >
                   + Agregar ingrediente
                 </button>
               </div>
             </div>
 
-            <!-- Chips de ingredientes rápidos -->
-            <div
-              class="mt-5 flex flex-col gap-2 border-t border-[var(--border)]/30 pt-4"
-            >
+            <!-- Suggestions -->
+            <div class="mb-6 pl-6">
               <span
-                class="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]"
-                >Sugerencias rápidas:</span
+                class="text-[10px] font-mono font-bold tracking-wider text-[var(--muted)] mb-3 block"
+                >SUGERENCIAS RÁPIDAS:</span
               >
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-wrap gap-x-4 gap-y-2">
                 {#each commonIngredients as chip}
                   {@const present = ingredients.some(
                     (i) => i.toLowerCase() === chip.toLowerCase(),
@@ -421,10 +422,8 @@
                   <button
                     type="button"
                     disabled={present}
-                    class="rounded-xl border border-[var(--border)] px-3 py-1.5 text-xs font-bold transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed {present
-                      ? 'bg-[var(--surface-muted)] text-[var(--muted)]'
-                      : 'bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent-hover)]'}"
                     onclick={() => addCommonIngredient(chip)}
+                    class="font-handwritten text-[var(--muted)] hover:text-[var(--text)] hover:underline transition-colors disabled:opacity-30 disabled:no-underline font-bold text-base cursor-pointer"
                   >
                     + {chip}
                   </button>
@@ -432,134 +431,212 @@
               </div>
             </div>
 
-            <!-- Ajustes y Preferencias Avanzadas (Progressive Disclosure) -->
-            <details class="group mt-6">
-              <summary
-                class="cursor-pointer flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-5 py-3.5 text-xs font-bold text-[var(--text)] select-none hover:bg-[var(--surface)] transition"
-              >
-                <div class="flex items-center gap-2">
-                  <span>Ajustes y Preferencias de Receta</span>
-                  <span class="text-[var(--muted)] font-medium">(Opcional)</span
-                  >
-                </div>
-                <svg
-                  class="h-4 w-4 text-[var(--muted)] transition-transform group-open:rotate-180"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </summary>
-
+            <!-- Empty State Preview -->
+            {#if !recipe && !loading}
               <div
-                class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 border-t border-[var(--border)]/30 pt-5"
+                class="mt-12 mx-6 p-10 border-2 border-dashed border-[var(--border)] rounded-lg bg-[var(--surface)]/10 flex flex-col items-center text-center opacity-45"
               >
-                <label class="block">
-                  <span class="mb-2 block text-xs font-bold text-[var(--muted)]"
-                    >Momento del día</span
-                  >
-                  <select
-                    class="w-full h-11 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-xs font-bold text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:bg-[var(--surface)]"
-                    bind:value={mealType}
-                  >
-                    <option value="">Cualquiera</option>
-                    <option value="Desayuno">Desayuno</option>
-                    <option value="Comida">Comida</option>
-                    <option value="Almuerzo">Almuerzo</option>
-                    <option value="Cena">Cena</option>
-                    <option value="Merienda">Merienda</option>
-                  </select>
-                </label>
-
-                <label class="block">
-                  <span class="mb-2 block text-xs font-bold text-[var(--muted)]"
-                    >Dieta / Restricción</span
-                  >
-                  <select
-                    class="w-full h-11 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-xs font-bold text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:bg-[var(--surface)]"
-                    bind:value={dietType}
-                  >
-                    <option value="">Ninguna</option>
-                    <option value="Vegetariano">Vegetariano</option>
-                    <option value="Vegano">Vegano</option>
-                    <option value="Sin gluten">Sin gluten</option>
-                    <option value="Sin lactosa">Sin lactosa</option>
-                  </select>
-                </label>
-
-                <label class="block">
-                  <span class="mb-2 block text-xs font-bold text-[var(--muted)]"
-                    >Porciones</span
-                  >
-                  <select
-                    class="w-full h-11 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-xs font-bold text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:bg-[var(--surface)]"
-                    bind:value={servings}
-                  >
-                    <option value="1">1 porción</option>
-                    <option value="2">2 porciones</option>
-                    <option value="4">4 porciones</option>
-                    <option value="6">6 porciones</option>
-                  </select>
-                </label>
-
-                <label class="block">
-                  <span class="mb-2 block text-xs font-bold text-[var(--muted)]"
-                    >Tiempo máximo</span
-                  >
-                  <select
-                    class="w-full h-11 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-xs font-bold text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:bg-[var(--surface)]"
-                    bind:value={maxMinutes}
-                  >
-                    <option value="15">15 minutos</option>
-                    <option value="30">30 minutos</option>
-                    <option value="45">45 minutos</option>
-                    <option value="60">60 minutos</option>
-                    <option value="120">120 minutos</option>
-                  </select>
-                </label>
+                <span
+                  class="material-symbols-outlined text-5xl text-[var(--muted)] mb-3"
+                  >search_gear</span
+                >
+                <h4
+                  class="font-handwritten text-lg font-bold text-[var(--text)]"
+                >
+                  Tu receta aparecerá aquí
+                </h4>
+                <p
+                  class="font-handwritten text-sm text-[var(--muted)] mt-1 max-w-xs leading-normal"
+                >
+                  Con foto, ingredientes correctos, pasos numerados y
+                  temporizadores interactivos.
+                </p>
               </div>
-            </details>
-
-            <!-- Fila del Botón de Generación Principal -->
-            <div class="mt-8 flex justify-end">
-              <button
-                type="button"
-                class="w-full sm:w-auto h-12 flex items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] px-8 text-xs font-bold text-white shadow-sm transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={loading}
-                onclick={generateRecipe}
-              >
-                {#if loading}
-                  <span
-                    class="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
-                  ></span>
-                  Generando...
-                {:else}
-                  Generar receta
-                {/if}
-              </button>
-            </div>
+            {/if}
 
             {#if error}
               <div
-                class="mt-4 rounded-2xl border border-red-200 bg-red-50/50 p-4 text-xs font-semibold text-red-700"
+                class="mt-6 mx-6 rounded border border-red-200 bg-red-50/50 p-4 text-xs font-bold text-red-700 font-mono"
               >
                 ⚠️ {error}
               </div>
             {/if}
           </section>
+
+          <!-- Right Column: Preferences Sticky Note & CTA -->
+          <aside class="col-span-12 md:col-span-4 flex flex-col gap-6">
+            <!-- Polaroid Frame -->
+            <div class="polaroid w-full rotate-[1.5deg]">
+              <img
+                class="w-full aspect-square object-cover grayscale-[15%] sepia-[8%]"
+                src={HERO_IMAGE}
+                alt="Inspiración culinaria del día"
+              />
+              <p
+                class="font-handwritten text-center mt-3.5 text-[var(--text)]/70 text-sm font-bold"
+              >
+                Inspiración del día
+              </p>
+            </div>
+
+            <!-- Sticky Note Preferences (Bug-free alignment) -->
+            <div
+              class="post-it p-6 relative rotate-[-1deg] flex flex-col justify-between"
+            >
+              <div>
+                <h4
+                  class="font-handwritten text-xl font-bold text-[var(--text)] border-b border-[var(--text)]/20 pb-2 mb-5"
+                >
+                  Ajustes de Receta
+                </h4>
+
+                <div class="space-y-5">
+                  <!-- Momento del Día -->
+                  <div>
+                    <p
+                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-1.5 uppercase"
+                    >
+                      MOMENTO DEL DÍA
+                    </p>
+                    <select
+                      bind:value={mealType}
+                      class="w-full bg-transparent border-b border-[var(--text)]/20 font-handwritten text-base py-1 text-[var(--text)] focus:outline-none cursor-pointer"
+                    >
+                      <option value="">Cualquiera</option>
+                      <option value="Desayuno">Desayuno</option>
+                      <option value="Comida">Comida</option>
+                      <option value="Almuerzo">Almuerzo</option>
+                      <option value="Cena">Cena</option>
+                      <option value="Merienda">Merienda</option>
+                    </select>
+                  </div>
+
+                  <!-- Dieta / Restricción con checkboxes limpios -->
+                  <div>
+                    <p
+                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-2.5 uppercase"
+                    >
+                      DIETA / RESTRICCIÓN
+                    </p>
+                    <div class="space-y-2.5">
+                      <label
+                        class="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={dietType === "Vegetariano"}
+                          onchange={(e) =>
+                            (dietType = e.currentTarget.checked
+                              ? "Vegetariano"
+                              : "")}
+                          class="w-4 h-4 border-2 border-[var(--text)] rounded-sm bg-transparent checked:bg-[var(--text)] checked:border-[var(--text)] transition-all cursor-pointer"
+                        />
+                        <span
+                          class="font-handwritten text-base text-[var(--text)] group-hover:underline"
+                          >Vegetariano</span
+                        >
+                      </label>
+                      <label
+                        class="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={dietType === "Sin gluten"}
+                          onchange={(e) =>
+                            (dietType = e.currentTarget.checked
+                              ? "Sin gluten"
+                              : "")}
+                          class="w-4 h-4 border-2 border-[var(--text)] rounded-sm bg-transparent checked:bg-[var(--text)] checked:border-[var(--text)] transition-all cursor-pointer"
+                        />
+                        <span
+                          class="font-handwritten text-base text-[var(--text)] group-hover:underline"
+                          >Sin gluten</span
+                        >
+                      </label>
+                      <label
+                        class="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={dietType === "Sin lactosa"}
+                          onchange={(e) =>
+                            (dietType = e.currentTarget.checked
+                              ? "Sin lactosa"
+                              : "")}
+                          class="w-4 h-4 border-2 border-[var(--text)] rounded-sm bg-transparent checked:bg-[var(--text)] checked:border-[var(--text)] transition-all cursor-pointer"
+                        />
+                        <span
+                          class="font-handwritten text-base text-[var(--text)] group-hover:underline"
+                          >Sin lactosa</span
+                        >
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Tiempo Máximo -->
+                  <div>
+                    <p
+                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-1.5 uppercase"
+                    >
+                      TIEMPO MÁXIMO
+                    </p>
+                    <div class="flex items-center gap-3">
+                      <input
+                        type="range"
+                        min="15"
+                        max="120"
+                        step="15"
+                        bind:value={maxMinutes}
+                        class="w-full accent-[var(--text)] bg-[var(--text)]/15 h-1 rounded appearance-none cursor-pointer"
+                      />
+                      <span
+                        class="font-handwritten font-black text-[var(--text)] w-10 text-right"
+                        >{maxMinutes}'</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Post-it Corner Fold Effect -->
+              <div
+                class="absolute bottom-0 right-0 w-6 h-6 bg-gradient-to-tl from-black/10 to-transparent pointer-events-none"
+              ></div>
+            </div>
+
+            <!-- CTA Button Section (Marker effect) -->
+            <div>
+              <button
+                onclick={generateRecipe}
+                disabled={loading}
+                class="marker-btn w-full py-5 px-6 text-white text-lg flex items-center justify-center gap-3 shadow-md disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer"
+              >
+                {#if loading}
+                  <span
+                    class="h-4.5 w-4.5 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                  ></span>
+                  <span>Cocinando...</span>
+                {:else}
+                  <span>Generar receta</span>
+                  <span
+                    class="material-symbols-outlined font-variation-settings: 'FILL' 1"
+                    style="font-variation-settings: 'FILL' 1">auto_awesome</span
+                  >
+                {/if}
+              </button>
+              <p
+                class="text-center font-handwritten text-[var(--muted)]/70 mt-3 text-xs leading-normal"
+              >
+                La IA está lista para cocinar...
+              </p>
+            </div>
+          </aside>
         </div>
       {:else}
         <!-- Barra de Retorno de Generación (cuando se lee la receta activa) -->
-        <div class="px-6 py-6 lg:px-12">
+        <div class="px-6 py-6 lg:px-12 max-w-5xl mx-auto">
           <button
             type="button"
-            class="inline-flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 text-xs font-extrabold text-[var(--text)] shadow-sm hover:bg-[var(--surface-muted)] active:scale-95 transition-all print-hidden"
+            class="inline-flex items-center gap-2 rounded border border-dashed border-[var(--border)] bg-white px-5 py-3 text-xs font-bold text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all print-hidden cursor-pointer"
             onclick={() => (showGeneratorForm = true)}
           >
             ← Generar otra receta / Modificar ingredientes
@@ -568,7 +645,7 @@
       {/if}
 
       <!-- Contenedor para Resultados e Historial (Siempre visible abajo) -->
-      <div class="px-6 lg:px-12 mt-6 space-y-8">
+      <div class="px-6 lg:px-12 mt-6 space-y-8 max-w-5xl mx-auto">
         <!-- Visor de Resultados -->
         <div bind:this={recipeEl} class="scroll-mt-6">
           {#if recipe}
@@ -577,13 +654,15 @@
             <!-- Card de estado vacío -->
             {#if showGeneratorForm}
               <section
-                class="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--surface)]/50 px-6 py-16 text-center shadow-sm"
+                class="rounded border border-dashed border-[var(--border)] bg-white p-12 text-center shadow-sm"
               >
-                <span class="text-4xl block mb-4">🍳</span>
-                <h4 class="font-extrabold text-[var(--text)] text-base">
+                <span class="text-3xl block mb-3">🍳</span>
+                <h4
+                  class="font-display font-extrabold text-[var(--text)] text-sm"
+                >
                   Tu receta aparecerá aquí
                 </h4>
-                <p class="mt-1.5 text-xs text-[var(--muted)] font-medium">
+                <p class="mt-1 text-xs text-[var(--muted)] font-medium">
                   Con foto, ingredientes correctos, pasos numerados y
                   temporizadores interactivos.
                 </p>

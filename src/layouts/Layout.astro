@@ -25,18 +25,29 @@ const { title } = Astro.props;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>{title ?? "Umami — Tu Chef Inteligente"}</title>
   </head>
-  <body class="min-h-screen bg-[var(--bg)]">
+  <body class="min-h-screen bg-[var(--bg)] font-body text-[var(--text)]">
     <div class="flex min-h-screen">
       <Sidebar client:load />
 
       <div class="flex min-w-0 flex-1 flex-col">
         <header
-          class="flex items-center justify-between border-b border-[var(--border)] bg-white/80 px-4 py-3 backdrop-blur lg:hidden"
+          class="flex items-center justify-between border-b border-dashed border-[var(--border)] bg-[var(--surface-muted)] px-6 py-3.5 lg:hidden z-30"
         >
-          <a href="/" class="font-bold text-orange-600">Umami</a>
-          <nav class="flex gap-3 text-sm text-[var(--muted)]">
-            <a href="/">Generar</a>
-            <a href="/recetas">Recetas</a>
+          <a
+            href="/"
+            class="font-handwritten text-2xl font-black text-[var(--text)]"
+            >Umami</a
+          >
+          <nav
+            class="flex gap-4 text-xs font-bold font-mono text-[var(--muted)]"
+          >
+            <a href="/" class="hover:text-[var(--accent)] transition-colors"
+              >GENERAR</a
+            >
+            <a
+              href="/recetas"
+              class="hover:text-[var(--accent)] transition-colors">RECETAS</a
+            >
           </nav>
         </header>
         <main class="flex-1">

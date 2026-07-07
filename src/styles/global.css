@@ -1,26 +1,26 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Karla:wght@400;700&family=JetBrains+Mono&family=Gochi+Hand&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap");
 @import "tailwindcss";
 
 :root {
   color-scheme: light;
-  --bg: #f4f6f8;
+  --bg: #f4f3f8;
   --surface: #ffffff;
-  --surface-muted: #f8fafc;
-  --text: #0f172a;
-  --muted: #475569;
-  --accent: #f97316;
-  --accent-hover: #ea580c;
-  --accent-soft: #fff7ed;
-  --accent-soft-opacity: rgba(255, 247, 237, 0.5);
-  --accent-ring: #fed7aa;
-  --border: #e2e8f0;
-  --border-opacity: rgba(226, 232, 240, 0.3);
+  --surface-muted: #fcfaf2;
+  --text: #001e40;
+  --muted: #5a6270;
+  --accent: #ff7e33;
+  --accent-hover: #ff6a14;
+  --accent-soft: #FEF3A7;
+  --accent-soft-opacity: rgba(254, 243, 167, 0.5);
+  --accent-ring: #ff7e33;
+  --border: #e2ddd3;
+  --border-opacity: rgba(226, 221, 211, 0.4);
   --sidebar: #ffffff;
-  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.05);
-  --shadow-md: 0 8px 30px rgb(15 23 42 / 0.08);
-  --shadow-lg: 0 20px 50px rgb(15 23 42 / 0.12);
-  --radius: 1rem;
-  --radius-lg: 1.5rem;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 4px 4px 0px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 6px 6px 0px rgba(0, 0, 0, 0.15);
+  --radius: 0.125rem;
+  --radius-lg: 0.25rem;
 }
 
 * {
@@ -30,7 +30,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -47,6 +47,17 @@ a {
 }
 
 @theme {
+  --color-paper: #fcfaf2;
+  --color-ink: #001e40;
+  --color-pencil: #333333;
+  --color-postit: #FEF3A7;
+  --color-marker: #ff7e33;
+  
+  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-body: "Karla", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-handwritten: "Gochi Hand", cursive;
+
   --animate-fade-in-up: fade-in-up 0.3s var(--ease-out-quint);
   --animate-slide-up: slide-up 0.3s var(--ease-out-quint);
   --animate-toast-in: toast-in 0.25s var(--ease-out-quint);
@@ -183,3 +194,75 @@ body {
     break-inside: avoid;
   }
 }
+
+/* Clases de Diseño de Cuaderno Skeuomorfo */
+.notebook-paper {
+  background-color: #fcfaf2;
+  background-image: linear-gradient(#e5e2d9 1px, transparent 1px);
+  background-size: 100% 24px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  border: 1px solid #e0ddd5;
+  position: relative;
+}
+
+.notebook-paper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 40px;
+  width: 1px;
+  background-color: rgba(220, 100, 100, 0.2);
+  pointer-events: none;
+}
+
+.tape {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  backdrop-filter: blur(1px);
+}
+
+.hand-drawn-border {
+  border: 2px solid #001e40;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+
+.sketchy-input {
+  border: none;
+  border-bottom: 2px solid #001e40;
+  background: transparent;
+}
+
+.post-it {
+  background: #FEF3A7;
+  box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+  transform: rotate(-1deg);
+}
+
+.polaroid {
+  background: white;
+  padding: 10px 10px 40px 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transform: rotate(2deg);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.marker-btn {
+  background: #ff7e33;
+  clip-path: polygon(2% 0%, 98% 3%, 100% 95%, 5% 100%, 0% 50%);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.marker-btn:hover:not(:disabled) {
+  transform: scale(1.05) rotate(-1deg);
+}
+
+.marker-btn:active:not(:disabled) {
+  transform: scale(0.95) rotate(1deg);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+

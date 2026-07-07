@@ -23,92 +23,167 @@ const coverImage = getRecipeImageUrl(
 ---
 
 <Layout title={`${recipe.data.title} | Recetario IA`} active="recetas">
-  <div class="px-4 py-8 sm:px-8 lg:px-10">
-    <article class="space-y-8">
+  <div class="px-4 py-8 sm:px-8 lg:px-10 max-w-7xl mx-auto">
+    <!-- Back link styled as tape/note -->
+    <div class="mb-6 select-none">
+      <a
+        href="/recetas"
+        class="relative inline-flex items-center gap-1 px-4 py-1.5 text-xs font-mono font-bold uppercase text-[var(--text)] tape rotate-[-1.5deg] border border-black/5 shadow-sm hover:rotate-0"
+      >
+        ← Volver al catálogo
+      </a>
+    </div>
+
+    <article
+      class="overflow-hidden rounded border border-dashed border-[var(--border)] bg-white shadow-md"
+    >
       <div
-        class="overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-md)]"
+        class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-6 sm:p-8 min-h-[500px]"
       >
-        <img
-          src={coverImage}
-          alt={recipe.data.title}
-          class="h-56 w-full object-cover sm:h-72"
-        />
-      </div>
-      <header
-        class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-      >
-        <a
-          href="/recetas"
-          class="text-sm text-[var(--muted)] hover:text-[var(--text)]"
-        >
-          ← Volver al listado
-        </a>
-        <div class="mt-4 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 class="text-3xl font-semibold tracking-tight">
+        <!-- Left Page: Polaroid and Ingredients -->
+        <div class="p-4 sm:p-6 flex flex-col gap-6">
+          <!-- Polaroid Cover -->
+          <div
+            class="relative polaroid w-full rotate-[-1.2deg] max-w-sm mx-auto"
+          >
+            <img
+              src={coverImage}
+              alt={recipe.data.title}
+              class="w-full aspect-[4/3] object-cover grayscale-[10%] sepia-[5%]"
+              loading="lazy"
+            />
+            <p
+              class="font-handwritten text-center mt-3 text-[var(--text)]/80 text-sm font-bold truncate px-2"
+            >
               {recipe.data.title}
-            </h1>
-            <p class="mt-2 max-w-2xl text-[var(--muted)]">
-              {recipe.data.description}
             </p>
           </div>
-          <span
-            class="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-medium text-[var(--accent)]"
-          >
-            {recipe.data.difficulty}
-          </span>
+
+          <!-- Lined block for Ingredients -->
+          <div class="flex-1 mt-4">
+            <h3
+              class="font-handwritten text-2xl font-bold text-[var(--text)] mb-4 border-b border-[var(--text)]/15 pb-1 select-none"
+            >
+              Ingredientes
+            </h3>
+            <ul
+              class="space-y-2 font-handwritten text-base text-[var(--text)]/90"
+            >
+              {
+                recipe.data.ingredients.map((ingredient) => (
+                  <li class="flex justify-between items-center gap-4 py-1 border-b border-dashed border-[var(--text)]/10">
+                    <span class="flex items-center gap-2">
+                      <span class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[10px] font-mono text-[var(--text)] font-extrabold select-none bg-white/20">
+                        ✓
+                      </span>
+                      <span>{ingredient.item}</span>
+                    </span>
+                    <span class="text-sm text-[var(--muted)] font-mono">
+                      {ingredient.amount}
+                    </span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
         </div>
 
-        <dl class="mt-6 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-          <div class="rounded-xl bg-stone-50 p-3">
-            <dt class="text-[var(--muted)]">Prep</dt>
-            <dd class="font-semibold">{recipe.data.prepMinutes} min</dd>
-          </div>
-          <div class="rounded-xl bg-stone-50 p-3">
-            <dt class="text-[var(--muted)]">Cocción</dt>
-            <dd class="font-semibold">{recipe.data.cookMinutes} min</dd>
-          </div>
-          <div class="rounded-xl bg-stone-50 p-3">
-            <dt class="text-[var(--muted)]">Total</dt>
-            <dd class="font-semibold">
-              {recipe.data.prepMinutes + recipe.data.cookMinutes} min
-            </dd>
-          </div>
-          <div class="rounded-xl bg-stone-50 p-3">
-            <dt class="text-[var(--muted)]">Porciones</dt>
-            <dd class="font-semibold">{recipe.data.servings}</dd>
-          </div>
-        </dl>
-      </header>
+        <!-- Right Page: Info, Description and Steps -->
+        <div class="p-4 sm:p-6 flex flex-col justify-between gap-6 lg:pl-10">
+          <div>
+            <!-- Title -->
+            <div>
+              <h1
+                class="font-handwritten text-3xl font-black text-[var(--text)] leading-tight"
+              >
+                {recipe.data.title}
+              </h1>
+              <p
+                class="font-handwritten text-base text-[var(--muted)] mt-2 leading-relaxed"
+              >
+                {recipe.data.description}
+              </p>
+            </div>
 
-      <section class="grid gap-8 md:grid-cols-2">
-        <div
-          class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-        >
-          <h2 class="text-lg font-semibold">Ingredientes</h2>
-          <ul class="mt-4 space-y-2">
-            {
-              recipe.data.ingredients.map((ingredient) => (
-                <li class="flex items-start justify-between gap-4 rounded-lg border border-[var(--border)] px-3 py-2">
-                  <span>{ingredient.item}</span>
-                  <span class="text-sm text-[var(--muted)]">
-                    {ingredient.amount}
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+            <!-- Masking Tapes for cooking metadata -->
+            <div class="mt-6 flex flex-wrap gap-4 select-none">
+              <span
+                class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-sm rotate-[-1deg] tape shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-black/5 flex items-center gap-1.5"
+              >
+                <span class="material-symbols-outlined text-base">schedule</span
+                >
+                Listo en {recipe.data.prepMinutes + recipe.data.cookMinutes} min
+              </span>
+              <span
+                class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-sm rotate-[1.2deg] tape shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-black/5 flex items-center gap-1.5"
+              >
+                <span class="material-symbols-outlined text-base"
+                  >restaurant_menu</span
+                >
+                Dificultad: {recipe.data.difficulty}
+              </span>
+              <span
+                class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-sm rotate-[-0.8deg] tape shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-black/5 flex items-center gap-1.5"
+              >
+                <span class="material-symbols-outlined text-base">group</span>
+                {recipe.data.servings} porciones
+              </span>
+            </div>
 
-        <div
-          class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-        >
-          <h2 class="text-lg font-semibold">Preparación</h2>
-          <div class="prose prose-stone mt-4 max-w-none">
-            <Content />
+            <!-- Steps from Astro Markdown Content -->
+            <div class="mt-8">
+              <h3
+                class="font-handwritten text-xl font-bold text-[var(--text)] border-b border-[var(--text)]/15 pb-2 mb-4 select-none"
+              >
+                Preparación
+              </h3>
+              <!-- Markdown Content Stylized for Notebook -->
+              <div
+                class="markdown-content font-handwritten text-base leading-relaxed text-[var(--text)]/90 space-y-4"
+              >
+                <Content />
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
     </article>
   </div>
 </Layout>
+
+<style is:global>
+  /* Stylize Astro Markdown Content steps for the notebook look */
+  .markdown-content ol {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    list-style-type: none;
+    padding-left: 0;
+  }
+  .markdown-content ol li {
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px dashed rgba(0, 30, 64, 0.05);
+  }
+  .markdown-content ol li::before {
+    counter-increment: step-counter;
+    content: counter(step-counter);
+    flex-shrink: 0;
+    display: flex;
+    height: 1.25rem;
+    width: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: rgba(0, 30, 64, 0.1);
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #001e40;
+  }
+  .markdown-content {
+    counter-reset: step-counter;
+  }
+</style>

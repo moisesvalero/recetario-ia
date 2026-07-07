@@ -113,58 +113,66 @@
 </script>
 
 <section
-  class="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-md select-none"
+  class="overflow-hidden rounded border border-dashed border-[var(--border)] bg-white shadow-md select-none"
   ontouchstart={handleTouchStart}
   ontouchend={handleTouchEnd}
 >
   <!-- Cabecera de Cocción -->
   <div
-    class="border-b border-[var(--border)] bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] px-6 py-5 text-white"
+    class="border-b border-dashed border-[var(--border)] bg-[var(--surface-muted)] px-6 py-5 text-[var(--text)]"
   >
     <div class="flex items-center justify-between gap-3">
       <div>
-        <p class="text-sm opacity-90">Modo Cocinar</p>
-        <h2 class="text-xl font-bold">
+        <p
+          class="text-xs font-mono font-bold uppercase tracking-wider text-[var(--muted)]"
+        >
+          Modo Cocinar
+        </p>
+        <h2 class="font-handwritten text-3xl font-black mt-1">
           Paso {currentStep + 1} de {steps.length}
         </h2>
       </div>
       <button
         type="button"
-        class="h-10 rounded-xl bg-white/15 px-4 text-xs font-bold backdrop-blur transition hover:bg-white/25 active:scale-95"
+        class="h-10 rounded border border-dashed border-[var(--border)] bg-white px-4 text-xs font-mono font-bold uppercase hover:bg-[var(--accent-soft)]/20 active:scale-95 cursor-pointer"
         onclick={handleCloseConfirm}
       >
         Salir
       </button>
     </div>
-    <div class="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
+    <div
+      class="mt-4 h-2.5 overflow-hidden rounded bg-[var(--border)]/40 relative"
+    >
       <div
-        class="h-full rounded-full bg-white transition-all duration-300"
-        style={`width: ${progress}%`}
+        class="h-full bg-emerald-500/80 transition-all duration-300"
+        style={`width: ${progress}%; clip-path: polygon(0% 0%, 100% 5%, 98% 95%, 1% 100%);`}
       ></div>
     </div>
   </div>
 
-  <div class="grid lg:grid-cols-[1fr_280px] gap-6 p-6 sm:p-8">
+  <div
+    class="grid lg:grid-cols-[1fr_260px] divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-6 sm:p-8 min-h-[400px]"
+  >
     <!-- Columna Principal (Instrucciones de Cocción) -->
-    <div class="flex flex-col justify-between min-w-0">
+    <div class="flex flex-col justify-between min-w-0 pr-0 lg:pr-6">
       <div>
         <!-- Ingredientes activos del paso siempre visibles en móvil (oculto en escritorio) -->
         {#if currentStepIngredients.length > 0}
           <div
-            class="lg:hidden mb-4 rounded-2xl bg-[var(--accent-soft)] border border-[var(--accent)]/20 p-4"
+            class="lg:hidden mb-5 rounded bg-[var(--accent-soft)]/45 border border-dashed border-[var(--text)]/10 p-4"
           >
             <span
-              class="text-[10px] font-bold uppercase tracking-wider text-[var(--accent-hover)]"
+              class="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text)]"
             >
               Ingredientes para este paso:
             </span>
-            <div class="mt-2 flex flex-wrap gap-2">
+            <div class="mt-2.5 flex flex-wrap gap-2">
               {#each currentStepIngredients as ing}
                 <span
-                  class="inline-flex items-center rounded-xl bg-[var(--surface)] px-3 py-1 text-xs font-bold text-[var(--text)] border border-[var(--border)]/70 shadow-sm"
+                  class="inline-flex items-center rounded bg-white px-3 py-1 text-xs font-handwritten font-bold text-[var(--text)] border border-[var(--border)] shadow-sm"
                 >
                   {ing.item}
-                  <span class="text-[var(--muted)] font-semibold ml-1.5"
+                  <span class="text-[var(--muted)] font-mono text-[10px] ml-1.5"
                     >({ing.amount})</span
                   >
                 </span>
@@ -173,52 +181,59 @@
           </div>
         {/if}
 
-        <p class="text-lg leading-relaxed text-[var(--text)] font-semibold">
+        <p
+          class="font-handwritten text-2xl font-black leading-relaxed text-[var(--text)]"
+        >
           {step.text}
         </p>
 
+        <!-- Timer as a Post-it Note -->
         {#if step.timerMinutes}
           <div
-            class="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-5"
+            class="mt-8 relative post-it p-5 rotate-[1deg] max-w-xs shadow-[4px_4px_0px_rgba(0,0,0,0.1)] border border-[var(--text)]/5 select-none"
           >
             <p
-              class="text-xs font-bold uppercase tracking-wider text-[var(--muted)]"
+              class="font-handwritten text-xs font-black tracking-wider text-[var(--text)]/60"
             >
-              Temporizador
+              TEMPORIZADOR
             </p>
             <p
-              class="mt-1.5 text-4xl font-bold tabular-nums text-[var(--accent)]"
+              class="font-mono text-4xl font-black mt-1.5 tabular-nums text-[var(--text)]"
             >
               {formatTime(remainingSeconds || step.timerMinutes * 60)}
             </p>
-            <div class="mt-4 flex flex-wrap gap-2">
+            <div class="mt-4 flex flex-wrap gap-2 select-none">
               <button
                 type="button"
-                class="h-11 rounded-xl bg-[var(--accent)] px-5 text-xs font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] transition active:scale-95"
+                class="rounded bg-[var(--text)] px-4 py-2 text-xs font-mono font-bold uppercase text-white shadow-sm hover:opacity-90 transition active:scale-95 cursor-pointer"
                 onclick={() => startTimer(step.timerMinutes ?? 0)}
               >
                 {timerRunning ? "Reiniciar" : "Iniciar"}
               </button>
               <button
                 type="button"
-                class="h-11 border border-[var(--border)] bg-[var(--surface)] px-5 text-xs font-bold text-[var(--text)] shadow-sm hover:bg-[var(--surface-muted)] transition active:scale-95"
+                class="rounded border border-dashed border-[var(--border)] bg-white px-4 py-2 text-xs font-mono font-bold uppercase text-[var(--text)] shadow-sm hover:bg-[var(--surface-muted)] transition active:scale-95 cursor-pointer"
                 onclick={clearTimer}
               >
                 Parar
               </button>
             </div>
+            <!-- Corner fold decoration -->
+            <div
+              class="absolute bottom-0 right-0 w-5 h-5 bg-gradient-to-tl from-black/5 to-transparent pointer-events-none"
+            ></div>
           </div>
         {/if}
 
         <!-- Cajón Colapsable de Ingredientes Generales para Móvil (Oculto en LG) -->
         {#if ingredients.length > 0}
           <details
-            class="lg:hidden mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] overflow-hidden transition-all duration-300"
+            class="lg:hidden mt-6 rounded border border-dashed border-[var(--border)] bg-[var(--surface-muted)] overflow-hidden transition-all duration-300"
           >
             <summary
-              class="cursor-pointer px-5 py-4 text-xs font-bold text-[var(--text)] flex items-center justify-between select-none"
+              class="cursor-pointer px-5 py-4 text-xs font-mono font-bold uppercase text-[var(--text)] flex items-center justify-between select-none"
             >
-              Ver todos los ingredientes ({ingredients.length})
+              Ver ingredientes necesarios ({ingredients.length})
               <svg
                 class="h-4 w-4 text-[var(--muted)]"
                 fill="none"
@@ -234,19 +249,28 @@
               </svg>
             </summary>
             <ul
-              class="space-y-2 border-t border-[var(--border)]/70 px-5 py-4 bg-[var(--surface)]"
+              class="space-y-2 border-t border-dashed border-[var(--border)] px-5 py-4 bg-white/80 font-handwritten text-base text-[var(--text)]/90"
             >
               {#each ingredients as ing}
                 {@const active = currentStepIngredients.some(
                   (c) => c.item === ing.item,
                 )}
                 <li
-                  class="flex justify-between gap-4 text-xs font-semibold rounded-lg p-1.5 transition {active
-                    ? 'bg-[var(--accent-soft)] text-[var(--accent-hover)] font-bold'
-                    : 'text-[var(--text)]'}"
+                  class="flex justify-between gap-4 py-1 border-b border-dashed border-black/5 transition {active
+                    ? 'font-bold text-[var(--accent-hover)]'
+                    : ''}"
                 >
-                  <span>{ing.item}</span>
-                  <span class="text-[var(--muted)]">{ing.amount}</span>
+                  <span class="flex items-center gap-2">
+                    <span
+                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[8px] font-mono select-none"
+                    >
+                      {active ? "✓" : ""}
+                    </span>
+                    <span>{ing.item}</span>
+                  </span>
+                  <span class="text-sm text-[var(--muted)] font-mono"
+                    >{ing.amount}</span
+                  >
                 </li>
               {/each}
             </ul>
@@ -256,25 +280,27 @@
 
       <!-- Botones de Navegación Sobredimensionados (48px / 56px de alto) -->
       <div
-        class="mt-8 flex items-center justify-between gap-3 border-t border-[var(--border)]/30 pt-6"
+        class="mt-8 flex items-center justify-between gap-3 border-t border-dashed border-[var(--border)] pt-6 select-none"
       >
         <button
           type="button"
-          class="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-xs sm:text-sm font-bold text-[var(--text)] hover:bg-[var(--surface-muted)] active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          class="h-12 px-6 rounded border border-dashed border-[var(--border)] bg-white text-xs font-mono font-bold uppercase text-[var(--text)] hover:bg-[var(--accent-soft)]/20 active:scale-95 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           disabled={currentStep === 0}
           onclick={goPrev}
         >
           ← Anterior
         </button>
 
-        <span class="text-xs font-semibold text-[var(--muted)] lg:hidden">
+        <span
+          class="text-xs font-handwritten font-bold text-[var(--muted)] lg:hidden"
+        >
           Desliza para cambiar de paso
         </span>
 
         {#if currentStep < steps.length - 1}
           <button
             type="button"
-            class="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-[var(--accent)] text-xs sm:text-sm font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] active:scale-95 transition"
+            class="marker-btn h-12 px-6 text-xs text-white shadow-md cursor-pointer"
             onclick={goNext}
           >
             Siguiente →
@@ -282,7 +308,7 @@
         {:else}
           <button
             type="button"
-            class="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-emerald-600 text-xs sm:text-sm font-bold text-white shadow-sm hover:bg-emerald-700 active:scale-95 transition"
+            class="h-12 px-6 rounded bg-emerald-600 text-xs font-mono font-bold uppercase text-white shadow-md hover:bg-emerald-700 active:scale-95 transition cursor-pointer"
             onclick={onClose}
           >
             ¡Listo!
@@ -293,14 +319,14 @@
 
     <!-- Columna Lateral Derecha (Ingredientes en Escritorio) -->
     {#if ingredients.length > 0}
-      <div class="hidden lg:block border-l border-[var(--border)] pl-6">
+      <div class="hidden lg:block pl-6">
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-[var(--muted)] mb-4"
+          class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--muted)] mb-4"
         >
           Ingredientes
         </h3>
         <ul
-          class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1"
+          class="space-y-2 max-h-[360px] overflow-y-auto pr-1"
           style="contain: content;"
         >
           {#each ingredients as ing}
@@ -308,19 +334,19 @@
               (c) => c.item === ing.item,
             )}
             <li
-              class="flex flex-col rounded-2xl p-3 transition border {active
-                ? 'bg-[var(--accent-soft)] border-[var(--accent)]'
-                : 'border-[var(--border)] bg-[var(--surface-muted)]/50'}"
+              class="flex flex-col rounded p-2.5 transition border border-dashed {active
+                ? 'bg-[var(--accent-soft)]/40 border-[var(--text)]/20'
+                : 'border-[var(--border)] bg-[var(--surface-muted)]/40'}"
             >
               <span
-                class="text-xs font-bold {active
+                class="font-handwritten text-base font-bold {active
                   ? 'text-[var(--accent-hover)]'
                   : 'text-[var(--text)]'}"
               >
                 {ing.item}
               </span>
               <span
-                class="text-[10px] font-semibold text-[var(--muted)] mt-0.5"
+                class="text-[10px] font-mono font-semibold text-[var(--muted)] mt-0.5"
               >
                 {ing.amount}
               </span>

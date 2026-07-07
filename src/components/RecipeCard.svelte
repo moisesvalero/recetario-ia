@@ -135,15 +135,12 @@
 </script>
 
 <article
-  class="overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-md print-recipe"
+  class="overflow-hidden rounded border border-dashed border-[var(--border)] bg-white shadow-md print-recipe"
 >
   <!-- Mensaje de estado -->
   {#if statusMessage}
     <div
-      class="fixed bottom-6 right-6 z-50 rounded-2xl p-4 text-xs font-bold text-white shadow-lg transition-all duration-300 flex items-center gap-2 {statusType ===
-      'success'
-        ? 'bg-[var(--text)]'
-        : 'bg-[var(--accent-hover)]'}"
+      class="fixed bottom-6 right-6 z-50 rounded bg-[var(--text)] p-4 text-xs font-bold text-white shadow-lg transition-all duration-300 flex items-center gap-2"
     >
       {#if statusType === "success"}
         ✓
@@ -154,165 +151,139 @@
     </div>
   {/if}
 
-  <div class="grid lg:grid-cols-[380px_1fr]">
-    <!-- Columna Izquierda (Imagen de plato) -->
-    <div
-      class="relative min-h-[260px] lg:min-h-full aspect-[4/3] lg:aspect-auto overflow-hidden bg-[var(--surface-muted)]"
-    >
-      <img
-        src={imageUrl}
-        alt={recipe.title}
-        class="h-full w-full object-cover transition-opacity duration-300"
-        loading="lazy"
-        decoding="async"
-      />
-      <!-- Corazón de Favorito Flotante -->
-      <button
-        type="button"
-        onclick={handleToggleFavorite}
-        class="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--muted)] shadow-md transition-all hover:scale-105 active:scale-95 print-hidden"
-        aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill={isFav ? "currentColor" : "none"}
-          stroke={isFav ? "currentColor" : "currentColor"}
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-5 w-5 transition-transform duration-300 {isFav
-            ? 'text-red-500'
-            : 'text-[var(--muted)]'} {favoriteAnimate
-            ? 'scale-125 rotate-12'
-            : ''}"
+  <div
+    class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-6 sm:p-8 min-h-[500px]"
+  >
+    <!-- Left Page of the open book: Image and Ingredients -->
+    <div class="p-4 sm:p-6 flex flex-col gap-6">
+      <!-- Polaroid Image -->
+      <div class="relative polaroid w-full rotate-[-1.5deg] max-w-sm mx-auto">
+        <img
+          src={imageUrl}
+          alt={recipe.title}
+          class="w-full aspect-[4/3] object-cover grayscale-[10%] sepia-[5%]"
+          loading="lazy"
+        />
+        <!-- Favorite Heart Icon overlay on Polaroid -->
+        <button
+          type="button"
+          onclick={handleToggleFavorite}
+          class="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[var(--muted)] shadow-md transition-all hover:scale-105 active:scale-95 print-hidden border border-black/5"
+          aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
         >
-          <path
-            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-          />
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill={isFav ? "currentColor" : "none"}
+            stroke={isFav ? "currentColor" : "currentColor"}
+            stroke-width="2.2"
+            class="h-4.5 w-4.5 transition-transform duration-300 {isFav
+              ? 'text-red-500'
+              : 'text-[var(--muted)]'} {favoriteAnimate
+              ? 'scale-125 rotate-12'
+              : ''}"
+          >
+            <path
+              d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+            />
+          </svg>
+        </button>
+        <p
+          class="font-handwritten text-center mt-3 text-[var(--text)]/80 text-sm font-bold truncate px-2"
+        >
+          {recipe.title}
+        </p>
+      </div>
 
-      <!-- Badge Listo en X min Flotante -->
-      <div
-        class="absolute bottom-4 left-4 flex items-center gap-1.5 rounded-2xl bg-[var(--surface)]/95 px-4 py-2 text-xs font-bold text-[var(--text)] shadow-md backdrop-blur-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-3.5 w-3.5 text-[var(--muted)]"
+      <!-- Lined paper block for Ingredients -->
+      <div class="flex-1 mt-4">
+        <h3
+          class="font-handwritten text-2xl font-bold text-[var(--text)] mb-4 border-b border-[var(--text)]/15 pb-1"
         >
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-        Listo en {totalMinutes} min
+          Ingredientes
+        </h3>
+        <ul class="space-y-2 font-handwritten text-base text-[var(--text)]/90">
+          {#each recipe.ingredients as ingredient}
+            <li
+              class="flex justify-between items-center gap-4 py-1 border-b border-dashed border-[var(--text)]/10"
+            >
+              <span class="flex items-center gap-2">
+                <!-- Checkbox hand drawn -->
+                <span
+                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[10px] font-mono text-[var(--text)] font-extrabold select-none bg-white/20"
+                >
+                  ✓
+                </span>
+                <span>{ingredient.item}</span>
+              </span>
+              <span class="text-sm text-[var(--muted)] font-mono"
+                >{ingredient.amount}</span
+              >
+            </li>
+          {/each}
+        </ul>
       </div>
     </div>
 
-    <!-- Columna Derecha (Contenido de Receta) -->
-    <div class="flex flex-col p-6 sm:p-8 lg:p-10 justify-between">
+    <!-- Right Page: Details, Info and Steps -->
+    <div class="p-4 sm:p-6 flex flex-col justify-between gap-6 lg:pl-10">
       <div>
-        <!-- Título e insignia IA -->
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <h2
-              class="text-xl sm:text-2xl font-black text-[var(--text)] tracking-tight flex flex-wrap items-center gap-2 leading-tight"
-            >
-              {recipe.title}
-            </h2>
-            <p
-              class="mt-2 text-xs sm:text-sm text-[var(--muted)] font-semibold leading-relaxed max-w-2xl"
-            >
-              {recipe.description}
-            </p>
-          </div>
+        <!-- Title and description -->
+        <div>
+          <h2
+            class="font-handwritten text-3xl font-black text-[var(--text)] leading-tight"
+          >
+            {recipe.title}
+          </h2>
+          <p
+            class="font-handwritten text-base text-[var(--muted)] mt-2 leading-relaxed"
+          >
+            {recipe.description}
+          </p>
         </div>
 
-        <!-- Metadata de Cocina -->
-        <div
-          class="mt-5 flex flex-wrap gap-4 border-b border-[var(--border)]/30 pb-5"
-        >
+        <!-- Masking Tapes for cooking metadata -->
+        <div class="mt-6 flex flex-wrap gap-4 select-none">
           <span
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--muted)]"
+            class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-sm rotate-[-1deg] tape shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-black/5 flex items-center gap-1.5"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4 text-[var(--muted)]"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            {totalMinutes} min
+            <span class="material-symbols-outlined text-base">schedule</span>
+            Listo en {totalMinutes} min
           </span>
           <span
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--muted)] capitalize"
+            class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-sm rotate-[1.2deg] tape shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-black/5 flex items-center gap-1.5"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4 text-[var(--muted)]"
+            <span class="material-symbols-outlined text-base"
+              >restaurant_menu</span
             >
-              <path d="M6 18V13c0-2.2 1.8-4 4-4h4c2.2 0 4 1.8 4 4v5" />
-              <path
-                d="M3 18h18a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1Z"
-              />
-            </svg>
-            {recipe.difficulty}
+            Dificultad: {recipe.difficulty}
           </span>
           <span
-            class="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--muted)]"
+            class="relative px-4 py-1.5 text-[var(--text)] font-handwritten text-sm rotate-[-0.8deg] tape shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-black/5 flex items-center gap-1.5"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4 text-[var(--muted)]"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
+            <span class="material-symbols-outlined text-base">group</span>
             {recipe.servings} porciones
           </span>
         </div>
 
-        <!-- Modo de cocción & Pasos -->
-        <div class="mt-6">
-          <div class="flex items-center justify-between gap-4">
-            <h3 class="text-xs font-semibold tracking-wide text-[var(--muted)]">
-              Pasos de preparación
+        <!-- Cooking Steps -->
+        <div class="mt-8">
+          <div
+            class="flex items-center justify-between gap-4 border-b border-[var(--text)]/15 pb-2 mb-4"
+          >
+            <h3 class="font-handwritten text-xl font-bold text-[var(--text)]">
+              Preparación
             </h3>
 
-            <!-- Selector de modo -->
+            <!-- View mode selectors -->
             <div
-              class="inline-flex rounded-xl bg-[var(--surface-muted)] p-1 scale-90 origin-right"
+              class="inline-flex rounded border border-[var(--border)] bg-[var(--surface-muted)] p-0.5 scale-90 origin-right"
             >
               <button
                 type="button"
-                class="rounded-lg px-3 py-1.5 text-xs font-extrabold transition-all {viewMode ===
+                class="rounded px-2.5 py-1 text-[10px] font-mono font-bold uppercase transition-all cursor-pointer {viewMode ===
                 'steps'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-sm'
+                  ? 'bg-white text-[var(--text)] shadow-sm'
                   : 'text-[var(--muted)]'}"
                 onclick={() => onViewModeChange?.("steps")}
               >
@@ -320,278 +291,169 @@
               </button>
               <button
                 type="button"
-                class="rounded-lg px-3 py-1.5 text-xs font-extrabold transition-all {viewMode ===
+                class="rounded px-2.5 py-1 text-[10px] font-mono font-bold uppercase transition-all cursor-pointer {viewMode ===
                 'cook'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-sm'
+                  ? 'bg-white text-[var(--text)] shadow-sm'
                   : 'text-[var(--muted)]'}"
                 onclick={() => {
                   onViewModeChange?.("cook");
                   onStartCooking?.();
                 }}
               >
-                Cocción guiada
+                Cocina guiada
               </button>
             </div>
           </div>
 
-          <!-- Pasos numerados con círculos naranjas -->
-          <ol class="mt-5 space-y-4">
+          <!-- Lined steps -->
+          <ol
+            class="space-y-4 font-handwritten text-base leading-relaxed text-[var(--text)]/90"
+          >
             {#each recipe.steps as step, index}
-              <li class="flex gap-4 text-xs sm:text-sm leading-relaxed">
+              <li
+                class="flex gap-4 items-start py-1 border-b border-dashed border-[var(--text)]/5"
+              >
                 <span
-                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-extrabold text-white"
+                  class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--text)]/10 text-xs font-mono font-bold text-[var(--text)]"
                 >
                   {index + 1}
                 </span>
-                <span class="pt-0.5 text-[var(--text)] font-medium"
-                  >{step.text}</span
-                >
+                <span class="pt-0.5">{step.text}</span>
               </li>
             {/each}
           </ol>
-
-          <!-- Ingredientes colapsables -->
-          <details
-            class="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]/50 overflow-hidden transition-all duration-300"
-          >
-            <summary
-              class="cursor-pointer px-5 py-4 text-xs font-bold text-[var(--text)] flex items-center justify-between select-none"
-            >
-              Ver ingredientes necesarios ({recipe.ingredients.length})
-              <svg
-                class="h-4 w-4 text-[var(--muted)]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </summary>
-            <ul
-              class="space-y-2.5 border-t border-[var(--border)]/70 px-5 py-4 bg-[var(--surface)]/80"
-            >
-              {#each recipe.ingredients as ingredient}
-                <li
-                  class="flex justify-between gap-4 text-xs font-semibold text-[var(--text)]"
-                >
-                  <span>{ingredient.item}</span>
-                  <span
-                    class="text-[var(--muted)] bg-[var(--surface-muted)] px-2 py-0.5 rounded-md border border-[var(--border)]"
-                    >{ingredient.amount}</span
-                  >
-                </li>
-              {/each}
-            </ul>
-          </details>
         </div>
       </div>
 
-      <!-- Pie de tarjeta: Botones de Acción -->
+      <!-- Action buttons -->
       <div
-        class="mt-8 flex flex-wrap gap-2.5 border-t border-[var(--border)]/70 pt-6 print-hidden"
+        class="mt-8 flex flex-wrap items-center gap-3 pt-4 border-t border-dashed border-[var(--border)] print-hidden select-none"
       >
         <button
           type="button"
-          class="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-xs font-bold text-[var(--text)] shadow-sm hover:bg-[var(--surface-muted)] active:scale-95 transition-all"
+          class="flex items-center gap-2 rounded border border-dashed border-[var(--border)] bg-white px-4 py-2.5 text-xs font-mono font-bold uppercase text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all cursor-pointer"
           onclick={handleSaveRecipe}
         >
-          <svg
-            class="h-4 w-4 text-[var(--muted)]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-            />
-          </svg>
+          <span class="material-symbols-outlined text-base">bookmark</span>
           Guardar receta
         </button>
 
         <button
           type="button"
-          class="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-xs font-bold text-[var(--text)] shadow-sm hover:bg-[var(--surface-muted)] active:scale-95 transition-all"
+          class="flex items-center gap-2 rounded border border-dashed border-[var(--border)] bg-white px-4 py-2.5 text-xs font-mono font-bold uppercase text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all cursor-pointer"
           onclick={handleAddShopping}
         >
-          <svg
-            class="h-4 w-4 text-[var(--muted)]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-            />
-          </svg>
-          Agregar a la lista
+          <span class="material-symbols-outlined text-base">shopping_cart</span>
+          Agregar a compras
         </button>
 
-        <!-- Menú de Más Acciones (Compartir, PDF) -->
         <div class="relative">
           <button
             type="button"
-            class="flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] shadow-sm hover:bg-[var(--surface-muted)] active:scale-95 transition-all"
+            class="flex h-9 w-9 items-center justify-center rounded border border-dashed border-[var(--border)] bg-white text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all cursor-pointer"
             onclick={() => (showMoreActions = !showMoreActions)}
-            aria-label="Más acciones de la receta"
+            aria-label="Más opciones de la receta"
           >
-            <svg
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010-2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-              />
-            </svg>
+            <span class="material-symbols-outlined text-lg">more_vert</span>
           </button>
 
           {#if showMoreActions}
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div
-              class="absolute bottom-full left-0 mb-2 z-20 w-44 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-md animate-fade-in-up"
+              class="absolute bottom-full left-0 mb-2 z-20 w-40 rounded border border-[var(--border)] bg-white p-1 shadow-md animate-fade-in-up"
               onclick={() => (showMoreActions = false)}
             >
               <button
                 type="button"
-                class="flex w-full items-center gap-2 rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold text-[var(--text)] hover:bg-[var(--surface-muted)] transition-all"
+                class="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs font-mono font-bold uppercase text-[var(--text)] hover:bg-[var(--accent-soft)]/20 transition-all cursor-pointer"
                 onclick={(e) => {
                   e.stopPropagation();
                   shareRecipe();
                   showMoreActions = false;
                 }}
               >
-                <svg
-                  class="h-4 w-4 text-[var(--muted)]"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.684 10.742l4.63-2.316a3 3 0 11.83 1.666l-4.63 2.316a3 3 0 11-.83-1.666z"
-                  />
-                </svg>
+                <span class="material-symbols-outlined text-base">share</span>
                 Compartir
               </button>
               <button
                 type="button"
-                class="flex w-full items-center gap-2 rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold text-[var(--text)] hover:bg-[var(--surface-muted)] transition-all"
+                class="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs font-mono font-bold uppercase text-[var(--text)] hover:bg-[var(--accent-soft)]/20 transition-all cursor-pointer"
                 onclick={(e) => {
                   e.stopPropagation();
                   handleDownloadPdf();
                   showMoreActions = false;
                 }}
               >
-                <svg
-                  class="h-4 w-4 text-[var(--muted)]"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
+                <span class="material-symbols-outlined text-base"
+                  >picture_as_pdf</span
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
                 Descargar PDF
               </button>
             </div>
           {/if}
         </div>
 
-        <!-- Botón Modo Cocinar Principal -->
         <button
           type="button"
-          class="ml-auto flex items-center gap-1.5 rounded-2xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] px-5 py-3 text-xs font-extrabold text-white shadow-md hover:bg-[var(--accent-hover)] active:scale-95 transition-all"
+          class="marker-btn ml-auto flex items-center gap-1.5 py-3 px-5 text-xs text-white shadow-md cursor-pointer select-none"
           onclick={onStartCooking}
         >
-          Modo cocinar
-          <svg
-            class="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M14 5l7 7m0 0l-7 7m7-7H3"
-            />
-          </svg>
+          <span>Modo cocinar</span>
+          <span class="material-symbols-outlined text-base">arrow_forward</span>
         </button>
       </div>
     </div>
-  </div>
 
-  {#if showAuthPrompt}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
-      onclick={() => (showAuthPrompt = false)}
-    >
+    {#if showAuthPrompt}
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
-        class="w-full max-w-sm rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-lg text-center"
-        onclick={(e) => e.stopPropagation()}
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+        onclick={() => (showAuthPrompt = false)}
       >
-        <p class="text-2xl mb-2">📖</p>
-        <h4 class="text-sm font-extrabold text-[var(--text)]">
-          Únete a nuestro recetario
-        </h4>
-        <p class="mt-2 text-xs leading-relaxed text-[var(--muted)]">
-          Crea una cuenta gratuita o inicia sesión para poder {authPromptReason}.
-        </p>
-        <div class="mt-5 flex flex-col gap-2">
-          <button
-            type="button"
-            class="h-10 w-full rounded-xl bg-[var(--accent)] text-xs font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] transition active:scale-95"
-            onclick={() => {
-              showAuthPrompt = false;
-              authState.openRegister();
-            }}
-          >
-            Crear cuenta gratis
-          </button>
-          <button
-            type="button"
-            class="h-10 w-full rounded-xl border border-[var(--border)] text-xs font-bold text-[var(--text)] hover:bg-[var(--surface-muted)] transition active:scale-95"
-            onclick={() => {
-              showAuthPrompt = false;
-              authState.openLogin();
-            }}
-          >
-            Iniciar sesión
-          </button>
-          <button
-            type="button"
-            class="mt-1 text-[10px] font-bold text-[var(--muted)] hover:text-[var(--text)] transition"
-            onclick={() => (showAuthPrompt = false)}
-          >
-            Seguir explorando
-          </button>
+        <div
+          class="w-full max-w-sm rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-lg text-center"
+          onclick={(e) => e.stopPropagation()}
+        >
+          <p class="text-2xl mb-2">📖</p>
+          <h4 class="text-sm font-extrabold text-[var(--text)]">
+            Únete a nuestro recetario
+          </h4>
+          <p class="mt-2 text-xs leading-relaxed text-[var(--muted)]">
+            Crea una cuenta gratuita o inicia sesión para poder {authPromptReason}.
+          </p>
+          <div class="mt-5 flex flex-col gap-2">
+            <button
+              type="button"
+              class="h-10 w-full rounded-xl bg-[var(--accent)] text-xs font-bold text-white shadow-sm hover:bg-[var(--accent-hover)] transition active:scale-95"
+              onclick={() => {
+                showAuthPrompt = false;
+                authState.openRegister();
+              }}
+            >
+              Crear cuenta gratis
+            </button>
+            <button
+              type="button"
+              class="h-10 w-full rounded-xl border border-[var(--border)] text-xs font-bold text-[var(--text)] hover:bg-[var(--surface-muted)] transition active:scale-95"
+              onclick={() => {
+                showAuthPrompt = false;
+                authState.openLogin();
+              }}
+            >
+              Iniciar sesión
+            </button>
+            <button
+              type="button"
+              class="mt-1 text-[10px] font-bold text-[var(--muted)] hover:text-[var(--text)] transition"
+              onclick={() => (showAuthPrompt = false)}
+            >
+              Seguir explorando
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  {/if}
+    {/if}
+  </div>
 </article>
