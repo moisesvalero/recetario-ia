@@ -468,7 +468,9 @@
             class="col-span-12 lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-8 lg:self-start"
           >
             <!-- Polaroid Frame -->
-            <div class="polaroid w-full rotate-[1.5deg]">
+            <div
+              class="polaroid w-full max-w-xs mx-auto lg:max-w-none rotate-[1.5deg] order-3 lg:order-1"
+            >
               <img
                 class="w-full aspect-square object-cover grayscale-[15%] sepia-[8%]"
                 src={HERO_IMAGE}
@@ -483,7 +485,7 @@
 
             <!-- Sticky Note Preferences (Bug-free alignment) -->
             <div
-              class="post-it p-6 relative rotate-[-1deg] flex flex-col justify-between"
+              class="post-it p-6 relative rotate-[-1deg] flex flex-col justify-between order-1 lg:order-2"
             >
               <div>
                 <h4
@@ -606,7 +608,7 @@
             </div>
 
             <!-- CTA Button Section (Marker effect) -->
-            <div>
+            <div class="order-2 lg:order-3">
               <button
                 onclick={generateRecipe}
                 disabled={loading}
