@@ -162,7 +162,7 @@
             class="lg:hidden mb-5 rounded bg-[var(--accent-soft)]/45 border border-dashed border-[var(--text)]/10 p-4"
           >
             <span
-              class="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text)]"
+              class="text-[0.625rem] font-mono font-bold uppercase tracking-wider text-[var(--text)]"
             >
               Ingredientes para este paso:
             </span>
@@ -172,7 +172,8 @@
                   class="inline-flex items-center rounded bg-white px-3 py-1 text-xs font-handwritten font-bold text-[var(--text)] border border-[var(--border)] shadow-sm"
                 >
                   {ing.item}
-                  <span class="text-[var(--muted)] font-mono text-[10px] ml-1.5"
+                  <span
+                    class="text-[var(--muted)] font-mono text-[0.625rem] ml-1.5"
                     >({ing.amount})</span
                   >
                 </span>
@@ -262,7 +263,7 @@
                 >
                   <span class="flex items-center gap-2">
                     <span
-                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[8px] font-mono select-none"
+                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[0.5rem] font-mono select-none"
                     >
                       {active ? "✓" : ""}
                     </span>
@@ -346,7 +347,7 @@
                 {ing.item}
               </span>
               <span
-                class="text-[10px] font-mono font-semibold text-[var(--muted)] mt-0.5"
+                class="text-[0.625rem] font-mono font-semibold text-[var(--muted)] mt-0.5"
               >
                 {ing.amount}
               </span>

@@ -106,7 +106,7 @@
           Instala Umami en tu pantalla
         </p>
         <p
-          class="text-[11px] text-[var(--muted)] leading-relaxed mt-1 font-medium"
+          class="text-[0.6875rem] text-[var(--muted)] leading-relaxed mt-1 font-medium"
         >
           Accede instantáneamente y úsala a pantalla completa como una app
           nativa, con mejor velocidad y rendimiento.
@@ -131,7 +131,7 @@
 
       {#if showInstructions && isIOS}
         <div
-          class="bg-white/80 p-3.5 rounded-xl border border-[var(--border)] text-[10.5px] leading-relaxed text-[var(--muted)] font-mono space-y-2 animate-fade-in-up"
+          class="bg-white/80 p-3.5 rounded-xl border border-[var(--border)] text-[0.656rem] leading-relaxed text-[var(--muted)] font-mono space-y-2 animate-fade-in-up"
         >
           <p class="font-bold text-[var(--text)]">
             Sigue estos pasos en Safari:

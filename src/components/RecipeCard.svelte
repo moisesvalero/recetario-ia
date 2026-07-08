@@ -210,7 +210,7 @@
               <span class="flex items-center gap-2">
                 <!-- Checkbox hand drawn -->
                 <span
-                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[10px] font-mono text-[var(--text)] font-extrabold select-none bg-white/20"
+                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20"
                 >
                   ✓
                 </span>
@@ -281,7 +281,7 @@
             >
               <button
                 type="button"
-                class="rounded px-2.5 py-1 text-[10px] font-mono font-bold uppercase transition-all cursor-pointer {viewMode ===
+                class="rounded px-2.5 py-1 text-[0.625rem] font-mono font-bold uppercase transition-all cursor-pointer {viewMode ===
                 'steps'
                   ? 'bg-white text-[var(--text)] shadow-sm'
                   : 'text-[var(--muted)]'}"
@@ -291,7 +291,7 @@
               </button>
               <button
                 type="button"
-                class="rounded px-2.5 py-1 text-[10px] font-mono font-bold uppercase transition-all cursor-pointer {viewMode ===
+                class="rounded px-2.5 py-1 text-[0.625rem] font-mono font-bold uppercase transition-all cursor-pointer {viewMode ===
                 'cook'
                   ? 'bg-white text-[var(--text)] shadow-sm'
                   : 'text-[var(--muted)]'}"
@@ -459,7 +459,7 @@
             </button>
             <button
               type="button"
-              class="mt-1 text-[10px] font-bold text-[var(--muted)] hover:text-[var(--text)] transition"
+              class="mt-1 text-[0.625rem] font-bold text-[var(--muted)] hover:text-[var(--text)] transition"
               onclick={() => (showAuthPrompt = false)}
             >
               Seguir explorando

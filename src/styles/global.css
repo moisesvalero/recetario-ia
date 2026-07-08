@@ -1,6 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Karla:wght@400;700&family=JetBrains+Mono&family=Gochi+Hand&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap");
 @import "tailwindcss";
 
+html {
+  font-size: 17px;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+
 :root {
   color-scheme: light;
   --bg: #f4f3f8;

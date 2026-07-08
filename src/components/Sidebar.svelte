@@ -54,7 +54,7 @@
           Umami
         </p>
         <p
-          class="text-[10px] font-handwritten text-[var(--muted)] mt-1 uppercase tracking-wider"
+          class="text-[0.625rem] font-handwritten text-[var(--muted)] mt-1 uppercase tracking-wider"
         >
           Chef inteligente
         </p>
@@ -239,7 +239,7 @@
             ✨ Ventajas gratis
           </p>
           <p
-            class="mt-1 text-[11px] text-[var(--muted)] leading-normal font-medium"
+            class="mt-1 text-[0.6875rem] text-[var(--muted)] leading-normal font-medium"
           >
             Regístrate para guardar tus recetas y descargarlas en PDF de forma
             100% gratuita.
@@ -262,7 +262,9 @@
         >
           🎉 ¡Sesión Activa!
         </p>
-        <p class="text-[11px] text-[var(--muted)] leading-normal font-medium">
+        <p
+          class="text-[0.6875rem] text-[var(--muted)] leading-normal font-medium"
+        >
           Ya puedes guardar tus recetas y descargarlas en PDF desde la ficha de
           cada receta.
         </p>
@@ -284,7 +286,7 @@
         <p class="text-xs font-bold text-[var(--text)] truncate font-display">
           {authState.currentUser ? authState.currentUser.name : "Invitado"}
         </p>
-        <p class="text-[10px] text-[var(--muted)] truncate font-medium">
+        <p class="text-[0.625rem] text-[var(--muted)] truncate font-medium">
           {authState.currentUser ? "Cuenta gratuita" : "Inicia sesión →"}
         </p>
       </div>
@@ -301,7 +303,7 @@
 
     <!-- Enlaces Legales discretos -->
     <div
-      class="flex flex-col items-center gap-2 mt-2 text-[10px] font-mono font-bold text-[var(--muted)]/60 pb-1"
+      class="flex flex-col items-center gap-2 mt-2 text-[0.625rem] font-mono font-bold text-[var(--muted)]/60 pb-1"
     >
       <div class="flex items-center gap-3">
         <a
@@ -322,7 +324,7 @@
           class="hover:text-[var(--text)] transition-colors">Cookies</a
         >
       </div>
-      <div class="text-[9px] text-[var(--muted)]/50 mt-0.5">
+      <div class="text-[0.5625rem] text-[var(--muted)]/50 mt-0.5">
         Desarrollado por <a
           href="https://github.com/moisesvalero"
           target="_blank"

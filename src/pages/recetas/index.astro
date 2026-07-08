@@ -57,7 +57,7 @@ const recipes = (await getCollection("recipes")).sort((a, b) =>
                   class="h-48 w-full object-cover transition duration-300 grayscale-[8%] sepia-[4%] group-hover:scale-105"
                   loading="lazy"
                 />
-                <span class="absolute top-2 right-2 shrink-0 rounded bg-white/90 border border-black/10 px-2 py-0.5 text-[10px] font-mono font-bold text-[var(--text)] select-none uppercase shadow-sm">
+                <span class="absolute top-2 right-2 shrink-0 rounded bg-white/90 border border-black/10 px-2 py-0.5 text-[0.625rem] font-mono font-bold text-[var(--text)] select-none uppercase shadow-sm">
                   {recipe.data.difficulty}
                 </span>
               </div>

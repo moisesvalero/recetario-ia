@@ -411,7 +411,7 @@
             <!-- Suggestions -->
             <div class="mb-6 pl-6">
               <span
-                class="text-[10px] font-mono font-bold tracking-wider text-[var(--muted)] mb-3 block"
+                class="text-[0.625rem] font-mono font-bold tracking-wider text-[var(--muted)] mb-3 block"
                 >SUGERENCIAS RÁPIDAS:</span
               >
               <div class="flex flex-wrap gap-x-4 gap-y-2">
@@ -712,7 +712,7 @@
                   {item.recipe.description}
                 </p>
                 <span
-                  class="inline-block mt-2 text-[10px] font-bold text-[var(--accent-hover)] bg-[var(--accent-soft)] rounded-full px-2 py-0.5"
+                  class="inline-block mt-2 text-[0.625rem] font-bold text-[var(--accent-hover)] bg-[var(--accent-soft)] rounded-full px-2 py-0.5"
                 >
                   ⏱ {item.recipe.prepMinutes + item.recipe.cookMinutes} min
                 </span>
@@ -786,7 +786,7 @@
                   {fav.recipe.description}
                 </p>
                 <span
-                  class="inline-block mt-2 text-[10px] font-bold text-red-600 bg-red-50 rounded-full px-2 py-0.5"
+                  class="inline-block mt-2 text-[0.625rem] font-bold text-red-600 bg-red-50 rounded-full px-2 py-0.5"
                 >
                   ⏱ {fav.recipe.prepMinutes + fav.recipe.cookMinutes} min
                 </span>

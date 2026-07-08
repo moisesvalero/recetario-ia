@@ -33,7 +33,9 @@
         <p class="text-xs font-bold font-display tracking-wide">
           CONSENTIMIENTO DE COOKIES
         </p>
-        <p class="text-[11px] text-slate-300 leading-relaxed mt-1 font-medium">
+        <p
+          class="text-[0.6875rem] text-slate-300 leading-relaxed mt-1 font-medium"
+        >
           Utilizamos cookies esenciales y almacenamiento local para recordar tus
           preferencias de cocina, ingredientes comunes e inicio de sesión.
         </p>
@@ -45,7 +47,7 @@
     >
       <a
         href="/cookies"
-        class="text-[10px] font-bold font-mono text-slate-400 hover:text-white transition-colors"
+        class="text-[0.625rem] font-bold font-mono text-slate-400 hover:text-white transition-colors"
       >
         MÁS INFORMACIÓN
       </a>

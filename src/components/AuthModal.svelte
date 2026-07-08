@@ -301,7 +301,7 @@
                   ></div>
                 </div>
                 <span
-                  class="relative bg-white px-3 text-[10px] font-mono font-bold text-[var(--muted)] uppercase tracking-wider"
+                  class="relative bg-white px-3 text-[0.625rem] font-mono font-bold text-[var(--muted)] uppercase tracking-wider"
                   >O continuar con</span
                 >
               </div>
@@ -468,7 +468,7 @@
                   ></div>
                 </div>
                 <span
-                  class="relative bg-white px-3 text-[10px] font-mono font-bold text-[var(--muted)] uppercase tracking-wider"
+                  class="relative bg-white px-3 text-[0.625rem] font-mono font-bold text-[var(--muted)] uppercase tracking-wider"
                   >O continuar con</span
                 >
               </div>
