@@ -38,10 +38,10 @@ const coverImage = getRecipeImageUrl(
       class="overflow-hidden rounded border border-dashed border-[var(--border)] bg-white shadow-md"
     >
       <div
-        class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-6 sm:p-8 min-h-[500px]"
+        class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-4 sm:p-8 min-h-[500px]"
       >
         <!-- Left Page: Polaroid and Ingredients -->
-        <div class="p-4 sm:p-6 flex flex-col gap-6">
+        <div class="p-4 pl-6 pr-2 sm:p-6 flex flex-col gap-6">
           <!-- Polaroid Cover -->
           <div
             class="relative polaroid w-full rotate-[-1.2deg] max-w-sm mx-auto"
@@ -72,13 +72,13 @@ const coverImage = getRecipeImageUrl(
               {
                 recipe.data.ingredients.map((ingredient) => (
                   <li class="flex justify-between items-center gap-4 py-1 border-b border-dashed border-[var(--text)]/10">
-                    <span class="flex items-center gap-2">
-                      <span class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20">
+                    <span class="flex items-center gap-2 min-w-0 flex-1">
+                      <span class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20 shrink-0">
                         ✓
                       </span>
-                      <span>{ingredient.item}</span>
+                      <span class="break-words">{ingredient.item}</span>
                     </span>
-                    <span class="text-sm text-[var(--muted)] font-mono">
+                    <span class="text-sm text-[var(--muted)] font-mono shrink-0">
                       {ingredient.amount}
                     </span>
                   </li>
@@ -94,12 +94,12 @@ const coverImage = getRecipeImageUrl(
             <!-- Title -->
             <div>
               <h1
-                class="font-handwritten text-3xl font-black text-[var(--text)] leading-tight"
+                class="font-handwritten text-3xl font-black text-[var(--text)] leading-tight break-words"
               >
                 {recipe.data.title}
               </h1>
               <p
-                class="font-handwritten text-base text-[var(--muted)] mt-2 leading-relaxed"
+                class="font-handwritten text-base text-[var(--muted)] mt-2 leading-relaxed break-words"
               >
                 {recipe.data.description}
               </p>
@@ -166,6 +166,8 @@ const coverImage = getRecipeImageUrl(
     align-items: start;
     padding-bottom: 0.25rem;
     border-bottom: 1px dashed rgba(0, 30, 64, 0.05);
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
   .markdown-content ol li::before {
     counter-increment: step-counter;

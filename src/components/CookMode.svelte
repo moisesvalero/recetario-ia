@@ -183,7 +183,7 @@
         {/if}
 
         <p
-          class="font-handwritten text-2xl font-black leading-relaxed text-[var(--text)]"
+          class="font-handwritten text-2xl font-black leading-relaxed text-[var(--text)] break-words"
         >
           {step.text}
         </p>
@@ -261,15 +261,15 @@
                     ? 'font-bold text-[var(--accent-hover)]'
                     : ''}"
                 >
-                  <span class="flex items-center gap-2">
+                  <span class="flex items-center gap-2 min-w-0 flex-1">
                     <span
-                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[0.5rem] font-mono select-none"
+                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[0.5rem] font-mono select-none shrink-0"
                     >
                       {active ? "✓" : ""}
                     </span>
-                    <span>{ing.item}</span>
+                    <span class="break-words">{ing.item}</span>
                   </span>
-                  <span class="text-sm text-[var(--muted)] font-mono"
+                  <span class="text-sm text-[var(--muted)] font-mono shrink-0"
                     >{ing.amount}</span
                   >
                 </li>

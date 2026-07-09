@@ -331,7 +331,7 @@
         >
           <!-- Left Column: The Interactive Lined Notebook -->
           <section
-            class="col-span-12 lg:col-span-8 notebook-paper p-8 pt-10 relative"
+            class="col-span-12 lg:col-span-8 notebook-paper p-4 sm:p-8 pt-6 sm:pt-10 relative"
           >
             <!-- Header Section -->
             <div class="mb-10 pl-6">

@@ -152,10 +152,10 @@
   {/if}
 
   <div
-    class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-6 sm:p-8 min-h-[500px]"
+    class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-dashed divide-[var(--border)] notebook-paper p-4 sm:p-8 min-h-[500px]"
   >
     <!-- Left Page of the open book: Image and Ingredients -->
-    <div class="p-4 sm:p-6 flex flex-col gap-6">
+    <div class="p-4 pl-6 pr-2 sm:p-6 flex flex-col gap-6">
       <!-- Polaroid Image -->
       <div class="relative polaroid w-full rotate-[-1.5deg] max-w-sm mx-auto">
         <img
@@ -207,16 +207,16 @@
             <li
               class="flex justify-between items-center gap-4 py-1 border-b border-dashed border-[var(--text)]/10"
             >
-              <span class="flex items-center gap-2">
+              <span class="flex items-center gap-2 min-w-0 flex-1">
                 <!-- Checkbox hand drawn -->
                 <span
-                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20"
+                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20 shrink-0"
                 >
                   ✓
                 </span>
-                <span>{ingredient.item}</span>
+                <span class="break-words">{ingredient.item}</span>
               </span>
-              <span class="text-sm text-[var(--muted)] font-mono"
+              <span class="text-sm text-[var(--muted)] font-mono shrink-0"
                 >{ingredient.amount}</span
               >
             </li>
@@ -231,12 +231,12 @@
         <!-- Title and description -->
         <div>
           <h2
-            class="font-handwritten text-3xl font-black text-[var(--text)] leading-tight"
+            class="font-handwritten text-3xl font-black text-[var(--text)] leading-tight break-words"
           >
             {recipe.title}
           </h2>
           <p
-            class="font-handwritten text-base text-[var(--muted)] mt-2 leading-relaxed"
+            class="font-handwritten text-base text-[var(--muted)] mt-2 leading-relaxed break-words"
           >
             {recipe.description}
           </p>
@@ -318,7 +318,9 @@
                 >
                   {index + 1}
                 </span>
-                <span class="pt-0.5">{step.text}</span>
+                <span class="pt-0.5 flex-1 min-w-0 break-words"
+                  >{step.text}</span
+                >
               </li>
             {/each}
           </ol>

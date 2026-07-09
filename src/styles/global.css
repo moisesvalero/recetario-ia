@@ -3,6 +3,8 @@
 
 html {
   font-size: 17px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 @media (min-width: 1024px) {
@@ -45,6 +47,8 @@ body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 a {
