@@ -257,19 +257,20 @@
                   (c) => c.item === ing.item,
                 )}
                 <li
-                  class="flex justify-between gap-4 py-1 border-b border-dashed border-black/5 transition {active
+                  class="flex justify-between items-start gap-4 py-1 border-b border-dashed border-black/5 transition {active
                     ? 'font-bold text-[var(--accent-hover)]'
                     : ''}"
                 >
-                  <span class="flex items-center gap-2 min-w-0 flex-1">
+                  <span class="flex items-start gap-2 min-w-0 flex-1">
                     <span
-                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[0.5rem] font-mono select-none shrink-0"
+                      class="inline-block w-3.5 h-3.5 border border-[var(--text)] flex items-center justify-center text-[0.5rem] font-mono select-none shrink-0 mt-0.5"
                     >
                       {active ? "✓" : ""}
                     </span>
                     <span class="break-words">{ing.item}</span>
                   </span>
-                  <span class="text-sm text-[var(--muted)] font-mono shrink-0"
+                  <span
+                    class="text-sm text-[var(--muted)] font-mono text-right break-words max-w-[45%]"
                     >{ing.amount}</span
                   >
                 </li>

@@ -254,18 +254,19 @@
         <ul class="space-y-2 font-handwritten text-base text-[var(--text)]/90">
           {#each recipe.ingredients as ingredient}
             <li
-              class="flex justify-between items-center gap-4 py-1 border-b border-dashed border-[var(--text)]/10"
+              class="flex justify-between items-start gap-4 py-1 border-b border-dashed border-[var(--text)]/10"
             >
-              <span class="flex items-center gap-2 min-w-0 flex-1">
+              <span class="flex items-start gap-2 min-w-0 flex-1">
                 <!-- Checkbox hand drawn -->
                 <span
-                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20 shrink-0"
+                  class="inline-block w-4 h-4 border border-[var(--text)] flex items-center justify-center text-[0.625rem] font-mono text-[var(--text)] font-extrabold select-none bg-white/20 shrink-0 mt-1"
                 >
                   ✓
                 </span>
                 <span class="break-words">{ingredient.item}</span>
               </span>
-              <span class="text-sm text-[var(--muted)] font-mono shrink-0"
+              <span
+                class="text-sm text-[var(--muted)] font-mono text-right break-words max-w-[45%]"
                 >{ingredient.amount}</span
               >
             </li>
