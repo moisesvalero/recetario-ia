@@ -139,7 +139,7 @@
       await removeFromMenu(existing.id);
     }
     try {
-      await addToMenu({
+      const newEntry = await addToMenu({
         weekStart,
         day: target.day,
         slot: target.slot,
@@ -156,6 +156,13 @@
           tips: recipe.tips,
         },
       });
+
+      // Actualizar estado local reactivo
+      if (existing) {
+        entries = entries.filter((e) => e.id !== existing.id);
+      }
+      entries = [...entries, newEntry];
+
       const dayLabel = dayHeaders[target.day]?.label ?? "";
       const slotLabel =
         slotRows.find((s) => s.slot === target.slot)?.label ?? "";
@@ -171,6 +178,8 @@
     e.stopPropagation();
     try {
       await removeFromMenu(entry.id);
+      // Actualizar estado local reactivo
+      entries = entries.filter((item) => item.id !== entry.id);
       showStatus("Receta quitada del menú", "success");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error al quitar";
@@ -201,6 +210,8 @@
   async function doClearWeek() {
     try {
       await clearWeek(weekStart);
+      // Actualizar estado local reactivo
+      entries = [];
       showStatus("Semana limpiada", "success");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error al limpiar";
