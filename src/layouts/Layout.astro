@@ -52,7 +52,7 @@ const { title } = Astro.props;
     <CookieConsent client:idle />
     <PwaInstallBanner client:idle />
 
-    <!-- Registro de Service Worker para PWA -->
+    <!-- Registro de Service Worker para PWA con Auto-update forzado -->
     <script is:inline>
       if (
         "serviceWorker" in navigator &&
@@ -61,10 +61,23 @@ const { title } = Astro.props;
         window.addEventListener("load", () => {
           navigator.serviceWorker
             .register("/sw.js")
-            .then((reg) => console.log("Service Worker registrado:", reg.scope))
+            .then((reg) => {
+              console.log("Service Worker registrado:", reg.scope);
+              // Forzar comprobación de actualizaciones de forma activa
+              reg.update();
+            })
             .catch((err) =>
               console.error("Error al registrar el Service Worker:", err),
             );
+        });
+
+        // Forzar recarga automática si el service worker se actualiza y toma el control
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
         });
       }
     </script>

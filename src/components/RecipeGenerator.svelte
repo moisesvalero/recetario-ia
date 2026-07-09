@@ -68,13 +68,20 @@
 
   // Estado del menú semanal: semana actualmente visualizada
   let currentWeekStart = $state(getWeekStart());
+  let openedFromMenu = $state(false);
 
   function handleWeekChange(next: string) {
     currentWeekStart = next;
   }
 
   function handleOpenRecipeFromMenu(recipe: Recipe) {
+    openedFromMenu = true;
     openHistoryItem(recipe);
+  }
+
+  function handleBackToMenu() {
+    openedFromMenu = false;
+    navState.setTab("menu-semanal");
   }
 
   // Estados para deshacer (Undo Toast)
@@ -650,11 +657,23 @@
         </div>
       {:else}
         <!-- Barra de Retorno de Generación (cuando se lee la receta activa) -->
-        <div class="px-6 py-6 lg:px-12 max-w-5xl mx-auto">
+        <div class="px-6 py-6 lg:px-12 max-w-5xl mx-auto flex flex-wrap gap-3">
+          {#if openedFromMenu}
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded border border-dashed border-[var(--accent-hover)] bg-white px-5 py-3 text-xs font-bold text-[var(--accent-hover)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all print-hidden cursor-pointer"
+              onclick={handleBackToMenu}
+            >
+              ← Volver al menú semanal (Calendario)
+            </button>
+          {/if}
           <button
             type="button"
             class="inline-flex items-center gap-2 rounded border border-dashed border-[var(--border)] bg-white px-5 py-3 text-xs font-bold text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all print-hidden cursor-pointer"
-            onclick={() => (showGeneratorForm = true)}
+            onclick={() => {
+              showGeneratorForm = true;
+              openedFromMenu = false;
+            }}
           >
             ← Generar otra receta / Modificar ingredientes
           </button>
