@@ -9,6 +9,8 @@
     addToShoppingList,
   } from "../lib/auth";
   import { exportToPdf } from "../lib/pdf-generator";
+  import { addToMenu } from "../lib/menu-storage";
+  import { getWeekStart } from "../lib/menu-schema";
 
   let {
     recipe,
@@ -29,6 +31,7 @@
   let showAuthPrompt = $state(false);
   let authPromptReason = $state("");
   let favoriteAnimate = $state(false);
+  let showMenuPopover = $state(false);
 
   // Reactividad para el botón de favorito
   $effect(() => {
@@ -130,6 +133,52 @@
         navigator.clipboard.writeText(window.location.href);
         showStatus("¡Enlace copiado al portapapeles! 🔗", "success");
       }
+    }
+  }
+
+  // ── Menú semanal: popover día × slot ────────────────────
+  const dayLabels = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  const slotLabels: Record<"desayuno" | "comida" | "cena", string> = {
+    desayuno: "Desayuno",
+    comida: "Comida",
+    cena: "Cena",
+  };
+
+  function toggleMenuPopover() {
+    if (!authState.currentUser) {
+      authPromptReason = "planificar tus recetas en el menú semanal";
+      showAuthPrompt = true;
+      return;
+    }
+    showMenuPopover = !showMenuPopover;
+  }
+
+  async function addToMenuSlot(
+    day: number,
+    slot: "desayuno" | "comida" | "cena",
+  ) {
+    try {
+      await addToMenu({
+        weekStart: getWeekStart(),
+        day,
+        slot,
+        recipeId: recipe.title,
+        recipeSnapshot: {
+          title: recipe.title,
+          description: recipe.description,
+          prepMinutes: recipe.prepMinutes,
+          cookMinutes: recipe.cookMinutes,
+          servings: recipe.servings,
+          difficulty: recipe.difficulty,
+          ingredients: recipe.ingredients,
+          steps: recipe.steps,
+          tips: recipe.tips,
+        },
+      });
+      showStatus(`Añadido a ${dayLabels[day]} ${slotLabels[slot]}`, "success");
+      showMenuPopover = false;
+    } catch (err: any) {
+      showStatus(err?.message || "Error al añadir al menú", "error");
     }
   }
 </script>
@@ -361,6 +410,84 @@
           <span class="material-symbols-outlined text-base">shopping_cart</span>
           Agregar a compras
         </button>
+
+        <div class="relative">
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded border border-dashed border-[var(--border)] bg-white px-4 py-2.5 text-xs font-mono font-bold uppercase text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 active:scale-95 transition-all cursor-pointer"
+            onclick={toggleMenuPopover}
+            aria-haspopup="dialog"
+            aria-expanded={showMenuPopover}
+            aria-label="Añadir al menú semanal"
+          >
+            <span class="material-symbols-outlined text-base"
+              >calendar_month</span
+            >
+            Añadir al menú
+          </button>
+
+          {#if showMenuPopover}
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div
+              class="absolute bottom-full left-0 mb-2 z-30 w-[320px] rounded-2xl border border-[var(--border)] bg-white p-3 shadow-lg animate-fade-in-up"
+              role="dialog"
+              aria-label="Selecciona día y comida"
+              onclick={(e) => e.stopPropagation()}
+            >
+              <div class="flex items-center justify-between mb-2">
+                <p
+                  class="font-mono text-[0.625rem] font-bold tracking-wider text-[var(--muted)] uppercase"
+                >
+                  Semana actual
+                </p>
+                <button
+                  type="button"
+                  onclick={() => (showMenuPopover = false)}
+                  class="flex h-6 w-6 items-center justify-center rounded-full text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)] transition-all cursor-pointer"
+                  aria-label="Cerrar"
+                >
+                  <span class="material-symbols-outlined text-base">close</span>
+                </button>
+              </div>
+              <div
+                class="grid gap-1"
+                style="grid-template-columns: 60px repeat(7, minmax(0, 1fr));"
+              >
+                <div></div>
+                {#each dayLabels as dayLabel, dayIdx}
+                  <div
+                    class="text-center font-mono text-[0.5625rem] font-bold tracking-wider text-[var(--muted)] uppercase py-1"
+                  >
+                    {dayLabel}
+                  </div>
+                {/each}
+
+                {#each ["desayuno", "comida", "cena"] as slot (slot)}
+                  <div
+                    class="flex items-center font-mono text-[0.5625rem] font-bold tracking-wider text-[var(--muted)] uppercase pr-1"
+                  >
+                    {slotLabels[slot as "desayuno" | "comida" | "cena"]}
+                  </div>
+                  {#each dayLabels as _day, dayIdx}
+                    <button
+                      type="button"
+                      onclick={() =>
+                        addToMenuSlot(
+                          dayIdx,
+                          slot as "desayuno" | "comida" | "cena",
+                        )}
+                      class="aspect-square flex items-center justify-center rounded-lg border border-dashed border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]/20 hover:text-[var(--accent)] active:scale-95 transition-all cursor-pointer"
+                      aria-label={`Añadir a ${dayLabels[dayIdx]} ${slotLabels[slot as "desayuno" | "comida" | "cena"]}`}
+                    >
+                      <span class="material-symbols-outlined text-sm">add</span>
+                    </button>
+                  {/each}
+                {/each}
+              </div>
+            </div>
+          {/if}
+        </div>
 
         <div class="relative">
           <button

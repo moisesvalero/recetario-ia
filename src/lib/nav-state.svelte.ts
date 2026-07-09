@@ -7,6 +7,7 @@ class NavState {
     | "lista-compras"
     | "ajustes"
     | "inicio"
+    | "menu-semanal"
   >("generar");
 
   mobileMenuOpen = $state(false);
@@ -28,6 +29,7 @@ class NavState {
           "lista-compras",
           "ajustes",
           "inicio",
+          "menu-semanal",
         ];
         if (validTabs.includes(tab)) {
           this.activeTab = tab as any;
@@ -52,7 +54,8 @@ class NavState {
       | "historial"
       | "lista-compras"
       | "ajustes"
-      | "inicio",
+      | "inicio"
+      | "menu-semanal",
   ) {
     const targetTab = tab === "mis-recetas" ? "favoritos" : tab;
     this.activeTab = targetTab;

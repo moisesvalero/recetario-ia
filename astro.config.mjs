@@ -45,6 +45,11 @@ export default defineConfig({
         access: "public",
         optional: true,
       }),
+      PUBLIC_APPWRITE_COLLECTION_MENU: envField.string({
+        context: "client",
+        access: "public",
+        optional: true,
+      }),
     },
   },
 });

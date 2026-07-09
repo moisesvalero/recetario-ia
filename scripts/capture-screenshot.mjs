@@ -9,10 +9,14 @@ const OUT = "public/screenshot.png";
 
 await mkdir("public", { recursive: true });
 
-const preview = spawn("pnpm", ["preview", "--host", "127.0.0.1", "--port", String(PORT)], {
-  stdio: "ignore",
-  detached: true,
-});
+const preview = spawn(
+  "pnpm",
+  ["preview", "--host", "127.0.0.1", "--port", String(PORT)],
+  {
+    stdio: "ignore",
+    detached: true,
+  },
+);
 
 let ready = false;
 for (let i = 0; i < 30; i++) {
@@ -35,7 +39,9 @@ if (!ready) {
 
 try {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1400, height: 900 },
+  });
   await page.goto(URL, { waitUntil: "networkidle", timeout: 60000 });
   await page.screenshot({ path: OUT, fullPage: false });
   await browser.close();

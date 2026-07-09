@@ -22,6 +22,8 @@
   } from "../lib/auth";
   import RecipeHistory from "./RecipeHistory.svelte";
   import RecipeResult from "./RecipeResult.svelte";
+  import WeeklyMenu from "./WeeklyMenu.svelte";
+  import { getWeekStart } from "../lib/menu-schema";
 
   let ingredientInput = $state("");
   let ingredients = $state<string[]>(["Pollo", "Arroz", "Limón"]);
@@ -63,6 +65,17 @@
 
   // Control de visibilidad del formulario de generación
   let showGeneratorForm = $state(true);
+
+  // Estado del menú semanal: semana actualmente visualizada
+  let currentWeekStart = $state(getWeekStart());
+
+  function handleWeekChange(next: string) {
+    currentWeekStart = next;
+  }
+
+  function handleOpenRecipeFromMenu(recipe: Recipe) {
+    openHistoryItem(recipe);
+  }
 
   // Estados para deshacer (Undo Toast)
   let showUndoToast = $state(false);
@@ -912,6 +925,16 @@
           <RecipeHistory items={history} onSelect={openHistoryItem} />
         {/if}
       </div>
+    </div>
+  {:else if navState.activeTab === "menu-semanal"}
+    <div
+      class="px-4 py-8 sm:px-6 lg:px-12 max-w-6xl mx-auto animate-fade-in-up"
+    >
+      <WeeklyMenu
+        weekStart={currentWeekStart}
+        onWeekChange={handleWeekChange}
+        onOpenRecipe={handleOpenRecipeFromMenu}
+      />
     </div>
   {/if}
 

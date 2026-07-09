@@ -114,6 +114,30 @@
 
       <button
         type="button"
+        onclick={() => navState.setTab("menu-semanal")}
+        class="flex w-[calc(100%-16px)] items-center gap-3 rounded-r-2xl pl-6 pr-4 py-3 text-sm font-semibold transition-all select-none {navState.activeTab ===
+        'menu-semanal'
+          ? 'bg-[var(--accent-soft)] text-[var(--text)] font-extrabold shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)] border-y border-r border-[var(--border)]'
+          : 'text-[var(--muted)] hover:bg-[var(--accent-soft)]/20 hover:text-[var(--text)]'}"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+        </svg>
+        Menú semanal
+      </button>
+
+      <button
+        type="button"
         onclick={() => {
           if (authState.currentUser) navState.setTab("favoritos");
           else authState.openLogin();

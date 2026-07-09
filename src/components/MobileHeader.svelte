@@ -90,6 +90,17 @@
             Generar Receta
           </button>
 
+          <button
+            type="button"
+            onclick={() => handleTabClick("menu-semanal")}
+            class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-bold font-mono rounded-lg hover:bg-[var(--accent-soft)]/30 text-[var(--text)] transition-colors cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-base"
+              >calendar_month</span
+            >
+            Menú semanal
+          </button>
+
           <a
             href="/recetas"
             class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-bold font-mono rounded-lg hover:bg-[var(--accent-soft)]/30 text-[var(--text)] transition-colors"

@@ -4,6 +4,7 @@ import {
   PUBLIC_APPWRITE_PROJECT_ID,
   PUBLIC_APPWRITE_DATABASE_ID,
   PUBLIC_APPWRITE_COLLECTION_RECETAS,
+  PUBLIC_APPWRITE_COLLECTION_MENU,
 } from "astro:env/client";
 
 const client = new Client();
@@ -29,5 +30,6 @@ export const APPWRITE_CONFIG = {
   projectId,
   databaseId: PUBLIC_APPWRITE_DATABASE_ID || "",
   collectionRecetas: PUBLIC_APPWRITE_COLLECTION_RECETAS || "",
+  collectionMenu: PUBLIC_APPWRITE_COLLECTION_MENU || "",
   isConfigured: !!projectId,
 };
