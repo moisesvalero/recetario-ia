@@ -5,6 +5,7 @@ html {
   font-size: 17px;
   max-width: 100%;
   overflow-x: hidden;
+  position: relative;
 }
 
 @media (min-width: 1024px) {
@@ -49,6 +50,7 @@ body {
   -webkit-font-smoothing: antialiased;
   max-width: 100%;
   overflow-x: hidden;
+  position: relative;
 }
 
 a {
