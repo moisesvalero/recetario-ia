@@ -39,7 +39,8 @@
 
   $effect(() => {
     if (authState.isAuthModalOpen) {
-      error = "";
+      error = authState.oauthError || "";
+      authState.oauthError = "";
       success = "";
       password = "";
       getUsers().then((accounts) => {

@@ -617,12 +617,62 @@ export async function loginWithOAuth(provider: "google"): Promise<void> {
       "El inicio de sesión social solo está disponible cuando Appwrite Cloud está configurado.",
     );
   }
-  const successRedirect = window.location.origin + "/";
+
+  const successRedirect = window.location.origin + "/?oauth=success";
   const failureRedirect = window.location.origin + "/?oauth_error=true";
 
-  account.createOAuth2Session(
-    provider as any,
-    successRedirect,
-    failureRedirect,
-  );
+  account.createOAuth2Token(provider as any, successRedirect, failureRedirect);
+}
+
+export async function handleOAuthCallback(): Promise<User | null> {
+  if (!isAppwriteActive()) return null;
+  if (typeof window === "undefined") return null;
+
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("userId");
+  const secret = params.get("secret");
+  const oauthError = params.get("oauth_error");
+  const oauthSuccess = params.get("oauth");
+
+  const hasOAuthParams = userId && secret;
+  const hasOAuthFlag = oauthError || oauthSuccess;
+
+  if (!hasOAuthParams && !hasOAuthFlag) return null;
+
+  if (oauthError) {
+    cleanOAuthUrl();
+    throw new Error(
+      "El inicio de sesión con Google fue cancelado o falló. Inténtalo de nuevo.",
+    );
+  }
+
+  if (hasOAuthParams) {
+    try {
+      await account.createSession(userId!, secret!);
+      cleanOAuthUrl();
+      return await initAuth();
+    } catch (err: any) {
+      cleanOAuthUrl();
+      throw new Error(
+        "No se pudo completar el inicio de sesión con Google. " +
+          (err?.message || "Inténtalo de nuevo."),
+      );
+    }
+  }
+
+  if (oauthSuccess) {
+    cleanOAuthUrl();
+  }
+
+  return null;
+}
+
+function cleanOAuthUrl(): void {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.delete("userId");
+  url.searchParams.delete("secret");
+  url.searchParams.delete("oauth");
+  url.searchParams.delete("oauth_error");
+  window.history.replaceState({}, document.title, url.pathname);
 }

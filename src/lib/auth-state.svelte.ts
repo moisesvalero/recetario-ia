@@ -1,19 +1,39 @@
-import { initAuth, getCurrentUser, type User } from "./auth";
+import {
+  initAuth,
+  getCurrentUser,
+  handleOAuthCallback,
+  type User,
+} from "./auth";
 
 class AuthState {
   currentUser = $state<User | null>(null);
   isAuthModalOpen = $state(false);
   authTab = $state<"login" | "register" | "profile">("login");
   isInitialized = $state(false);
+  oauthError = $state("");
 
   constructor() {
     if (typeof window !== "undefined") {
       this.currentUser = getCurrentUser();
-      initAuth().then((user) => {
-        this.currentUser = user;
-        this.isInitialized = true;
-      });
+      this.init();
     }
+  }
+
+  private async init() {
+    try {
+      const oauthUser = await handleOAuthCallback();
+      if (oauthUser) {
+        this.currentUser = oauthUser;
+        this.isInitialized = true;
+        return;
+      }
+    } catch (err: any) {
+      this.oauthError = err?.message || "Error en el login con Google.";
+    }
+
+    const user = await initAuth();
+    this.currentUser = user;
+    this.isInitialized = true;
   }
 
   login(user: User) {
