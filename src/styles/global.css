@@ -220,6 +220,35 @@ body {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
   border: 1px solid #e0ddd5;
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Evitar que los hijos del grid en notebook-paper desborden el contenedor en móviles */
+.notebook-paper > div {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Asegurar que las listas y textos dentro del cuaderno hagan wrap de forma natural */
+.notebook-paper ul,
+.notebook-paper ol,
+.notebook-paper p,
+.notebook-paper span,
+.notebook-paper li {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Posicionar popovers absolutos de forma segura en pantallas móviles */
+@media (max-width: 640px) {
+  .notebook-paper .relative .absolute {
+    left: auto !important;
+    right: 0 !important;
+    max-width: calc(100vw - 48px) !important;
+  }
 }
 
 .notebook-paper::before {
