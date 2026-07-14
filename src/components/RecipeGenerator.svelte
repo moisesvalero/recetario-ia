@@ -16,6 +16,8 @@
     toggleShoppingItem,
     clearShoppingList,
     deleteSavedRecipe,
+    updateFavoriteRecipe,
+    toggleFavorite,
     type SavedRecipe,
     type FavoriteRecipe,
     type ShoppingItem,
@@ -62,6 +64,12 @@
   let savedRecipes = $state<SavedRecipe[]>([]);
   let favoriteRecipes = $state<FavoriteRecipe[]>([]);
   let shoppingList = $state<ShoppingItem[]>([]);
+
+  // Estados para la edición de recetas favoritas
+  let isEditingFavTitle = $state(false);
+  let favRecipeToEdit = $state<any>(null);
+  let newFavTitle = $state("");
+  let editFavError = $state("");
 
   // Control de visibilidad del formulario de generación
   let showGeneratorForm = $state(true);
@@ -134,6 +142,18 @@
       if (recipe && recipe.title === title) {
         recipe = updated;
       }
+      // Actualizar en el historial
+      const index = history.findIndex(
+        (h) => h.title === title || h.recipe.title === title,
+      );
+      if (index !== -1) {
+        history[index] = {
+          ...history[index],
+          title: updated.title,
+          recipe: updated,
+        };
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      }
       refreshTabData();
     };
 
@@ -157,6 +177,65 @@
     ].slice(0, 20);
     history = next;
     localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(next));
+  }
+
+  function openEditFavTitleModal(recipeItem: any) {
+    favRecipeToEdit = recipeItem;
+    newFavTitle = recipeItem.title;
+    editFavError = "";
+    isEditingFavTitle = true;
+  }
+
+  function closeEditFavTitleModal() {
+    isEditingFavTitle = false;
+    favRecipeToEdit = null;
+    newFavTitle = "";
+    editFavError = "";
+  }
+
+  async function handleSaveFavTitle() {
+    const trimmedTitle = newFavTitle.trim();
+    if (!trimmedTitle) {
+      editFavError = "El título no puede estar vacío";
+      return;
+    }
+    if (!favRecipeToEdit) return;
+
+    try {
+      const oldTitle = favRecipeToEdit.title;
+      const updatedRecipe = {
+        ...favRecipeToEdit,
+        title: trimmedTitle,
+      };
+
+      await updateFavoriteRecipe(oldTitle, updatedRecipe);
+
+      // Emitir evento para sincronizar otros componentes
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("recipe-updated", {
+            detail: {
+              title: oldTitle,
+              recipe: updatedRecipe,
+            },
+          }),
+        );
+      }
+
+      closeEditFavTitleModal();
+      await refreshTabData();
+    } catch (err: any) {
+      editFavError = err.message || "Error al actualizar la receta";
+    }
+  }
+
+  async function handleRemoveFavorite(recipeItem: any) {
+    try {
+      await toggleFavorite(recipeItem);
+      await refreshTabData();
+    } catch (err: any) {
+      console.error("Error al quitar de favoritos:", err);
+    }
   }
 
   function addIngredient() {
@@ -819,30 +898,65 @@
       {:else}
         <div class="mt-8 grid gap-6 sm:grid-cols-2">
           {#each favoriteRecipes as fav}
-            <button
-              type="button"
-              onclick={() => openHistoryItem(fav.recipe)}
-              class="flex items-center gap-4 rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left shadow-sm hover:border-[var(--accent)] transition-all"
+            <div
+              class="group relative flex items-center gap-4 rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left shadow-sm hover:border-[var(--accent)] transition-all"
             >
-              <div
-                class="h-16 w-16 shrink-0 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-xl font-bold border border-red-100"
+              <!-- Enlace interactivo principal para abrir la receta -->
+              <button
+                type="button"
+                onclick={() => openHistoryItem(fav.recipe)}
+                class="flex flex-1 items-center gap-4 min-w-0 text-left cursor-pointer focus:outline-none"
               >
-                ❤️
-              </div>
-              <div class="flex-1 min-w-0">
-                <h4 class="font-bold text-[var(--text)] text-sm truncate">
-                  {fav.recipe.title}
-                </h4>
-                <p class="text-xs text-[var(--muted)] truncate mt-0.5">
-                  {fav.recipe.description}
-                </p>
-                <span
-                  class="inline-block mt-2 text-[0.625rem] font-bold text-red-600 bg-red-50 rounded-full px-2 py-0.5"
+                <div
+                  class="h-16 w-16 shrink-0 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-xl font-bold border border-red-100 group-hover:scale-105 transition-transform"
                 >
-                  ⏱ {fav.recipe.prepMinutes + fav.recipe.cookMinutes} min
-                </span>
+                  ❤️
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4
+                    class="font-bold text-[var(--text)] text-sm truncate pr-16 group-hover:text-[var(--accent)] transition-colors"
+                  >
+                    {fav.recipe.title}
+                  </h4>
+                  <p class="text-xs text-[var(--muted)] truncate mt-0.5 pr-16">
+                    {fav.recipe.description}
+                  </p>
+                  <span
+                    class="inline-block mt-2 text-[0.625rem] font-bold text-red-600 bg-red-50 rounded-full px-2 py-0.5"
+                  >
+                    ⏱ {fav.recipe.prepMinutes + fav.recipe.cookMinutes} min
+                  </span>
+                </div>
+              </button>
+
+              <!-- Botones de Acción flotantes -->
+              <div
+                class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100 transition-opacity z-10"
+              >
+                <!-- Editar Título -->
+                <button
+                  type="button"
+                  onclick={() => openEditFavTitleModal(fav.recipe)}
+                  class="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                  title="Editar título"
+                  aria-label="Editar título de receta"
+                >
+                  <span class="material-symbols-outlined text-sm">edit</span>
+                </button>
+                <!-- Quitar de Favoritos -->
+                <button
+                  type="button"
+                  onclick={() => handleRemoveFavorite(fav.recipe)}
+                  class="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 border border-red-100 text-red-500 hover:bg-red-100 shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-400"
+                  title="Quitar de favoritos"
+                  aria-label="Quitar de favoritos"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >heart_broken</span
+                  >
+                </button>
               </div>
-            </button>
+            </div>
           {/each}
         </div>
       {/if}
@@ -987,6 +1101,75 @@
       >
         Deshacer
       </button>
+    </div>
+  {/if}
+
+  <!-- Modal de Edición de Título Favorito -->
+  {#if isEditingFavTitle && favRecipeToEdit}
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        class="w-full max-w-md overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-2xl animate-fade-in-up"
+      >
+        <h3
+          class="text-lg font-bold text-[var(--text)] mb-2 flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-[var(--accent)]"
+            >edit_note</span
+          >
+          Editar título de la receta
+        </h3>
+        <p class="text-xs text-[var(--muted)] mb-4">
+          Modifica el nombre con el que se guardará esta receta en tus
+          favoritos.
+        </p>
+
+        {#if editFavError}
+          <div
+            class="mb-4 rounded-xl bg-red-50 border border-red-100 p-3 text-xs font-semibold text-red-600"
+          >
+            {editFavError}
+          </div>
+        {/if}
+
+        <div class="mb-6">
+          <label
+            for="fav-title-input"
+            class="block text-xs font-bold text-[var(--text)] mb-2 tracking-wide uppercase"
+          >
+            Título de la receta
+          </label>
+          <input
+            id="fav-title-input"
+            type="text"
+            bind:value={newFavTitle}
+            class="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm font-medium text-[var(--text)] focus:border-[var(--accent)] focus:outline-none transition-colors"
+            placeholder="Escribe el nuevo título..."
+            required
+            onkeydown={(e) => e.key === "Enter" && handleSaveFavTitle()}
+          />
+        </div>
+
+        <div class="flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onclick={closeEditFavTitleModal}
+            class="rounded-2xl border border-[var(--border)] px-4 py-2.5 text-xs font-bold text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--surface)]/80 transition-all cursor-pointer"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onclick={handleSaveFavTitle}
+            class="rounded-2xl bg-[var(--accent)] hover:bg-[var(--accent)]/90 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[var(--accent)]/20 hover:scale-[1.02] active:scale-98 transition-all cursor-pointer"
+          >
+            Guardar cambios
+          </button>
+        </div>
+      </div>
     </div>
   {/if}
 </div>
