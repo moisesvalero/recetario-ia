@@ -32,10 +32,11 @@
             onclick={() => onSelect(item)}
           >
             <img
-              src={getRecipeImageUrl(
-                item.title,
-                item.ingredients.map((i) => i.item),
-              )}
+              src={item.customImage ||
+                getRecipeImageUrl(
+                  item.title,
+                  item.ingredients.map((i) => i.item),
+                )}
               alt=""
               class="h-14 w-14 shrink-0 rounded-lg object-cover"
             />

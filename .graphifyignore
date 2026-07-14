@@ -1,0 +1,16 @@
+# .graphifyignore
+.git/
+.github/
+.agents/
+.claude/
+.astro/
+.vercel/
+.husky/
+node_modules/
+dist/
+graphify-out/
+public/
+*.log
+*.txt
+*.yaml
+*.json

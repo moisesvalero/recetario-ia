@@ -474,6 +474,110 @@ export async function isFavorite(title: string): Promise<boolean> {
   return favs.some((f) => f.title === title);
 }
 
+export async function updateFavoriteRecipe(
+  oldTitle: string,
+  updatedRecipe: any,
+): Promise<void> {
+  const currentUser = getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Debes iniciar sesión para editar recetas");
+  }
+
+  if (isAppwriteActive()) {
+    // 1. Actualizar favoritos en las preferencias de Appwrite
+    const favs = appwritePrefsCache.favorites || [];
+    const index = favs.findIndex((f: any) => f.title === oldTitle);
+    if (index !== -1) {
+      favs[index] = updatedRecipe;
+    }
+    const newPrefs = { ...appwritePrefsCache, favorites: favs };
+    await account.updatePrefs(newPrefs);
+    appwritePrefsCache = newPrefs;
+
+    // 2. Si también está en la base de datos de recetas guardadas, la actualizamos
+    try {
+      const response = await databases.listDocuments(
+        APPWRITE_CONFIG.databaseId,
+        APPWRITE_CONFIG.collectionRecetas,
+        [Query.limit(100)],
+      );
+
+      const docToUpdate = response.documents.find((doc) => {
+        try {
+          const r = JSON.parse(doc.recipeJson);
+          return r.title === oldTitle;
+        } catch {
+          return false;
+        }
+      });
+
+      if (docToUpdate) {
+        await databases.updateDocument(
+          APPWRITE_CONFIG.databaseId,
+          APPWRITE_CONFIG.collectionRecetas,
+          docToUpdate.$id,
+          {
+            recipeJson: JSON.stringify(updatedRecipe),
+          },
+        );
+      }
+    } catch (err) {
+      console.error("Error al actualizar receta guardada en Appwrite:", err);
+    }
+    return;
+  }
+
+  // Local
+  if (typeof localStorage === "undefined") return;
+
+  // 1. Actualizar en favoritos
+  const rawFavs = localStorage.getItem(STORAGE_KEYS.FAVORITES);
+  if (rawFavs) {
+    try {
+      const allFavs: FavoriteRecipe[] = JSON.parse(rawFavs);
+      const updatedFavs = allFavs.map((f) => {
+        if (f.userId === currentUser.id && f.recipe.title === oldTitle) {
+          return {
+            ...f,
+            title: updatedRecipe.title,
+            recipe: updatedRecipe,
+          };
+        }
+        return f;
+      });
+      localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(updatedFavs));
+    } catch (err) {
+      console.error("Error al actualizar favoritos en localStorage:", err);
+    }
+  }
+
+  // 2. Actualizar en biblioteca de recetas guardadas (SavedRecipe)
+  const rawSaved = localStorage.getItem(STORAGE_KEYS.SAVED_RECIPES);
+  if (rawSaved) {
+    try {
+      const allSaved: SavedRecipe[] = JSON.parse(rawSaved);
+      const updatedSaved = allSaved.map((r) => {
+        if (r.userId === currentUser.id && r.recipe.title === oldTitle) {
+          return {
+            ...r,
+            recipe: updatedRecipe,
+          };
+        }
+        return r;
+      });
+      localStorage.setItem(
+        STORAGE_KEYS.SAVED_RECIPES,
+        JSON.stringify(updatedSaved),
+      );
+    } catch (err) {
+      console.error(
+        "Error al actualizar recetas guardadas en localStorage:",
+        err,
+      );
+    }
+  }
+}
+
 // LISTA DE COMPRAS
 export async function getShoppingList(): Promise<ShoppingItem[]> {
   const currentUser = getCurrentUser();

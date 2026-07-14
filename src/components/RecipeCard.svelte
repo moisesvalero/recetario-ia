@@ -7,13 +7,14 @@
     toggleFavorite as saveFavorite,
     saveRecipe,
     addToShoppingList,
+    updateFavoriteRecipe,
   } from "../lib/auth";
   import { exportToPdf } from "../lib/pdf-generator";
   import { addToMenu } from "../lib/menu-storage";
   import { getWeekStart } from "../lib/menu-schema";
 
   let {
-    recipe,
+    recipe: initialRecipe,
     viewMode = "steps",
     onViewModeChange,
     onStartCooking,
@@ -23,6 +24,12 @@
     onViewModeChange?: (mode: "steps" | "cook") => void;
     onStartCooking?: () => void;
   } = $props();
+
+  let localRecipe = $state(initialRecipe);
+  $effect(() => {
+    localRecipe = initialRecipe;
+  });
+  const recipe = $derived(localRecipe);
 
   let isFav = $state(false);
   let statusMessage = $state("");
@@ -43,10 +50,11 @@
 
   const totalMinutes = $derived(recipe.prepMinutes + recipe.cookMinutes);
   const imageUrl = $derived(
-    getRecipeImageUrl(
-      recipe.title,
-      recipe.ingredients.map((i) => i.item),
-    ),
+    recipe.customImage ||
+      getRecipeImageUrl(
+        recipe.title,
+        recipe.ingredients.map((i) => i.item),
+      ),
   );
 
   async function handleToggleFavorite() {
@@ -181,6 +189,159 @@
       showStatus(err?.message || "Error al añadir al menú", "error");
     }
   }
+
+  // ── Edición de receta favorita y Webcam ────────────────
+  let isEditing = $state(false);
+  let editTitle = $state("");
+  let editImage = $state<string | null>(null);
+  let isCameraActive = $state(false);
+  let cameraStream = $state<MediaStream | null>(null);
+  let videoElement = $state<HTMLVideoElement | null>(null);
+  let cameraError = $state("");
+
+  function resizeAndCompressImage(
+    fileOrDataUrl: File | string,
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 600;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+          resolve(dataUrl);
+        } else {
+          reject(new Error("No se pudo obtener el contexto del canvas"));
+        }
+      };
+
+      img.onerror = () => reject(new Error("No se pudo cargar la imagen"));
+
+      if (fileOrDataUrl instanceof File) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target?.result as string;
+        };
+        reader.onerror = () => reject(new Error("No se pudo leer el archivo"));
+        reader.readAsDataURL(fileOrDataUrl);
+      } else {
+        img.src = fileOrDataUrl;
+      }
+    });
+  }
+
+  function openEditModal() {
+    editTitle = recipe.title;
+    editImage = recipe.customImage || null;
+    isEditing = true;
+    cameraError = "";
+  }
+
+  function closeEditModal() {
+    stopCamera();
+    isEditing = false;
+  }
+
+  async function startCamera() {
+    cameraError = "";
+    isCameraActive = true;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+        },
+        audio: false,
+      });
+      cameraStream = stream;
+      if (videoElement) {
+        videoElement.srcObject = stream;
+      }
+    } catch (err: any) {
+      console.error("Error al acceder a la cámara:", err);
+      cameraError = "No se pudo acceder a la cámara. Comprueba los permisos.";
+      isCameraActive = false;
+    }
+  }
+
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      cameraStream = null;
+    }
+    isCameraActive = false;
+  }
+
+  async function capturePhoto() {
+    if (!videoElement) return;
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoElement.videoWidth || 640;
+      canvas.height = videoElement.videoHeight || 480;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        editImage = await resizeAndCompressImage(dataUrl);
+      }
+      stopCamera();
+    } catch (err: any) {
+      console.error("Error al capturar foto:", err);
+      cameraError = "Error al capturar la foto.";
+    }
+  }
+
+  async function handleFileSelect(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+    try {
+      editImage = await resizeAndCompressImage(file);
+    } catch (err: any) {
+      showStatus("Error al procesar la imagen seleccionada", "error");
+    }
+  }
+
+  async function handleSaveEdit() {
+    const trimmedTitle = editTitle.trim();
+    if (!trimmedTitle) {
+      showStatus("El título no puede estar vacío", "error");
+      return;
+    }
+
+    try {
+      const updatedRecipe = {
+        ...recipe,
+        title: trimmedTitle,
+        customImage: editImage,
+      };
+
+      await updateFavoriteRecipe(recipe.title, updatedRecipe);
+      localRecipe = updatedRecipe;
+      showStatus("¡Receta editada con éxito! ✏️", "success");
+      closeEditModal();
+    } catch (err: any) {
+      showStatus(err.message || "Error al guardar los cambios", "error");
+    }
+  }
 </script>
 
 <article
@@ -207,6 +368,16 @@
     <div class="p-4 pl-6 pr-2 sm:p-6 flex flex-col gap-6">
       <!-- Polaroid Image -->
       <div class="relative polaroid w-full rotate-[-1.5deg] max-w-sm mx-auto">
+        {#if isFav}
+          <button
+            type="button"
+            onclick={openEditModal}
+            class="absolute top-4 left-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white text-[var(--text)] shadow-md transition-all hover:scale-105 active:scale-95 print-hidden border border-black/5 cursor-pointer"
+            aria-label="Editar receta favorita"
+          >
+            <span class="material-symbols-outlined text-base">edit</span>
+          </button>
+        {/if}
         <img
           src={imageUrl}
           alt={recipe.title}
@@ -593,6 +764,160 @@
               onclick={() => (showAuthPrompt = false)}
             >
               Seguir explorando
+            </button>
+          </div>
+        </div>
+      </div>
+    {/if}
+
+    {#if isEditing}
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+        onclick={closeEditModal}
+      >
+        <div
+          class="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl notebook-paper"
+          onclick={(e) => e.stopPropagation()}
+        >
+          <h3
+            class="font-handwritten text-2xl font-bold text-[var(--text)] mb-4"
+          >
+            Editar Receta Favorita
+          </h3>
+
+          <div class="space-y-4">
+            <!-- Campo Título -->
+            <div>
+              <label
+                class="block font-mono text-[0.625rem] font-bold text-[var(--muted)] uppercase tracking-wider mb-1"
+                for="edit-title"
+              >
+                Nombre de la receta
+              </label>
+              <input
+                id="edit-title"
+                type="text"
+                bind:value={editTitle}
+                class="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm font-handwritten text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+                placeholder="Ej. Tacos de Pollo"
+              />
+            </div>
+
+            <!-- Campo Foto/Cámara -->
+            <div>
+              <label
+                class="block font-mono text-[0.625rem] font-bold text-[var(--muted)] uppercase tracking-wider mb-2"
+              >
+                Foto de la receta
+              </label>
+
+              {#if isCameraActive}
+                <div
+                  class="relative overflow-hidden rounded-2xl bg-black aspect-[4/3] flex items-center justify-center mb-3"
+                >
+                  <!-- svelte-ignore a11y_media_has_caption -->
+                  <video
+                    bind:this={videoElement}
+                    autoplay
+                    playsinline
+                    class="w-full h-full object-cover"
+                  ></video>
+                  <div
+                    class="absolute bottom-4 left-0 right-0 flex justify-center gap-3"
+                  >
+                    <button
+                      type="button"
+                      onclick={capturePhoto}
+                      class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--accent)] text-white shadow-md hover:bg-[var(--accent-hover)] transition active:scale-95 cursor-pointer"
+                      aria-label="Capturar foto"
+                    >
+                      <span class="material-symbols-outlined text-xl"
+                        >photo_camera</span
+                      >
+                    </button>
+                    <button
+                      type="button"
+                      onclick={stopCamera}
+                      class="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white shadow-md hover:bg-slate-700 transition active:scale-95 cursor-pointer"
+                      aria-label="Cancelar cámara"
+                    >
+                      <span class="material-symbols-outlined text-xl"
+                        >close</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              {:else}
+                <div
+                  class="relative polaroid w-48 mx-auto rotate-[-0.5deg] mb-3"
+                >
+                  <img
+                    src={editImage ||
+                      getRecipeImageUrl(
+                        recipe.title,
+                        recipe.ingredients.map((i) => i.item),
+                      )}
+                    alt="Vista previa"
+                    class="w-full aspect-[4/3] object-cover rounded"
+                  />
+                </div>
+
+                {#if cameraError}
+                  <p class="text-red-500 text-xs font-mono mb-2 text-center">
+                    {cameraError}
+                  </p>
+                {/if}
+
+                <div class="flex justify-center gap-2">
+                  <!-- Botón de subir archivo -->
+                  <label
+                    class="flex items-center gap-1.5 rounded-xl border border-dashed border-[var(--border)] bg-white px-3 py-2 text-xs font-mono font-bold uppercase text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 transition cursor-pointer active:scale-95"
+                  >
+                    <span class="material-symbols-outlined text-base"
+                      >image</span
+                    >
+                    Galería
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onchange={handleFileSelect}
+                      class="hidden"
+                    />
+                  </label>
+
+                  <!-- Botón de cámara -->
+                  <button
+                    type="button"
+                    onclick={startCamera}
+                    class="flex items-center gap-1.5 rounded-xl border border-dashed border-[var(--border)] bg-white px-3 py-2 text-xs font-mono font-bold uppercase text-[var(--text)] shadow-sm hover:bg-[var(--accent-soft)]/20 transition active:scale-95 cursor-pointer"
+                  >
+                    <span class="material-symbols-outlined text-base"
+                      >photo_camera</span
+                    >
+                    Cámara
+                  </button>
+                </div>
+              {/if}
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="mt-6 flex gap-2">
+            <button
+              type="button"
+              onclick={handleSaveEdit}
+              class="h-10 flex-1 rounded-xl bg-[var(--accent)] text-xs font-mono font-bold uppercase tracking-wider text-white shadow-sm hover:bg-[var(--accent-hover)] transition active:scale-95 cursor-pointer"
+            >
+              Guardar
+            </button>
+            <button
+              type="button"
+              onclick={closeEditModal}
+              class="h-10 flex-1 rounded-xl border border-[var(--border)] text-xs font-mono font-bold uppercase tracking-wider text-[var(--text)] hover:bg-[var(--surface-muted)] transition active:scale-95 cursor-pointer"
+            >
+              Cancelar
             </button>
           </div>
         </div>

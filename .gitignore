@@ -33,3 +33,6 @@ install2-exit.txt
 
 # jetbrains setting folder
 .idea/
+
+# graphify
+graphify-out/
