@@ -1,5 +1,6 @@
 // Service Worker para Umami PWA
-const CACHE_NAME = "umami-cache-v3";
+const CACHE_NAME = "umami-cache-v4";
+
 const ASSETS = ["/", "/favicon.svg", "/favicon.ico", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

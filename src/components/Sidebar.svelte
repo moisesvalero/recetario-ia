@@ -29,7 +29,8 @@
   class="
     fixed lg:static inset-y-0 left-0 z-50
     w-64 shrink-0 flex flex-col border-r border-dashed border-[var(--border)] bg-[var(--surface-muted)]
-    h-screen lg:min-h-screen justify-between py-6 transition-transform duration-300 ease-in-out
+    h-dvh lg:min-h-dvh justify-between py-6 transition-transform duration-300 ease-in-out
+    overflow-y-auto
     {navState.mobileMenuOpen
     ? 'translate-x-0'
     : '-translate-x-full lg:translate-x-0'}

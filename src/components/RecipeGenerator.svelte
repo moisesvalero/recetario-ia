@@ -126,6 +126,23 @@
     });
   });
 
+  // Efecto para escuchar la actualización de recetas desde el componente hijo
+  $effect(() => {
+    if (typeof window === "undefined") return;
+    const handleRecipeUpdated = (e: any) => {
+      const { title, recipe: updated } = e.detail;
+      if (recipe && recipe.title === title) {
+        recipe = updated;
+      }
+      refreshTabData();
+    };
+
+    window.addEventListener("recipe-updated", handleRecipeUpdated);
+    return () => {
+      window.removeEventListener("recipe-updated", handleRecipeUpdated);
+    };
+  });
+
   async function refreshTabData() {
     if (typeof window === "undefined") return;
     savedRecipes = await getSavedRecipes();

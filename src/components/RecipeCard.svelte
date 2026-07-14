@@ -208,7 +208,7 @@
         const canvas = document.createElement("canvas");
         let width = img.width;
         let height = img.height;
-        const maxDim = 600;
+        const maxDim = 400;
 
         if (width > maxDim || height > maxDim) {
           if (width > height) {
@@ -225,7 +225,7 @@
         const ctx = canvas.getContext("2d");
         if (ctx) {
           ctx.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
           resolve(dataUrl);
         } else {
           reject(new Error("No se pudo obtener el contexto del canvas"));
@@ -337,6 +337,18 @@
       await updateFavoriteRecipe(recipe.title, updatedRecipe);
       localRecipe = updatedRecipe;
       showStatus("¡Receta editada con éxito! ✏️", "success");
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("recipe-updated", {
+            detail: {
+              title: recipe.title,
+              recipe: updatedRecipe,
+            },
+          }),
+        );
+      }
+
       closeEditModal();
     } catch (err: any) {
       showStatus(err.message || "Error al guardar los cambios", "error");
@@ -350,7 +362,7 @@
   <!-- Mensaje de estado -->
   {#if statusMessage}
     <div
-      class="fixed bottom-6 right-6 z-50 rounded bg-[var(--text)] p-4 text-xs font-bold text-white shadow-lg transition-all duration-300 flex items-center gap-2"
+      class="fixed bottom-6 right-6 z-[100] rounded bg-[var(--text)] p-4 text-xs font-bold text-white shadow-lg transition-all duration-300 flex items-center gap-2"
     >
       {#if statusType === "success"}
         ✓
@@ -774,11 +786,11 @@
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm overflow-y-auto"
         onclick={closeEditModal}
       >
         <div
-          class="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl notebook-paper"
+          class="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl notebook-paper my-auto"
           onclick={(e) => e.stopPropagation()}
         >
           <h3
@@ -815,7 +827,7 @@
 
               {#if isCameraActive}
                 <div
-                  class="relative overflow-hidden rounded-2xl bg-black aspect-[4/3] flex items-center justify-center mb-3"
+                  class="relative w-full overflow-hidden rounded-2xl bg-black aspect-[4/3] flex items-center justify-center mb-3"
                 >
                   <!-- svelte-ignore a11y_media_has_caption -->
                   <video
