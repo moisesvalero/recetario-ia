@@ -42,7 +42,7 @@
     "prettier": "^3.9.5",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-svelte": "^3.4.0",
-    "typescript": "^5.9.2",
+    "typescript": "^6.0.3",
     "vercel": "^54.15.0",
     "vitest": "^3.2.4"
   },
