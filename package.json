@@ -23,7 +23,7 @@
     "@ai-sdk/google": "^2.0.20",
     "@ai-sdk/openai": "^2.0.52",
     "@astrojs/svelte": "^8.0.0",
-    "@astrojs/vercel": "^11.0.2",
+    "@astrojs/vercel": "^11.0.3",
     "@tailwindcss/vite": "^4.3.2",
     "ai": "^5.0.76",
     "appwrite": "^26.1.0",
