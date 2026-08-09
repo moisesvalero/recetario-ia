@@ -43,7 +43,7 @@
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-svelte": "^3.4.0",
     "typescript": "^5.9.2",
-    "vercel": "^54.15.0",
+    "vercel": "^58.7.1",
     "vitest": "^3.2.4"
   },
   "lint-staged": {
