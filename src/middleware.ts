@@ -19,7 +19,7 @@ export const onRequest = defineMiddleware(async (_context, next) => {
   );
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.appwrite.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://cloud.appwrite.io https://generativelanguage.googleapis.com https://openrouter.ai https://accounts.google.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://cloud.appwrite.io https://accounts.google.com;",
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.appwrite.io https://fra.cloud.appwrite.io https://cloud.appwrite.io https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: https://*.googleusercontent.com https://*.appwrite.io; connect-src 'self' https://*.appwrite.io https://fra.cloud.appwrite.io https://cloud.appwrite.io https://generativelanguage.googleapis.com https://openrouter.ai https://accounts.google.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://*.appwrite.io https://fra.cloud.appwrite.io https://cloud.appwrite.io https://accounts.google.com;",
   );
   if (!response.headers.has("Cache-Control")) {
     response.headers.set(

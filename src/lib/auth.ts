@@ -94,11 +94,13 @@ export async function initAuth(): Promise<User | null> {
     }
     return appwriteUserCache;
   } catch {
+    const cached = getCurrentUser();
+    if (cached) {
+      appwriteUserCache = cached;
+      return cached;
+    }
     appwriteUserCache = null;
     appwritePrefsCache = {};
-    if (typeof localStorage !== "undefined") {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-    }
     return null;
   }
 }
@@ -762,11 +764,7 @@ export async function loginWithOAuth(provider: "google"): Promise<void> {
   const successRedirect = window.location.origin + "/?oauth=success";
   const failureRedirect = window.location.origin + "/?oauth_error=true";
 
-  try {
-    account.createOAuth2Token(provider as any, successRedirect, failureRedirect);
-  } catch {
-    account.createOAuth2Session(provider as any, successRedirect, failureRedirect);
-  }
+  account.createOAuth2Session(OAuthProvider.Google, successRedirect, failureRedirect);
 }
 
 export async function handleOAuthCallback(): Promise<User | null> {

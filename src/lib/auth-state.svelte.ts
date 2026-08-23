@@ -32,7 +32,9 @@ class AuthState {
     }
 
     const user = await initAuth();
-    this.currentUser = user;
+    if (user) {
+      this.currentUser = user;
+    }
     this.isInitialized = true;
   }
 
