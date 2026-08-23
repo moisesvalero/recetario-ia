@@ -11,16 +11,15 @@ export const onRequest = defineMiddleware(async (_context, next) => {
     "Permissions-Policy",
     "camera=(self), microphone=(), geolocation=(), payment=(), usb=()",
   );
-  response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
-  response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
-  response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+  response.headers.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  response.headers.set("Cross-Origin-Resource-Policy", "cross-origin");
   response.headers.set(
     "Strict-Transport-Security",
     "max-age=31536000; includeSubDomains; preload",
   );
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.appwrite.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://cloud.appwrite.io https://generativelanguage.googleapis.com https://openrouter.ai; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self';",
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.appwrite.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://cloud.appwrite.io https://generativelanguage.googleapis.com https://openrouter.ai https://accounts.google.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://cloud.appwrite.io https://accounts.google.com;",
   );
   if (!response.headers.has("Cache-Control")) {
     response.headers.set(

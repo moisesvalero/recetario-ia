@@ -86,16 +86,26 @@ export async function initAuth(): Promise<User | null> {
       avatarUrl: prefs.avatar || "🥑",
       createdAt: user.registration,
     };
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        STORAGE_KEYS.CURRENT_USER,
+        JSON.stringify(appwriteUserCache),
+      );
+    }
     return appwriteUserCache;
   } catch {
     appwriteUserCache = null;
+    appwritePrefsCache = {};
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    }
     return null;
   }
 }
 
 // Síncrona para renderizado rápido
 export function getCurrentUser(): User | null {
-  if (isAppwriteActive()) {
+  if (appwriteUserCache) {
     return appwriteUserCache;
   }
 
@@ -103,7 +113,11 @@ export function getCurrentUser(): User | null {
   const raw = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
   if (!raw) return null;
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (isAppwriteActive() && !appwriteUserCache) {
+      appwriteUserCache = parsed;
+    }
+    return parsed;
   } catch {
     return null;
   }
@@ -149,6 +163,12 @@ export async function registerUser(
       avatarUrl: avatar,
       createdAt: user.registration,
     };
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        STORAGE_KEYS.CURRENT_USER,
+        JSON.stringify(appwriteUserCache),
+      );
+    }
     return appwriteUserCache;
   }
 
@@ -197,6 +217,12 @@ export async function loginUser(
       avatarUrl: prefs.avatar || "🥑",
       createdAt: user.registration,
     };
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        STORAGE_KEYS.CURRENT_USER,
+        JSON.stringify(appwriteUserCache),
+      );
+    }
     return appwriteUserCache;
   }
 
@@ -213,9 +239,14 @@ export async function loginUser(
 
 export async function logoutUser(): Promise<void> {
   if (isAppwriteActive()) {
-    await account.deleteSession("current");
+    try {
+      await account.deleteSession("current");
+    } catch {}
     appwriteUserCache = null;
     appwritePrefsCache = {};
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    }
     return;
   }
 
@@ -244,6 +275,12 @@ export async function updateCurrentUser(
       avatarUrl,
       createdAt: user.registration,
     };
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        STORAGE_KEYS.CURRENT_USER,
+        JSON.stringify(appwriteUserCache),
+      );
+    }
     return appwriteUserCache;
   }
 
@@ -725,7 +762,11 @@ export async function loginWithOAuth(provider: "google"): Promise<void> {
   const successRedirect = window.location.origin + "/?oauth=success";
   const failureRedirect = window.location.origin + "/?oauth_error=true";
 
-  account.createOAuth2Token(provider as any, successRedirect, failureRedirect);
+  try {
+    account.createOAuth2Token(provider as any, successRedirect, failureRedirect);
+  } catch {
+    account.createOAuth2Session(provider as any, successRedirect, failureRedirect);
+  }
 }
 
 export async function handleOAuthCallback(): Promise<User | null> {
@@ -754,11 +795,15 @@ export async function handleOAuthCallback(): Promise<User | null> {
     try {
       await account.createSession(userId!, secret!);
       cleanOAuthUrl();
-      return await initAuth();
+      const user = await initAuth();
+      if (user && typeof localStorage !== "undefined") {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      }
+      return user;
     } catch (err: any) {
       cleanOAuthUrl();
       throw new Error(
-        "No se pudo completar el inicio de sesión con Google. " +
+        "No se pudo completar el inicio de sesión con Google: " +
           (err?.message || "Inténtalo de nuevo."),
       );
     }
@@ -766,6 +811,11 @@ export async function handleOAuthCallback(): Promise<User | null> {
 
   if (oauthSuccess) {
     cleanOAuthUrl();
+    const user = await initAuth();
+    if (user && typeof localStorage !== "undefined") {
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+    }
+    return user;
   }
 
   return null;
