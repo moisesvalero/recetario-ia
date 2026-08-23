@@ -15,10 +15,7 @@ const projectId = PUBLIC_APPWRITE_PROJECT_ID || "";
 if (projectId) {
   client.setEndpoint(endpoint).setProject(projectId);
   if (typeof window !== "undefined") {
-    client
-      .ping()
-      .then(() => console.log("Appwrite setup verified successfully."))
-      .catch((err) => console.warn("Appwrite setup verification failed:", err));
+    client.ping().catch(() => {});
   }
 }
 

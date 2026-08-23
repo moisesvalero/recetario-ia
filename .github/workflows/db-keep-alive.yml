@@ -1,0 +1,22 @@
+name: Database Keep Alive
+
+on:
+  schedule:
+    # Se ejecuta todos los lunes y jueves a las 06:00 UTC
+    - cron: '0 6 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Appwrite Keep-Alive Endpoint
+        run: |
+          echo "Ejecutando ping a la base de datos de Recetario IA..."
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://recetario.moisesvalero.es/api/keep-alive || true)
+          echo "Respuesta del endpoint keep-alive: $STATUS_CODE"
+          if [ "$STATUS_CODE" -eq 200 ]; then
+            echo "✅ Ping exitoso. Base de datos activa."
+          else
+            echo "⚠️ Aviso: el endpoint devolvió código $STATUS_CODE"
+          fi

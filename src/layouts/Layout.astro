@@ -8,10 +8,99 @@ import PwaInstallBanner from "../components/PwaInstallBanner.svelte";
 
 interface Props {
   title?: string;
+  description?: string;
   active?: "home" | "recetas";
 }
 
-const { title } = Astro.props;
+const DEFAULT_TITLE = "Recetario IA — Generador de Recetas con Inteligencia Artificial";
+const DEFAULT_DESCRIPTION =
+  "Crea deliciosas recetas personalizadas con inteligencia artificial usando lo que tienes en tu nevera. Planifica menús y cocina paso a paso con timers.";
+
+const { title, description } = Astro.props;
+
+const pageTitle = title
+  ? title.length < 30
+    ? `${title} — Recetario IA Chef Inteligente`
+    : title
+  : DEFAULT_TITLE;
+
+const pageDescription = description ?? DEFAULT_DESCRIPTION;
+
+const siteUrl = "https://recetario.moisesvalero.es";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImageUrl = `${siteUrl}/screenshot.png`;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": `${siteUrl}/#app`,
+      "name": "Recetario IA",
+      "url": siteUrl,
+      "description": pageDescription,
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "All",
+      "inLanguage": "es",
+      "datePublished": "2026-01-01",
+      "dateModified": "2026-08-23",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR",
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Moisés Valero",
+        "url": "https://github.com/moisesvalero",
+        "jobTitle": "Full Stack Developer",
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "Recetario IA",
+        "url": siteUrl,
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      "url": siteUrl,
+      "name": "Recetario IA",
+      "description": pageDescription,
+      "inLanguage": "es",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${siteUrl}/#faq`,
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cómo funciona el generador de recetas de Recetario IA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Introduces los ingredientes que tienes en tu cocina o nevera, seleccionas tus preferencias dietéticas y tiempo disponible, y la inteligencia artificial genera una receta detallada con pasos, cantidades exactas y temporizadores.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "¿Es gratis utilizar Recetario IA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, Recetario IA es completamente gratuito y de código abierto. Puedes generar recetas, planificar tu menú semanal y descargar tus fichas en PDF sin coste.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo guardar mis recetas favoritas y descargarlas en PDF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Al crear una cuenta gratuita puedes guardar tus recetas en favoritos, sincronizarlas en la nube y generar documentos PDF maquetados para imprimir.",
+          },
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -24,20 +113,63 @@ const { title } = Astro.props;
     />
     <meta name="screen-orientation" content="portrait landscape" />
 
-    <meta
-      name="description"
-      content="Genera recetas con IA a partir de lo que tienes en la nevera."
-    />
+    <!-- SEO Básico -->
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="es" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+    <meta name="author" content="Moisés Valero" />
+    <meta name="publisher" content="Moisés Valero" />
+    <meta name="geo.region" content="ES" />
+    <meta name="geo.placename" content="España" />
+    <meta name="date" content="2026-08-23" />
+    <meta property="article:modified_time" content="2026-08-23T11:00:00+02:00" />
+
+    <!-- Open Graph / Redes Sociales -->
+    <meta property="og:site_name" content="Recetario IA" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Vista previa de Recetario IA" />
+    <meta property="og:locale" content="es_ES" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Vista previa de Recetario IA" />
+    <meta name="twitter:creator" content="@moisesvalero" />
+
+    <!-- Favicon & PWA -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#f4f3f8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Umami" />
+    <meta name="apple-mobile-web-app-title" content="Recetario IA" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <title>{title ?? "Umami — Tu Chef Inteligente"}</title>
+
+    <!-- Optimización de Fuentes y Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Plus+Jakarta+Sans:wght@400..800&family=Space+Mono:wght@400;700&display=swap"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Plus+Jakarta+Sans:wght@400..800&family=Space+Mono:wght@400;700&display=swap"
+    />
+
+    <!-- Datos Estructurados JSON-LD -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
   </head>
   <body class="min-h-dvh bg-[var(--bg)] font-body text-[var(--text)]">
     <div class="flex min-h-dvh overflow-x-hidden">
@@ -54,26 +186,18 @@ const { title } = Astro.props;
     <CookieConsent client:idle />
     <PwaInstallBanner client:idle />
 
-    <!-- Registro de Service Worker para PWA con Auto-update forzado -->
-    <script is:inline>
-      if (
-        "serviceWorker" in navigator &&
-        window.location.hostname !== "localhost"
-      ) {
+    <!-- Registro de Service Worker para PWA con script modular -->
+    <script is:inline type="module">
+      if ("serviceWorker" in navigator && window.location.protocol === "https:") {
         window.addEventListener("load", () => {
           navigator.serviceWorker
             .register("/sw.js")
             .then((reg) => {
-              console.log("Service Worker registrado:", reg.scope);
-              // Forzar comprobación de actualizaciones de forma activa
               reg.update();
             })
-            .catch((err) =>
-              console.error("Error al registrar el Service Worker:", err),
-            );
+            .catch(() => {});
         });
 
-        // Forzar recarga automática si el service worker se actualiza y toma el control
         let refreshing = false;
         navigator.serviceWorker.addEventListener("controllerchange", () => {
           if (!refreshing) {

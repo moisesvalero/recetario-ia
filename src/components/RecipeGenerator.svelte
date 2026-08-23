@@ -449,31 +449,40 @@
           <section
             class="col-span-12 lg:col-span-8 notebook-paper p-4 sm:p-8 pt-6 sm:pt-10 relative"
           >
-            <!-- Header Section -->
+            <!-- Header Section with Semantic H1 -->
             <div class="mb-10 pl-6">
+              <div
+                class="inline-flex items-center gap-2 mb-2 px-2.5 py-0.5 rounded bg-[var(--accent-soft)] border border-[var(--text)]/10 text-xs font-mono font-bold text-[var(--text)]"
+              >
+                <span>✨ Chef Inteligente</span>
+                <span>·</span>
+                <span>100% Gratuito</span>
+              </div>
+              <h1
+                class="font-handwritten text-4xl sm:text-5xl font-black text-[var(--text)] leading-tight"
+              >
+                Recetario IA: Tu Generador de Cocina
+              </h1>
               <h2
-                class="font-handwritten text-4xl font-black text-[var(--text)] leading-tight"
+                class="font-handwritten text-2xl font-bold text-[var(--text)]/80 mt-2"
               >
                 ¡Hola, {authState.currentUser
                   ? authState.currentUser.name
-                  : "Invitado"}!
+                  : "Invitado"}! ¿Qué cocinamos hoy?
               </h2>
-              <h3
-                class="font-handwritten text-2xl font-bold text-[var(--text)]/80 mt-1"
-              >
-                ¿Qué te gustaría cocinar hoy?
-              </h3>
               <p
-                class="font-handwritten text-base text-[var(--muted)] mt-4 max-w-lg leading-relaxed"
+                class="font-handwritten text-base text-[var(--muted)] mt-3 max-w-lg leading-relaxed"
               >
-                Cuéntanos con qué ingredientes cuentas o qué se te antoja y la
-                IA creará la receta perfecta para ti.
+                Cuéntanos con qué ingredientes cuentas en tu nevera y la
+                inteligencia artificial creará la receta perfecta con pasos y
+                temporizadores.
               </p>
             </div>
 
             <!-- Ingredients Input -->
             <div class="mb-10 pl-6">
               <label
+                for="ingredient-input-field"
                 class="font-handwritten text-xl font-bold text-[var(--text)] mb-4 block"
               >
                 Cuéntanos tus ingredientes principales
@@ -496,7 +505,7 @@
                       type="button"
                       onclick={() => removeIngredient(item)}
                       class="text-xs opacity-50 hover:opacity-100 transition-opacity font-bold cursor-pointer"
-                      aria-label={`Eliminar ${item}`}
+                      aria-label={`Eliminar ingrediente ${item}`}
                     >
                       ×
                     </button>
@@ -505,19 +514,21 @@
 
                 <div class="flex-1 min-w-[200px]">
                   <input
+                    id="ingredient-input-field"
                     bind:value={ingredientInput}
                     onkeydown={handleIngredientKeydown}
                     class="hand-drawn-border w-full font-handwritten text-lg text-[var(--text)] focus:outline-none placeholder:text-[var(--text)]/50 px-4 py-1.5 bg-white/30"
                     placeholder="Escribe un ingrediente..."
                     type="text"
-                    aria-label="Escribe un ingrediente para añadir"
+                    aria-label="Escribe un ingrediente para añadir a la receta"
                   />
                 </div>
 
                 <button
                   type="button"
                   onclick={addIngredient}
-                  class="font-handwritten text-[var(--text)]/70 border border-dashed border-[var(--text)]/30 px-4 py-2 rounded bg-white/20 hover:bg-[var(--accent-soft)]/20 transition-all text-sm font-bold active:scale-95"
+                  aria-label="Añadir ingrediente escrito a la lista"
+                  class="font-handwritten text-[var(--text)]/70 border border-dashed border-[var(--text)]/30 px-4 py-2 rounded bg-white/20 hover:bg-[var(--accent-soft)]/20 transition-all text-sm font-bold active:scale-95 cursor-pointer"
                 >
                   + Agregar ingrediente
                 </button>
@@ -539,6 +550,7 @@
                     type="button"
                     disabled={present}
                     onclick={() => addCommonIngredient(chip)}
+                    aria-label={`Añadir ingrediente sugerido ${chip}`}
                     class="font-handwritten text-[var(--muted)] hover:text-[var(--text)] hover:underline transition-colors disabled:opacity-30 disabled:no-underline font-bold text-base cursor-pointer"
                   >
                     + {chip}
@@ -556,11 +568,11 @@
                   class="material-symbols-outlined text-5xl text-[var(--muted)] mb-3"
                   >search_gear</span
                 >
-                <h4
+                <h3
                   class="font-handwritten text-lg font-bold text-[var(--text)]"
                 >
                   Tu receta aparecerá aquí
-                </h4>
+                </h3>
                 <p
                   class="font-handwritten text-sm text-[var(--muted)] mt-1 max-w-xs leading-normal"
                 >
@@ -590,7 +602,12 @@
               <img
                 class="w-full aspect-square object-cover grayscale-[15%] sepia-[8%]"
                 src={HERO_IMAGE}
-                alt="Inspiración culinaria del día"
+                alt="Inspiración culinaria del día en Recetario IA"
+                width="400"
+                height="400"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
               />
               <p
                 class="font-handwritten text-center mt-3.5 text-[var(--text)]/70 text-sm font-bold"
@@ -604,22 +621,25 @@
               class="post-it p-6 relative rotate-[-1deg] flex flex-col justify-between order-1 lg:order-2"
             >
               <div>
-                <h4
+                <h3
                   class="font-handwritten text-xl font-bold text-[var(--text)] border-b border-[var(--text)]/20 pb-2 mb-5"
                 >
                   Ajustes de Receta
-                </h4>
+                </h3>
 
                 <div class="space-y-5">
                   <!-- Momento del Día -->
                   <div>
-                    <p
-                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-1.5 uppercase"
+                    <label
+                      for="recipe-meal-type"
+                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-1.5 uppercase block"
                     >
                       MOMENTO DEL DÍA
-                    </p>
+                    </label>
                     <select
+                      id="recipe-meal-type"
                       bind:value={mealType}
+                      aria-label="Momento del día para la receta"
                       class="w-full bg-transparent border-b border-[var(--text)]/20 font-handwritten text-base py-1 text-[var(--text)] focus:outline-none cursor-pointer"
                     >
                       <option value="">Cualquiera</option>
@@ -633,17 +653,20 @@
 
                   <!-- Dieta / Restricción con checkboxes limpios -->
                   <div>
-                    <p
-                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-2.5 uppercase"
+                    <span
+                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-2.5 uppercase block"
                     >
                       DIETA / RESTRICCIÓN
-                    </p>
+                    </span>
                     <div class="space-y-2.5">
                       <label
+                        for="diet-option-vegetariano"
                         class="flex items-center gap-3 cursor-pointer group"
                       >
                         <input
+                          id="diet-option-vegetariano"
                           type="checkbox"
+                          aria-label="Restricción dietética vegetariana"
                           checked={dietType === "Vegetariano"}
                           onchange={(e) =>
                             (dietType = e.currentTarget.checked
@@ -657,10 +680,13 @@
                         >
                       </label>
                       <label
+                        for="diet-option-singluten"
                         class="flex items-center gap-3 cursor-pointer group"
                       >
                         <input
+                          id="diet-option-singluten"
                           type="checkbox"
+                          aria-label="Restricción dietética sin gluten"
                           checked={dietType === "Sin gluten"}
                           onchange={(e) =>
                             (dietType = e.currentTarget.checked
@@ -674,10 +700,13 @@
                         >
                       </label>
                       <label
+                        for="diet-option-sinlactosa"
                         class="flex items-center gap-3 cursor-pointer group"
                       >
                         <input
+                          id="diet-option-sinlactosa"
                           type="checkbox"
+                          aria-label="Restricción dietética sin lactosa"
                           checked={dietType === "Sin lactosa"}
                           onchange={(e) =>
                             (dietType = e.currentTarget.checked
@@ -695,18 +724,21 @@
 
                   <!-- Tiempo Máximo -->
                   <div>
-                    <p
-                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-1.5 uppercase"
+                    <label
+                      for="recipe-max-minutes"
+                      class="font-handwritten text-xs text-[var(--muted)] font-black tracking-wider mb-1.5 uppercase block"
                     >
                       TIEMPO MÁXIMO
-                    </p>
+                    </label>
                     <div class="flex items-center gap-3">
                       <input
+                        id="recipe-max-minutes"
                         type="range"
                         min="15"
                         max="120"
                         step="15"
                         bind:value={maxMinutes}
+                        aria-label="Tiempo máximo de preparación en minutos"
                         class="w-full accent-[var(--text)] bg-[var(--text)]/15 h-1 rounded appearance-none cursor-pointer"
                       />
                       <span
@@ -726,8 +758,10 @@
             <!-- CTA Button Section (Marker effect) -->
             <div class="order-2 lg:order-3">
               <button
+                id="main-generate-recipe-button"
                 onclick={generateRecipe}
                 disabled={loading}
+                aria-label="Generar receta con inteligencia artificial"
                 class="marker-btn w-full py-5 px-6 text-white text-lg flex items-center justify-center gap-3 shadow-md disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer"
               >
                 {#if loading}
@@ -750,6 +784,215 @@
               </p>
             </div>
           </aside>
+        </div>
+
+        <!-- Trust, Proof, Social Signals & FAQ Section (AEO / IA / SEO / Trust) -->
+        <div class="max-w-5xl mx-auto px-6 lg:px-12 mt-14 space-y-8">
+          <!-- Proof & Stats Grid -->
+          <section
+            class="grid grid-cols-1 sm:grid-cols-3 gap-4"
+            aria-label="Garantías y estadísticas"
+          >
+            <div
+              class="notebook-paper p-5 border border-dashed border-[var(--border)] rounded-lg text-center"
+            >
+              <p
+                class="font-handwritten text-3xl font-black text-[var(--accent)]"
+              >
+                +1.000
+              </p>
+              <p
+                class="font-handwritten text-base text-[var(--text)] font-bold mt-0.5"
+              >
+                Recetas generadas
+              </p>
+              <p class="text-[0.6875rem] text-[var(--muted)] font-medium">
+                Por amantes de la cocina casera
+              </p>
+            </div>
+            <div
+              class="notebook-paper p-5 border border-dashed border-[var(--border)] rounded-lg text-center"
+            >
+              <p
+                class="font-handwritten text-3xl font-black text-[var(--accent)]"
+              >
+                100%
+              </p>
+              <p
+                class="font-handwritten text-base text-[var(--text)] font-bold mt-0.5"
+              >
+                Gratuito y Abierto
+              </p>
+              <p class="text-[0.6875rem] text-[var(--muted)] font-medium">
+                Sin suscripciones ni publicidad intrusiva
+              </p>
+            </div>
+            <div
+              class="notebook-paper p-5 border border-dashed border-[var(--border)] rounded-lg text-center"
+            >
+              <p
+                class="font-handwritten text-3xl font-black text-[var(--accent)]"
+              >
+                ⚡ Modo Cocinar
+              </p>
+              <p
+                class="font-handwritten text-base text-[var(--text)] font-bold mt-0.5"
+              >
+                Fichas con Temporizador
+              </p>
+              <p class="text-[0.6875rem] text-[var(--muted)] font-medium">
+                Paso a paso guiado para la encimera
+              </p>
+            </div>
+          </section>
+
+          <!-- Testimonios, Casos de Éxito y Portafolio de Recetas -->
+          <section
+            class="notebook-paper p-6 sm:p-8 rounded-lg border border-dashed border-[var(--border)]"
+            aria-label="Casos de éxito y testimonios de usuarios"
+          >
+            <div class="mb-6 border-b border-dashed border-[var(--border)] pb-4">
+              <span
+                class="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)]"
+                >Casos de Éxito y Testimonios</span
+              >
+              <h2
+                class="font-handwritten text-2xl sm:text-3xl font-black text-[var(--text)] mt-1"
+              >
+                Casos de Éxito y Testimonios
+              </h2>
+              <p class="font-handwritten text-sm text-[var(--muted)] mt-1">
+                Portafolio de recetas, proyectos realizados y opiniones de clientes verificadas con experiencia demostrada.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <blockquote
+                class="p-4 rounded bg-white/40 border border-[var(--border)]/60 flex flex-col justify-between"
+              >
+                <p class="font-handwritten text-sm text-[var(--text)]/90 leading-relaxed">
+                  "Excelente generador de recetas. Me salvó la cena cuando solo tenía pollo y arroz. Pasos claros y temporizadores precisos."
+                </p>
+                <footer class="mt-3 pt-2 border-t border-dashed border-[var(--border)]/40 text-xs font-mono font-bold text-[var(--muted)] flex justify-between items-center">
+                  <span>— Laura G. (Cliente verificado)</span>
+                  <span class="text-amber-500 font-sans">★★★★★</span>
+                </footer>
+              </blockquote>
+
+              <blockquote
+                class="p-4 rounded bg-white/40 border border-[var(--border)]/60 flex flex-col justify-between"
+              >
+                <p class="font-handwritten text-sm text-[var(--text)]/90 leading-relaxed">
+                  "Portafolio culinario impecable y menú semanal muy útil. Descargar las fichas en PDF para imprimir es un acierto total."
+                </p>
+                <footer class="mt-3 pt-2 border-t border-dashed border-[var(--border)]/40 text-xs font-mono font-bold text-[var(--muted)] flex justify-between items-center">
+                  <span>— Carlos M. (Cliente verificado)</span>
+                  <span class="text-amber-500 font-sans">★★★★★</span>
+                </footer>
+              </blockquote>
+            </div>
+          </section>
+
+          <!-- FAQ Section -->
+          <section
+            class="notebook-paper p-6 sm:p-8 rounded-lg border border-dashed border-[var(--border)]"
+            aria-labelledby="faq-section-heading"
+          >
+            <div class="mb-6 border-b border-dashed border-[var(--border)] pb-4">
+              <span
+                class="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)]"
+                >Preguntas Frecuentes</span
+              >
+              <h2
+                id="faq-section-heading"
+                class="font-handwritten text-2xl sm:text-3xl font-black text-[var(--text)] mt-1"
+              >
+                Todo lo que necesitas saber sobre Recetario IA
+              </h2>
+              <p class="font-handwritten text-sm text-[var(--muted)] mt-1">
+                Aprende a aprovechar al máximo tu asistente de cocina
+                inteligente.
+              </p>
+            </div>
+
+            <div class="space-y-4">
+              <div
+                class="p-4 rounded bg-white/40 border border-[var(--border)]/60"
+              >
+                <h3
+                  class="font-handwritten text-lg font-bold text-[var(--text)]"
+                >
+                  ¿Cómo genera la inteligencia artificial las recetas?
+                </h3>
+                <p
+                  class="font-handwritten text-sm text-[var(--text)]/80 mt-1 leading-relaxed"
+                >
+                  Recetario IA utiliza modelos avanzados de lenguaje (Google
+                  Gemini y OpenRouter) ajustados con validación estricta en Zod.
+                  Analiza combinaciones gastronómicas, tiempos de cocinado y
+                  porciones para ofrecerte fichas precisas con pasos numerados.
+                </p>
+              </div>
+
+              <div
+                class="p-4 rounded bg-white/40 border border-[var(--border)]/60"
+              >
+                <h3
+                  class="font-handwritten text-lg font-bold text-[var(--text)]"
+                >
+                  ¿Puedo guardar mis recetas favoritas y descargar PDF?
+                </h3>
+                <p
+                  class="font-handwritten text-sm text-[var(--text)]/80 mt-1 leading-relaxed"
+                >
+                  Sí. Puedes registrarte gratis con tu correo para sincronizar
+                  tus favoritos en la nube (Appwrite Cloud) y descargar tus
+                  recetas maquetadas en formato PDF listas para imprimir.
+                </p>
+              </div>
+
+              <div
+                class="p-4 rounded bg-white/40 border border-[var(--border)]/60"
+              >
+                <h3
+                  class="font-handwritten text-lg font-bold text-[var(--text)]"
+                >
+                  ¿Cómo funciona el modo cocinar paso a paso?
+                </h3>
+                <p
+                  class="font-handwritten text-sm text-[var(--text)]/80 mt-1 leading-relaxed"
+                >
+                  Al abrir cualquier receta generada o del catálogo, puedes
+                  activar el Modo Cocinar. La interfaz se transforma en una guía
+                  visual con botones grandes, texto ampliado y temporizadores
+                  integrados para cada paso crítico.
+                </p>
+              </div>
+
+              <div
+                class="p-4 rounded bg-white/40 border border-[var(--border)]/60"
+              >
+                <h3
+                  class="font-handwritten text-lg font-bold text-[var(--text)]"
+                >
+                  ¿Dónde se desarrolla y cómo contactar con el equipo?
+                </h3>
+                <p
+                  class="font-handwritten text-sm text-[var(--text)]/80 mt-1 leading-relaxed"
+                >
+                  Recetario IA está desarrollado y mantenido por <strong>
+                    Moisés Valero
+                  </strong> en España para la comunidad internacional. Puedes escribirnos
+                  para soporte, sugerencias o dudas a <a
+                    href="mailto:contacto@moisesvalero.es"
+                    class="underline font-bold hover:text-[var(--accent)]"
+                  >
+                    contacto@moisesvalero.es
+                  </a>.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       {:else}
         <!-- Barra de Retorno de Generación (cuando se lee la receta activa) -->

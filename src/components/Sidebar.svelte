@@ -326,11 +326,11 @@
       </svg>
     </button>
 
-    <!-- Enlaces Legales discretos -->
+    <!-- Enlaces Legales discretos & Contacto -->
     <div
-      class="flex flex-col items-center gap-2 mt-2 text-[0.625rem] font-mono font-bold text-[var(--muted)]/60 pb-1"
+      class="flex flex-col items-center gap-2 mt-2 text-[0.625rem] font-mono font-bold text-[var(--muted)]/70 pb-1"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center justify-center gap-2.5">
         <a
           href="/privacidad"
           onclick={() => navState.closeMobileMenu()}
@@ -348,14 +348,45 @@
           onclick={() => navState.closeMobileMenu()}
           class="hover:text-[var(--text)] transition-colors">Cookies</a
         >
+        <span>·</span>
+        <a
+          href="mailto:contacto@moisesvalero.es"
+          class="hover:text-[var(--accent)] underline transition-colors"
+          >Contacto</a
+        >
       </div>
-      <div class="text-[0.5625rem] text-[var(--muted)]/50 mt-0.5">
-        Desarrollado por <a
+      <div class="text-[0.5625rem] text-[var(--muted)]/60 mt-0.5 text-center">
+        Desarrollado en España por <a
           href="https://github.com/moisesvalero"
           target="_blank"
           rel="noopener noreferrer"
           class="hover:text-[var(--accent)] underline transition-colors"
           >Moisés Valero</a
+        >
+      </div>
+      <div class="flex items-center gap-2 text-[0.5625rem] font-mono text-[var(--muted)]/50">
+        <a
+          href="https://github.com/moisesvalero/recetario-ia"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-[var(--text)] transition-colors"
+          >GitHub</a
+        >
+        <span>·</span>
+        <a
+          href="https://linkedin.com/in/moisesvalero"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-[var(--text)] transition-colors"
+          >LinkedIn</a
+        >
+        <span>·</span>
+        <a
+          href="https://x.com/moisesvalero"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-[var(--text)] transition-colors"
+          >Twitter/X</a
         >
       </div>
     </div>
