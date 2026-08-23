@@ -1,5 +1,5 @@
 import { account, databases, APPWRITE_CONFIG } from "./appwrite";
-import { ID, Query } from "appwrite";
+import { ID, Query, OAuthProvider } from "appwrite";
 
 export interface User {
   id: string;
@@ -754,7 +754,7 @@ export async function clearShoppingList(): Promise<void> {
   } catch {}
 }
 
-export async function loginWithOAuth(provider: "google"): Promise<void> {
+export async function loginWithOAuth(provider: "google" = "google"): Promise<void> {
   if (!isAppwriteActive()) {
     throw new Error(
       "El inicio de sesión social solo está disponible cuando Appwrite Cloud está configurado.",
@@ -764,7 +764,8 @@ export async function loginWithOAuth(provider: "google"): Promise<void> {
   const successRedirect = window.location.origin + "/?oauth=success";
   const failureRedirect = window.location.origin + "/?oauth_error=true";
 
-  account.createOAuth2Session(OAuthProvider.Google, successRedirect, failureRedirect);
+  const authProvider = OAuthProvider?.Google || (provider as any) || "google";
+  account.createOAuth2Session(authProvider as any, successRedirect, failureRedirect);
 }
 
 export async function handleOAuthCallback(): Promise<User | null> {
