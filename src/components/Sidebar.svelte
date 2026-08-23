@@ -350,7 +350,7 @@
         >
         <span>·</span>
         <a
-          href="mailto:contacto@moisesvalero.es"
+          href="mailto:info@moisesvalero.es"
           class="hover:text-[var(--accent)] underline transition-colors"
           >Contacto</a
         >

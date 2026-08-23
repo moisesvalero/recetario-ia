@@ -984,10 +984,10 @@
                     Moisés Valero
                   </strong> en España para la comunidad internacional. Puedes escribirnos
                   para soporte, sugerencias o dudas a <a
-                    href="mailto:contacto@moisesvalero.es"
+                    href="mailto:info@moisesvalero.es"
                     class="underline font-bold hover:text-[var(--accent)]"
                   >
-                    contacto@moisesvalero.es
+                    info@moisesvalero.es
                   </a>.
                 </p>
               </div>
