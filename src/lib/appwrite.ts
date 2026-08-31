@@ -7,10 +7,42 @@ import {
   PUBLIC_APPWRITE_COLLECTION_MENU,
 } from "astro:env/client";
 
-const client = new Client();
+export const client = new Client();
 
-const endpoint = PUBLIC_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1";
-const projectId = PUBLIC_APPWRITE_PROJECT_ID || "";
+const endpoint =
+  PUBLIC_APPWRITE_ENDPOINT ||
+  (typeof process !== "undefined"
+    ? process.env?.PUBLIC_APPWRITE_ENDPOINT
+    : undefined) ||
+  "https://fra.cloud.appwrite.io/v1";
+
+const projectId =
+  PUBLIC_APPWRITE_PROJECT_ID ||
+  (typeof process !== "undefined"
+    ? process.env?.PUBLIC_APPWRITE_PROJECT_ID
+    : undefined) ||
+  "6a4b6de7000edc879709";
+
+const databaseId =
+  PUBLIC_APPWRITE_DATABASE_ID ||
+  (typeof process !== "undefined"
+    ? process.env?.PUBLIC_APPWRITE_DATABASE_ID
+    : undefined) ||
+  "recetario";
+
+const collectionRecetas =
+  PUBLIC_APPWRITE_COLLECTION_RECETAS ||
+  (typeof process !== "undefined"
+    ? process.env?.PUBLIC_APPWRITE_COLLECTION_RECETAS
+    : undefined) ||
+  "recetas_guardadas";
+
+const collectionMenu =
+  PUBLIC_APPWRITE_COLLECTION_MENU ||
+  (typeof process !== "undefined"
+    ? process.env?.PUBLIC_APPWRITE_COLLECTION_MENU
+    : undefined) ||
+  "menu_semanal";
 
 if (projectId) {
   client.setEndpoint(endpoint).setProject(projectId);
@@ -25,8 +57,8 @@ export const databases = new Databases(client);
 export const APPWRITE_CONFIG = {
   endpoint,
   projectId,
-  databaseId: PUBLIC_APPWRITE_DATABASE_ID || "",
-  collectionRecetas: PUBLIC_APPWRITE_COLLECTION_RECETAS || "",
-  collectionMenu: PUBLIC_APPWRITE_COLLECTION_MENU || "",
+  databaseId,
+  collectionRecetas,
+  collectionMenu,
   isConfigured: !!projectId,
 };

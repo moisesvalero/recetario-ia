@@ -2,21 +2,44 @@ name: Database Keep Alive
 
 on:
   schedule:
-    # Se ejecuta todos los lunes y jueves a las 06:00 UTC
-    - cron: '0 6 * * 1,4'
+    # Se ejecuta dos veces al día (06:00 UTC y 18:00 UTC) para asegurar actividad constante
+    - cron: "0 6,18 * * *"
   workflow_dispatch:
 
 jobs:
   ping-database:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Appwrite Keep-Alive Endpoint
+      - name: Ping Directo a Appwrite Cloud API
         run: |
-          echo "Ejecutando ping a la base de datos de Recetario IA..."
-          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://recetario.moisesvalero.es/api/keep-alive || true)
+          echo "Ejecutando ping directo a Appwrite Cloud API..."
+          PING_RES=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -H "X-Appwrite-Project: 6a4b6de7000edc879709" "https://fra.cloud.appwrite.io/v1/ping")
+          echo "Respuesta Appwrite ping: $PING_RES"
+          if echo "$PING_RES" | grep -q "Pong!"; then
+            echo "✅ Ping a API de Appwrite exitoso."
+          else
+            echo "⚠️ Aviso en ping a API de Appwrite"
+          fi
+
+      - name: Ping a Colección de Base de Datos Appwrite Cloud
+        run: |
+          echo "Consultando base de datos de Appwrite Cloud..."
+          DB_RES=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -H "X-Appwrite-Project: 6a4b6de7000edc879709" "https://fra.cloud.appwrite.io/v1/databases/recetario/collections/recetas_guardadas/documents")
+          echo "Respuesta DB: $DB_RES"
+          if echo "$DB_RES" | grep -q "HTTP_STATUS:200"; then
+            echo "✅ Consulta a BD de Appwrite exitosa. Proyecto activo."
+          else
+            echo "❌ Error al consultar colección en Appwrite"
+            exit 1
+          fi
+
+      - name: Ping Endpoint Web Keep-Alive (Vercel)
+        run: |
+          echo "Ejecutando ping al endpoint web de Recetario IA..."
+          STATUS_CODE=$(curl -s -L -o /dev/null -w "%{http_code}" https://recetario.moisesvalero.es/api/keep-alive || true)
           echo "Respuesta del endpoint keep-alive: $STATUS_CODE"
           if [ "$STATUS_CODE" -eq 200 ]; then
-            echo "✅ Ping exitoso. Base de datos activa."
+            echo "✅ Endpoint web activo y verificado."
           else
-            echo "⚠️ Aviso: el endpoint devolvió código $STATUS_CODE"
+            echo "⚠️ Aviso: el endpoint web devolvió código $STATUS_CODE"
           fi
