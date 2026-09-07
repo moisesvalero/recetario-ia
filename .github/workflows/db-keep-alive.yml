@@ -2,44 +2,27 @@ name: Database Keep Alive
 
 on:
   schedule:
-    # Se ejecuta dos veces al día (06:00 UTC y 18:00 UTC) para asegurar actividad constante
-    - cron: "0 6,18 * * *"
+    # Se ejecuta cada 6 horas para asegurar actividad constante y evitar la pausa por inactividad en Appwrite Cloud
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
-  ping-database:
+  keep-alive:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Directo a Appwrite Cloud API
-        run: |
-          echo "Ejecutando ping directo a Appwrite Cloud API..."
-          PING_RES=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -H "X-Appwrite-Project: 6a4b6de7000edc879709" "https://fra.cloud.appwrite.io/v1/ping")
-          echo "Respuesta Appwrite ping: $PING_RES"
-          if echo "$PING_RES" | grep -q "Pong!"; then
-            echo "✅ Ping a API de Appwrite exitoso."
-          else
-            echo "⚠️ Aviso en ping a API de Appwrite"
-          fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Ping a Colección de Base de Datos Appwrite Cloud
-        run: |
-          echo "Consultando base de datos de Appwrite Cloud..."
-          DB_RES=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -H "X-Appwrite-Project: 6a4b6de7000edc879709" "https://fra.cloud.appwrite.io/v1/databases/recetario/collections/recetas_guardadas/documents")
-          echo "Respuesta DB: $DB_RES"
-          if echo "$DB_RES" | grep -q "HTTP_STATUS:200"; then
-            echo "✅ Consulta a BD de Appwrite exitosa. Proyecto activo."
-          else
-            echo "❌ Error al consultar colección en Appwrite"
-            exit 1
-          fi
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-      - name: Ping Endpoint Web Keep-Alive (Vercel)
-        run: |
-          echo "Ejecutando ping al endpoint web de Recetario IA..."
-          STATUS_CODE=$(curl -s -L -o /dev/null -w "%{http_code}" https://recetario.moisesvalero.es/api/keep-alive || true)
-          echo "Respuesta del endpoint keep-alive: $STATUS_CODE"
-          if [ "$STATUS_CODE" -eq 200 ]; then
-            echo "✅ Endpoint web activo y verificado."
-          else
-            echo "⚠️ Aviso: el endpoint web devolvió código $STATUS_CODE"
-          fi
+      - name: Run Appwrite Keep-Alive Heartbeat
+        env:
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          PUBLIC_APPWRITE_ENDPOINT: "https://fra.cloud.appwrite.io/v1"
+          PUBLIC_APPWRITE_PROJECT_ID: "6a4b6de7000edc879709"
+          PUBLIC_APPWRITE_DATABASE_ID: "recetario"
+          PUBLIC_APPWRITE_COLLECTION_RECETAS: "recetas_guardadas"
+        run: node scripts/db-keep-alive.mjs

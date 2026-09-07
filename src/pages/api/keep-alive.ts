@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { ID } from "appwrite";
 import { APPWRITE_CONFIG, databases, client } from "../../lib/appwrite";
 
 export const prerender = false;
@@ -8,6 +9,7 @@ export const GET: APIRoute = async () => {
   let dbStatus = "skipped";
   let message = "Appwrite no configurado (fallback local)";
   let pingStatus = "unknown";
+  let heartbeatStatus = "skipped";
 
   if (APPWRITE_CONFIG.isConfigured && APPWRITE_CONFIG.databaseId) {
     try {
@@ -19,15 +21,39 @@ export const GET: APIRoute = async () => {
         pingStatus = `Error ping: ${pingErr?.message || "Desconocido"}`;
       }
 
-      // 2. Consulta a colección de base de datos para mantener activa la BD
+      // 2. Consulta y mutación activa (heartbeat create+delete) para registrar actividad real en DB
       if (APPWRITE_CONFIG.collectionRecetas) {
         const docs = await databases.listDocuments(
           APPWRITE_CONFIG.databaseId,
           APPWRITE_CONFIG.collectionRecetas,
           [],
         );
+
+        // Mutación de latido para garantizar que Appwrite Cloud registre escrituras activas
+        try {
+          const tempDoc = await databases.createDocument(
+            APPWRITE_CONFIG.databaseId,
+            APPWRITE_CONFIG.collectionRecetas,
+            ID.unique(),
+            {
+              recipeJson: JSON.stringify({
+                _heartbeat: true,
+                timestamp,
+              }),
+            },
+          );
+          await databases.deleteDocument(
+            APPWRITE_CONFIG.databaseId,
+            APPWRITE_CONFIG.collectionRecetas,
+            tempDoc.$id,
+          );
+          heartbeatStatus = "active";
+        } catch (hbErr: any) {
+          heartbeatStatus = `error: ${hbErr?.message || "Error desconocido"}`;
+        }
+
         dbStatus = "active";
-        message = `Ping exitoso a Appwrite Cloud (${docs.total} recetas encontradas, ping: ${pingStatus})`;
+        message = `Ping exitoso a Appwrite Cloud (${docs.total} recetas, ping: ${pingStatus}, heartbeat: ${heartbeatStatus})`;
       } else {
         dbStatus = "active";
         message = `Conexión a Appwrite Cloud verificada (ping: ${pingStatus})`;
@@ -49,6 +75,7 @@ export const GET: APIRoute = async () => {
         endpoint: APPWRITE_CONFIG.endpoint,
         projectId: APPWRITE_CONFIG.projectId,
         ping: pingStatus,
+        heartbeat: heartbeatStatus,
       },
       database: {
         status: dbStatus,
