@@ -1,5 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { getFavorites, toggleFavorite, updateFavoriteRecipe } from "./auth";
+import {
+  getFavorites,
+  toggleFavorite,
+  updateFavoriteRecipe,
+  getShoppingList,
+  addToShoppingList,
+  toggleShoppingItem,
+  deleteShoppingItem,
+  clearShoppingList,
+} from "./auth";
 
 // Desactivar Appwrite
 vi.mock("./appwrite", () => ({
@@ -117,3 +126,81 @@ describe("auth favorites (localStorage)", () => {
     );
   });
 });
+
+describe("auth shopping list (localStorage)", () => {
+  beforeEach(() => {
+    store.clear();
+    localStorageMock.setItem(
+      "recetario:current_user",
+      JSON.stringify(mockUser),
+    );
+  });
+
+  it("debería devolver una lista vacía si no hay ingredientes guardados", async () => {
+    const list = await getShoppingList();
+    expect(list).toEqual([]);
+  });
+
+  it("debería añadir productos con y sin cantidad a la lista", async () => {
+    await addToShoppingList([
+      { item: "Leche", amount: "1 litro" },
+      { item: "Pan", amount: "" },
+    ]);
+
+    const list = await getShoppingList();
+    expect(list).toHaveLength(2);
+    expect(list[0].item).toBe("Leche");
+    expect(list[0].amount).toBe("1 litro");
+    expect(list[0].checked).toBe(false);
+    expect(list[1].item).toBe("Pan");
+    expect(list[1].amount).toBe("");
+    expect(list[1].checked).toBe(false);
+  });
+
+  it("debería cambiar el estado checked con toggleShoppingItem", async () => {
+    await addToShoppingList([{ item: "Huevos", amount: "6 uds" }]);
+    let list = await getShoppingList();
+    const itemId = list[0].id;
+
+    await toggleShoppingItem(itemId);
+    list = await getShoppingList();
+    expect(list[0].checked).toBe(true);
+
+    await toggleShoppingItem(itemId);
+    list = await getShoppingList();
+    expect(list[0].checked).toBe(false);
+  });
+
+  it("debería eliminar un producto específico con deleteShoppingItem", async () => {
+    await addToShoppingList([
+      { item: "Manzanas", amount: "1 kg" },
+      { item: "Plátanos", amount: "500g" },
+    ]);
+
+    let list = await getShoppingList();
+    expect(list).toHaveLength(2);
+
+    const appleItem = list.find((i) => i.item === "Manzanas")!;
+    await deleteShoppingItem(appleItem.id);
+
+    list = await getShoppingList();
+    expect(list).toHaveLength(1);
+    expect(list[0].item).toBe("Plátanos");
+  });
+
+  it("debería vaciar la lista completa con clearShoppingList", async () => {
+    await addToShoppingList([
+      { item: "Café", amount: "250g" },
+      { item: "Azúcar", amount: "1 kg" },
+    ]);
+
+    let list = await getShoppingList();
+    expect(list).toHaveLength(2);
+
+    await clearShoppingList();
+
+    list = await getShoppingList();
+    expect(list).toEqual([]);
+  });
+});
+

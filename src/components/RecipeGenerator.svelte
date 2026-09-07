@@ -13,7 +13,9 @@
     getSavedRecipes,
     getFavorites,
     getShoppingList,
+    addToShoppingList,
     toggleShoppingItem,
+    deleteShoppingItem,
     clearShoppingList,
     deleteSavedRecipe,
     updateFavoriteRecipe,
@@ -64,6 +66,9 @@
   let savedRecipes = $state<SavedRecipe[]>([]);
   let favoriteRecipes = $state<FavoriteRecipe[]>([]);
   let shoppingList = $state<ShoppingItem[]>([]);
+  let newShoppingItemText = $state("");
+  let newShoppingItemAmount = $state("");
+  let shoppingInputError = $state("");
 
   // Estados para la edición de recetas favoritas
   let isEditingFavTitle = $state(false);
@@ -355,6 +360,75 @@
   async function handleToggleShopping(id: string) {
     await toggleShoppingItem(id);
     await refreshTabData();
+  }
+
+  async function handleAddCustomShoppingItem() {
+    shoppingInputError = "";
+    const item = newShoppingItemText.trim();
+    if (!item) {
+      shoppingInputError = "Escribe el nombre del producto.";
+      return;
+    }
+
+    if (!authState.currentUser) {
+      authState.openLogin();
+      return;
+    }
+
+    const exists = shoppingList.some(
+      (i) => i.item.toLowerCase() === item.toLowerCase() && !i.checked,
+    );
+    if (exists) {
+      shoppingInputError = `"${item}" ya está en tu lista de compras.`;
+      return;
+    }
+
+    const amount = newShoppingItemAmount.trim();
+    await addToShoppingList([{ item, amount }]);
+    newShoppingItemText = "";
+    newShoppingItemAmount = "";
+    shoppingInputError = "";
+    await refreshTabData();
+  }
+
+  async function handleDeleteShoppingItem(id: string) {
+    await commitPendingUndo();
+
+    const itemToDelete = shoppingList.find((i) => i.id === id);
+    if (!itemToDelete) return;
+
+    const previousList = [...shoppingList];
+    shoppingList = shoppingList.filter((i) => i.id !== id);
+
+    undoMessage = `"${itemToDelete.item}" eliminado.`;
+    showUndoToast = true;
+
+    undoAction = () => {
+      shoppingList = previousList;
+      showUndoToast = false;
+      undoAction = null;
+      undoPendingCommit = null;
+      if (undoTimeoutId) {
+        clearTimeout(undoTimeoutId);
+        undoTimeoutId = null;
+      }
+    };
+
+    undoPendingCommit = async () => {
+      await deleteShoppingItem(id);
+      await refreshTabData();
+    };
+
+    undoTimeoutId = setTimeout(async () => {
+      const commit = undoPendingCommit;
+      undoPendingCommit = null;
+      if (commit) {
+        await commit();
+      }
+      showUndoToast = false;
+      undoAction = null;
+      undoTimeoutId = null;
+    }, 5000);
   }
 
   async function handleClearShopping() {
@@ -1230,7 +1304,80 @@
         {/if}
       </div>
 
-      {#if shoppingList.length === 0}
+      <!-- Formulario para agregar producto personalizado -->
+      <form
+        onsubmit={(e) => {
+          e.preventDefault();
+          handleAddCustomShoppingItem();
+        }}
+        class="mt-6 flex flex-col sm:flex-row gap-2.5 bg-[var(--surface)] p-3 sm:p-4 rounded-2xl border border-[var(--border)] shadow-xs"
+      >
+        <div class="relative flex-1">
+          <input
+            type="text"
+            bind:value={newShoppingItemText}
+            oninput={() => {
+              if (shoppingInputError) shoppingInputError = "";
+            }}
+            placeholder="¿Qué necesitas comprar? (ej: Leche, Manzanas, Café...)"
+            class="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)]/60 px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:outline-none transition-all"
+            aria-label="Producto a añadir a la lista de compras"
+          />
+        </div>
+        <div class="sm:w-36">
+          <input
+            type="text"
+            bind:value={newShoppingItemAmount}
+            placeholder="Cant. (opc.)"
+            class="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)]/60 px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:outline-none transition-all"
+            aria-label="Cantidad u observaciones (opcional)"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={!newShoppingItemText.trim()}
+          class="flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-[var(--accent)]/90 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="h-4 w-4"
+          >
+            <path
+              d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+            />
+          </svg>
+          Añadir
+        </button>
+      </form>
+
+      {#if shoppingInputError}
+        <p class="mt-2 text-xs font-semibold text-red-500 px-1">
+          {shoppingInputError}
+        </p>
+      {/if}
+
+      {#if !authState.currentUser}
+        <div
+          class="mt-8 rounded-3xl border border-dashed border-[var(--border)] bg-[var(--surface)]/50 p-12 text-center"
+        >
+          <span class="text-4xl block mb-3">🔒</span>
+          <p class="font-bold text-[var(--text)] text-sm">
+            Inicia sesión para usar tu lista de compras
+          </p>
+          <p class="text-xs text-[var(--muted)] mt-1 mb-4">
+            Guarda tus productos e ingredientes y sincronízalos entre tus dispositivos.
+          </p>
+          <button
+            type="button"
+            onclick={() => authState.openLogin()}
+            class="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[var(--accent)]/90 transition-all cursor-pointer"
+          >
+            Iniciar sesión
+          </button>
+        </div>
+      {:else if shoppingList.length === 0}
         <div
           class="mt-8 rounded-3xl border border-dashed border-[var(--border)] bg-[var(--surface)]/50 p-12 text-center"
         >
@@ -1239,55 +1386,84 @@
             Tu lista de compras está vacía.
           </p>
           <p class="text-xs text-[var(--muted)] mt-1">
-            Pulsa en "Agregar a la lista de compras" en cualquier receta.
+            Escribe un producto arriba o pulsa en "Agregar a la lista de compras" en cualquier receta.
           </p>
         </div>
       {:else}
         <div
           class="mt-6 rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm divide-y divide-[var(--border)]/70"
         >
-          {#each shoppingList as item}
-            <button
-              type="button"
-              onclick={() => handleToggleShopping(item.id)}
-              class="flex w-full items-center gap-3 py-3.5 text-left text-sm transition hover:bg-[var(--surface-muted)] px-2 rounded-xl"
+          {#each shoppingList as item (item.id)}
+            <div
+              class="group flex w-full items-center gap-3 py-3.5 px-2 rounded-xl transition hover:bg-[var(--surface-muted)]"
             >
-              <div
-                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all {item.checked
-                  ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
-                  : 'border-[var(--border)] bg-[var(--surface)]'}"
+              <button
+                type="button"
+                onclick={() => handleToggleShopping(item.id)}
+                class="flex flex-1 items-center gap-3 min-w-0 text-left cursor-pointer focus:outline-none"
+                aria-label={`Marcar ${item.item} como ${item.checked ? 'pendiente' : 'comprado'}`}
               >
-                {#if item.checked}
-                  <svg
-                    class="h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="3"
+                <div
+                  class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all {item.checked
+                    ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                    : 'border-[var(--border)] bg-[var(--surface)]'}"
+                >
+                  {#if item.checked}
+                    <svg
+                      class="h-3.5 w-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  {/if}
+                </div>
+                <div class="flex-1 flex items-center justify-between gap-4 min-w-0">
+                  <span
+                    class="font-semibold truncate transition-all {item.checked
+                      ? 'text-[var(--muted)] line-through'
+                      : 'text-[var(--text)]'}"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                {/if}
-              </div>
-              <div class="flex-1 flex items-center justify-between gap-4">
-                <span
-                  class="font-semibold transition-all {item.checked
-                    ? 'text-[var(--muted)] line-through'
-                    : 'text-[var(--text)]'}"
+                    {item.item}
+                  </span>
+                  {#if item.amount}
+                    <span
+                      class="text-xs font-bold text-[var(--muted)] bg-[var(--surface-muted)] px-2 py-0.5 rounded-lg border border-[var(--border)] shrink-0"
+                    >
+                      {item.amount}
+                    </span>
+                  {/if}
+                </div>
+              </button>
+
+              <!-- Botón para eliminar artículo individual -->
+              <button
+                type="button"
+                onclick={() => handleDeleteShoppingItem(item.id)}
+                class="opacity-60 group-hover:opacity-100 hover:text-red-500 hover:bg-red-50 text-[var(--muted)] p-1.5 rounded-lg transition-all cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-red-400"
+                title="Eliminar de la lista"
+                aria-label={`Eliminar ${item.item} de la lista de compras`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="h-4 w-4"
                 >
-                  {item.item}
-                </span>
-                <span
-                  class="text-xs font-bold text-[var(--muted)] bg-[var(--surface-muted)] px-2 py-0.5 rounded-lg border border-[var(--border)]"
-                >
-                  {item.amount}
-                </span>
-              </div>
-            </button>
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
           {/each}
         </div>
       {/if}

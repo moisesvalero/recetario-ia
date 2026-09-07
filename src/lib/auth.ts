@@ -732,6 +732,30 @@ export async function toggleShoppingItem(id: string): Promise<void> {
   } catch {}
 }
 
+export async function deleteShoppingItem(id: string): Promise<void> {
+  const currentUser = getCurrentUser();
+  if (!currentUser) return;
+
+  if (isAppwriteActive()) {
+    const list: ShoppingItem[] = appwritePrefsCache.shoppingList || [];
+    const updated = list.filter((i) => i.id !== id);
+    const newPrefs = { ...appwritePrefsCache, shoppingList: updated };
+    await account.updatePrefs(newPrefs);
+    appwritePrefsCache = newPrefs;
+    return;
+  }
+
+  // Local
+  if (typeof localStorage === "undefined") return;
+  const raw = localStorage.getItem(STORAGE_KEYS.SHOPPING_LIST);
+  if (!raw) return;
+  try {
+    const allItems: ShoppingItem[] = JSON.parse(raw);
+    const updated = allItems.filter((i) => i.id !== id);
+    localStorage.setItem(STORAGE_KEYS.SHOPPING_LIST, JSON.stringify(updated));
+  } catch {}
+}
+
 export async function clearShoppingList(): Promise<void> {
   const currentUser = getCurrentUser();
   if (!currentUser) return;
