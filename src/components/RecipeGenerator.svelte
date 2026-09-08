@@ -662,13 +662,13 @@
               class="polaroid w-full max-w-xs mx-auto lg:max-w-none rotate-[1.5deg] order-1"
             >
               <img
-                class="w-full aspect-square object-cover grayscale-[15%] sepia-[8%]"
+                class="w-full aspect-square object-cover"
                 src={HERO_IMAGE}
                 alt="Inspiración culinaria del día"
                 width="400"
                 height="400"
                 loading="eager"
-                decoding="async"
+                decoding="sync"
                 onerror={(e) => {
                   const target = e.currentTarget;
                   if (target.src.indexOf("default.jpg") === -1) {
