@@ -22,7 +22,7 @@
   "dependencies": {
     "@ai-sdk/google": "^2.0.20",
     "@ai-sdk/openai": "^2.0.52",
-    "@astrojs/svelte": "^8.0.0",
+    "@astrojs/svelte": "^9.0.1",
     "@astrojs/vercel": "^11.0.3",
     "@tailwindcss/vite": "^4.3.2",
     "ai": "^5.0.76",
