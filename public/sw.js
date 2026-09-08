@@ -1,7 +1,15 @@
 // Service Worker para Umami PWA
 const CACHE_NAME = "umami-cache-v5";
 
-const STATIC_ASSETS = ["/favicon.svg", "/favicon.ico", "/manifest.webmanifest"];
+const STATIC_ASSETS = [
+  "/favicon.svg",
+  "/favicon.ico",
+  "/favicon.png",
+  "/apple-touch-icon.png",
+  "/pwa-192.png",
+  "/pwa-512.png",
+  "/manifest.webmanifest",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
