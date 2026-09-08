@@ -203,4 +203,3 @@ describe("auth shopping list (localStorage)", () => {
     expect(list).toEqual([]);
   });
 });
-

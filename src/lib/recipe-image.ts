@@ -268,7 +268,21 @@ const ALL_IMAGES = [
   "/images/default.jpg",
 ];
 
-export const HERO_IMAGE = "/images/hero.jpg";
+/**
+ * Devuelve la imagen de inspiración gastronómica para el día actual.
+ * Rota diariamente entre las imágenes de alta calidad del recetario local.
+ */
+export function getDailyInspirationImage(date = new Date()): string {
+  const startOfYear = new Date(date.getFullYear(), 0, 1);
+  const dayOfYear = Math.floor(
+    (date.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  return (
+    ALL_IMAGES[Math.abs(dayOfYear) % ALL_IMAGES.length] ?? "/images/default.jpg"
+  );
+}
+
+export const HERO_IMAGE = getDailyInspirationImage();
 
 function normalize(text: string): string {
   return text.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");

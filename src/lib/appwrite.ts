@@ -9,45 +9,16 @@ import {
 
 export const client = new Client();
 
-const endpoint =
-  PUBLIC_APPWRITE_ENDPOINT ||
-  (typeof process !== "undefined"
-    ? process.env?.PUBLIC_APPWRITE_ENDPOINT
-    : undefined) ||
-  "https://fra.cloud.appwrite.io/v1";
-
-const projectId =
-  PUBLIC_APPWRITE_PROJECT_ID ||
-  (typeof process !== "undefined"
-    ? process.env?.PUBLIC_APPWRITE_PROJECT_ID
-    : undefined) ||
-  "6a4b6de7000edc879709";
-
-const databaseId =
-  PUBLIC_APPWRITE_DATABASE_ID ||
-  (typeof process !== "undefined"
-    ? process.env?.PUBLIC_APPWRITE_DATABASE_ID
-    : undefined) ||
-  "recetario";
-
-const collectionRecetas =
-  PUBLIC_APPWRITE_COLLECTION_RECETAS ||
-  (typeof process !== "undefined"
-    ? process.env?.PUBLIC_APPWRITE_COLLECTION_RECETAS
-    : undefined) ||
-  "recetas_guardadas";
-
-const collectionMenu =
-  PUBLIC_APPWRITE_COLLECTION_MENU ||
-  (typeof process !== "undefined"
-    ? process.env?.PUBLIC_APPWRITE_COLLECTION_MENU
-    : undefined) ||
-  "menu_semanal";
+const endpoint = PUBLIC_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1";
+const projectId = PUBLIC_APPWRITE_PROJECT_ID || "";
 
 if (projectId) {
   client.setEndpoint(endpoint).setProject(projectId);
   if (typeof window !== "undefined") {
-    client.ping().catch(() => {});
+    client
+      .ping()
+      .then(() => console.log("Appwrite setup verified successfully."))
+      .catch((err) => console.warn("Appwrite setup verification failed:", err));
   }
 }
 
@@ -57,8 +28,8 @@ export const databases = new Databases(client);
 export const APPWRITE_CONFIG = {
   endpoint,
   projectId,
-  databaseId,
-  collectionRecetas,
-  collectionMenu,
+  databaseId: PUBLIC_APPWRITE_DATABASE_ID || "",
+  collectionRecetas: PUBLIC_APPWRITE_COLLECTION_RECETAS || "",
+  collectionMenu: PUBLIC_APPWRITE_COLLECTION_MENU || "",
   isConfigured: !!projectId,
 };
