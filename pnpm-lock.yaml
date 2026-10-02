@@ -27,8 +27,8 @@ importers:
         specifier: ^5.0.76
         version: 5.0.204(zod@3.25.76)
       appwrite:
-        specifier: ^26.1.0
-        version: 26.1.0
+        specifier: ^28.1.0
+        version: 28.1.0
       astro:
         specifier: ^7.2.8
         version: 7.2.8(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@24.13.2)(@vercel/blob@2.4.0)(@vercel/functions@3.9.1)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.9.0)
@@ -2285,8 +2285,8 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  appwrite@26.1.0:
-    resolution: {integrity: sha512-BLcSz1/F83V4W0mHAW3SO9kahVfpqStIDI2+m0N0m2UfxIJl7XU5KW/EhPoek8qje+6JPtf3VWoRaPq4k8L86g==}
+  appwrite@28.1.0:
+    resolution: {integrity: sha512-84XIXutjqO/6+5ezOn202aSi4T42ZKQp67vvlbGxlzXk/WpgdgrJ76GH56fCUf4om64NiZ24jMDw1Az4Kspu2Q==}
     engines: {node: '>=18.0.0'}
 
   arg@4.1.0:
@@ -6478,7 +6478,7 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.2
 
-  appwrite@26.1.0:
+  appwrite@28.1.0:
     dependencies:
       json-bigint: 1.0.0
 
