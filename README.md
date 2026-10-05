@@ -75,6 +75,17 @@ AW_KEY=... AW_PROJECT=... node scripts/asegurar-permisos.mjs
 
 Es idempotente: solo corrige lo que esté mal y avisa si encuentra documentos sin dueño.
 
+### Por qué las llamadas pasan por `/appwrite`
+
+Appwrite guarda la sesión en una cookie marcada con **su** dominio (`domain=.fra.cloud.appwrite.io`). Para la app es una cookie de terceros, así que Safari, iOS y Chrome con el bloqueo activado la descartan: entras con Google y vuelves a la pantalla de inicio en bucle.
+
+Por eso todas las llamadas salen por **nuestro propio dominio**: [`src/pages/appwrite/[...ruta].ts`](src/pages/appwrite/[...ruta].ts) es un proxy que reenvía a Appwrite y le quita el `domain=` **a la cookie de sesión**. Las demás cookies se dejan intactas, porque las que no llevan `domain=` se guardan en el host que responde.
+
+Dos detalles que costaron un rato y conviene no deshacer:
+
+- **El arranque del login va directo a Appwrite** (ver `abrirLogin` en [`src/lib/appwrite.ts`](src/lib/appwrite.ts)). Appwrite deja `a_oauth2_<proyecto>` para validar la vuelta; si esa petición saliera por el proxy, la cookie se quedaría en nuestro dominio y la vuelta fallaría.
+- **El service worker no intercepta `/appwrite`** (ver `public/sw.js`). Si lo hiciera, se comería la navegación del login y devolvería el HTML de la app.
+
 ---
 
 ## Inicio rápido
