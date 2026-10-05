@@ -17,7 +17,8 @@
     "format:check": "prettier --check .",
     "screenshot": "node scripts/capture-screenshot.mjs",
     "images": "zsh scripts/download-images.sh",
-    "prepare": "husky"
+    "prepare": "husky",
+    "verificar": "pnpm lint && pnpm check && pnpm test && pnpm format:check && pnpm build"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.20",

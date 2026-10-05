@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Si se empujan varios commits seguidos, se cancela el anterior en vez de
+# encolarse: interesa saber si el último está bien.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Tests, tipos, lint y build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12
+
+      - name: Instalar Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tipos (Astro y TypeScript)
+        run: pnpm check
+
+      - name: Tests
+        run: pnpm test
+
+      - name: Formato
+        run: pnpm format:check
+
+      # Sin variables de entorno: el build tiene que funcionar igualmente, con la
+      # app avisando de que falta la configuración en vez de romper.
+      - name: Build
+        run: pnpm build
