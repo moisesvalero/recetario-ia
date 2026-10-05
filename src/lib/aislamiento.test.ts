@@ -30,6 +30,8 @@ const espia = vi.hoisted(() => ({
     unknown
   >,
   borrados: [] as string[],
+  actualizado: { id: "", datos: {} as Record<string, unknown> },
+  prefs: null as Record<string, unknown> | null,
 }));
 
 vi.mock("./appwrite", () => ({
@@ -41,7 +43,16 @@ vi.mock("./appwrite", () => ({
   },
   account: {
     get: vi.fn(async () => USUARIO),
-    getPrefs: vi.fn(async () => ({})),
+    // Un favorito, para que editar una receta tenga algo que actualizar. En la
+    // nube las favoritas se guardan planas (con `title` en la raíz), no envueltas
+    // en `recipe`: así las mete `toggleFavorite`.
+    getPrefs: vi.fn(async () => ({
+      favorites: [{ title: "Tortilla", ingredientes: [] }],
+    })),
+    updatePrefs: vi.fn(async (prefs: Record<string, unknown>) => {
+      espia.prefs = prefs;
+      return {};
+    }),
   },
   databases: {
     listDocuments: vi.fn(
@@ -62,6 +73,25 @@ vi.mock("./appwrite", () => ({
         return { $id: "creado-1", $createdAt: "2026-01-01T00:00:00.000Z" };
       },
     ),
+    updateDocument: vi.fn(
+      async (
+        _db: string,
+        _col: string,
+        id: string,
+        datos: Record<string, unknown>,
+      ) => {
+        espia.actualizado = { id, datos };
+        return {
+          $id: id,
+          weekStart: "2026-01-05",
+          day: datos.day ?? 1,
+          slot: datos.slot ?? "comida",
+          recipeId: "r1",
+          recipeSnapshotJson: "{}",
+          $createdAt: "2026-01-01T00:00:00.000Z",
+        };
+      },
+    ),
     getDocument: vi.fn(async () => espia.documentoLeido),
     deleteDocument: vi.fn(async (_db: string, _col: string, id: string) => {
       espia.borrados.push(id);
@@ -75,8 +105,15 @@ import {
   getSavedRecipes,
   saveRecipe,
   deleteSavedRecipe,
+  updateFavoriteRecipe,
 } from "./auth";
-import { getWeekMenu, addToMenu } from "./menu-storage";
+import {
+  getWeekMenu,
+  addToMenu,
+  removeFromMenu,
+  moveEntry,
+  clearWeek,
+} from "./menu-storage";
 
 /** ¿Se filtró la consulta por el dueño indicado? */
 function filtraPorDueno(idEsperado: string): boolean {
@@ -91,6 +128,8 @@ beforeEach(async () => {
   espia.documentos = [];
   espia.creado = { datos: {}, permisos: [] };
   espia.borrados = [];
+  espia.actualizado = { id: "", datos: {} };
+  espia.prefs = null;
   espia.documentoLeido = { $id: "doc-1", userId: "usuario-a" };
   await initAuth();
 });
@@ -158,5 +197,69 @@ describe("menú semanal", () => {
 
     expect(espia.creado.datos.userId).toBe("usuario-a");
     expect(espia.creado.permisos).toContain('read("user:usuario-a")');
+  });
+});
+
+describe("menú semanal: mover, borrar y vaciar", () => {
+  it("mover una entrada actualiza su día y su hueco", async () => {
+    await moveEntry("doc-1", 3, "cena");
+
+    expect(espia.actualizado.id).toBe("doc-1");
+    expect(espia.actualizado.datos).toMatchObject({ day: 3, slot: "cena" });
+  });
+
+  it("mover a un hueco que no existe no toca nada", async () => {
+    await moveEntry("doc-1", 3, "merienda");
+
+    expect(espia.actualizado.id).toBe("");
+  });
+
+  it("quitar una entrada la borra por su id", async () => {
+    await removeFromMenu("doc-9");
+
+    expect(espia.borrados).toEqual(["doc-9"]);
+  });
+
+  it("vaciar la semana pide solo las entradas del dueño y borra esas", async () => {
+    espia.documentos = [{ $id: "mia-1" }, { $id: "mia-2" }];
+
+    await clearWeek("2026-03-02");
+
+    expect(filtraPorDueno("usuario-a")).toBe(true);
+    expect([...espia.borrados].sort()).toEqual(["mia-1", "mia-2"]);
+  });
+});
+
+describe("editar una receta favorita", () => {
+  it("actualiza las preferencias con la receta nueva", async () => {
+    await updateFavoriteRecipe("Tortilla", { title: "Tortilla nueva" });
+
+    expect(espia.prefs).not.toBeNull();
+    expect(JSON.stringify(espia.prefs)).toContain("Tortilla nueva");
+  });
+
+  it("filtra por dueño antes de tocar la copia guardada", async () => {
+    await updateFavoriteRecipe("Tortilla", { title: "Tortilla nueva" });
+
+    expect(filtraPorDueno("usuario-a")).toBe(true);
+  });
+
+  it("actualiza la copia que coincide, no otra", async () => {
+    espia.documentos = [
+      { $id: "otra", recipeJson: '{"title":"Otra"}' },
+      { $id: "esta", recipeJson: '{"title":"Tortilla"}' },
+    ];
+
+    await updateFavoriteRecipe("Tortilla", { title: "Tortilla nueva" });
+
+    expect(espia.actualizado.id).toBe("esta");
+  });
+
+  it("no toca ninguna copia si no hay ninguna que coincida", async () => {
+    espia.documentos = [{ $id: "otra", recipeJson: '{"title":"Otra"}' }];
+
+    await updateFavoriteRecipe("Tortilla", { title: "Tortilla nueva" });
+
+    expect(espia.actualizado.id).toBe("");
   });
 });
