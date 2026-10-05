@@ -60,6 +60,21 @@ Vercel           → Deploy serverless
 Service Workers  → Caching offline para PWA
 ```
 
+### Privacidad de los datos
+
+Cada usuario solo puede ver y tocar lo suyo. Se consigue con dos piezas que tienen que ir juntas:
+
+- **La colección concede solo `create`**, no lectura. Appwrite **suma** los permisos de la colección a los del documento, así que un `read("users")` en la colección anularía el aislamiento por documento y cualquier usuario registrado vería todo. Con `read("any")` lo vería cualquiera sin iniciar sesión.
+- **Cada documento concede leer, actualizar y borrar solo a su dueño** (`user:<id>`), y guarda su `userId` para poder filtrar por él en las consultas.
+
+Para asegurar que la configuración del servidor siga siendo esa (por ejemplo, si se recrea el proyecto):
+
+```bash
+AW_KEY=... AW_PROJECT=... node scripts/asegurar-permisos.mjs
+```
+
+Es idempotente: solo corrige lo que esté mal y avisa si encuentra documentos sin dueño.
+
 ---
 
 ## Inicio rápido
