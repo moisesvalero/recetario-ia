@@ -43,7 +43,7 @@ export const APPWRITE_CONFIG = {
 };
 
 /**
- * Lanza el login con Google **directamente contra Appwrite**, sin el proxy.
+ * Lanza el login social **directamente contra Appwrite**, sin el proxy.
  *
  * Es la única llamada que no puede pasar por nuestro dominio, y el motivo es una
  * cookie: al empezar el login, Appwrite deja `a_oauth2_<proyecto>` con el estado
@@ -55,11 +55,15 @@ export const APPWRITE_CONFIG = {
  * El resto de llamadas sí van por el proxy, que es lo que hace que la cookie de
  * sesión sea de primera parte.
  */
-export function abrirLoginConGoogle(exito: string, fallo: string): void {
+export function abrirLogin(
+  proveedor: "google",
+  exito: string,
+  fallo: string,
+): void {
   const anterior = client.config.endpoint;
   client.setEndpoint(endpointDirecto);
   try {
-    account.createOAuth2Token("google" as never, exito, fallo);
+    account.createOAuth2Token(proveedor as never, exito, fallo);
   } finally {
     client.setEndpoint(anterior);
   }
