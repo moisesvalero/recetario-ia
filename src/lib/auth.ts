@@ -1,4 +1,9 @@
-import { account, databases, APPWRITE_CONFIG } from "./appwrite";
+import {
+  abrirLoginConGoogle,
+  account,
+  databases,
+  APPWRITE_CONFIG,
+} from "./appwrite";
 import { ID, Permission, Query, Role } from "appwrite";
 
 export interface User {
@@ -782,7 +787,8 @@ export async function loginWithOAuth(provider: "google"): Promise<void> {
   const successRedirect = window.location.origin + "/?oauth=success";
   const failureRedirect = window.location.origin + "/?oauth_error=true";
 
-  account.createOAuth2Token(provider as any, successRedirect, failureRedirect);
+  // Va directo a Appwrite a propósito: ver `abrirLoginConGoogle`.
+  abrirLoginConGoogle(successRedirect, failureRedirect);
 }
 
 export async function handleOAuthCallback(): Promise<User | null> {

@@ -1,7 +1,7 @@
 // Service Worker para Umami PWA
-// v6: cambia el modelo de datos (dueño por documento). Un cliente con el
-// bundle anterior crearía documentos sin dueño, invisibles para siempre.
-const CACHE_NAME = "umami-cache-v6";
+// v7: las llamadas a Appwrite pasan por /appwrite en nuestro dominio, y el
+// service worker no debe tocarlas (ver el filtro de abajo).
+const CACHE_NAME = "umami-cache-v7";
 
 const STATIC_ASSETS = [
   "/favicon.svg",
@@ -43,8 +43,15 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(event.request.url);
 
-  // Evitar interceptar peticiones a la API o de autenticación de Appwrite/Google LLM
-  if (url.pathname.startsWith("/api") || url.hostname.includes("appwrite")) {
+  // Evitar interceptar la API. Ojo: las llamadas a Appwrite salen por /appwrite en
+  // nuestro propio dominio (ver src/pages/appwrite), así que hay que excluir esa
+  // ruta también. Sin esto el service worker intercepta la navegación del login y
+  // devuelve el HTML de la app: el navegador se queda ahí sin llegar a abrir Google.
+  if (
+    url.pathname.startsWith("/api") ||
+    url.pathname.startsWith("/appwrite") ||
+    url.hostname.includes("appwrite")
+  ) {
     return;
   }
 
