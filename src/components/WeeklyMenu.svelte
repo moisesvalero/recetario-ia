@@ -13,6 +13,7 @@
     RecipeSnapshot,
   } from "../lib/menu-schema";
   import { addWeeks, formatWeekRange, getWeekStart } from "../lib/menu-schema";
+  import { authState } from "../lib/auth-state.svelte";
   import MenuRecipePicker from "./MenuRecipePicker.svelte";
 
   let {
@@ -36,10 +37,26 @@
   const today = getWeekStart();
   const isCurrentWeek = $derived(weekStart === today);
 
-  // Carga entradas cada vez que cambia la semana
+  // Carga entradas cuando cambia la semana Y cuando la sesión termina de
+  // resolverse. Sin esa segunda dependencia, al entrar por enlace directo
+  // (?tab=menu-semanal) la consulta salía antes de saber quién eres, volvía
+  // vacía y no se repetía: el menú aparecía en blanco aunque tuvieras entradas.
   $effect(() => {
     let cancelled = false;
     const target = weekStart;
+    const inicializado = authState.isInitialized;
+    const usuario = authState.currentUser;
+
+    if (!inicializado) {
+      loading = true;
+      return;
+    }
+    if (usuario === null) {
+      entries = [];
+      loading = false;
+      return;
+    }
+
     loading = true;
     getWeekMenu(target).then((result) => {
       if (cancelled) return;

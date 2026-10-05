@@ -1,5 +1,7 @@
 // Service Worker para Umami PWA
-const CACHE_NAME = "umami-cache-v5";
+// v6: cambia el modelo de datos (dueño por documento). Un cliente con el
+// bundle anterior crearía documentos sin dueño, invisibles para siempre.
+const CACHE_NAME = "umami-cache-v6";
 
 const STATIC_ASSETS = [
   "/favicon.svg",

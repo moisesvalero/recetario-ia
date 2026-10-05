@@ -525,12 +525,14 @@ export async function updateFavoriteRecipe(
     await account.updatePrefs(newPrefs);
     appwritePrefsCache = newPrefs;
 
-    // 2. Si también está en la base de datos de recetas guardadas, la actualizamos
+    // 2. Si también está en la base de datos de recetas guardadas, la actualizamos.
+    // Se filtra por dueño: el servidor ya lo impediría por permisos, pero así
+    // este camino no depende de una sola capa.
     try {
       const response = await databases.listDocuments(
         APPWRITE_CONFIG.databaseId,
         APPWRITE_CONFIG.collectionRecetas,
-        [Query.limit(100)],
+        [Query.equal("userId", currentUser.id), Query.limit(100)],
       );
 
       const docToUpdate = response.documents.find((doc) => {

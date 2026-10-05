@@ -69,72 +69,136 @@ async function api(metodo, ruta, cuerpo) {
 
 const esperar = (ms) => new Promise((listo) => setTimeout(listo, ms));
 
-/** Añade el atributo `userId` si falta: es lo que permite filtrar por dueño. */
+/**
+ * Añade el atributo `userId` y su índice si faltan.
+ *
+ * Devuelve un mensaje de problema o `null` si todo está bien. El índice no es
+ * opcional: las consultas de la app filtran por `userId` y, sin índice, Appwrite
+ * falla, la app se traga el error y devuelve una lista vacía. Es decir, la
+ * biblioteca se vería vacía sin ningún aviso.
+ */
 async function asegurarUserId(coleccionId) {
-  const { attributes = [] } = await api(
-    "GET",
-    `/databases/${DATABASE}/collections/${coleccionId}/attributes`,
-  );
+  const ruta = `/databases/${DATABASE}/collections/${coleccionId}`;
+  const { attributes = [] } = await api("GET", `${ruta}/attributes`);
+
   if (!attributes.some((a) => a.key === "userId")) {
-    const creado = await api(
-      "POST",
-      `/databases/${DATABASE}/collections/${coleccionId}/attributes/string`,
-      { key: "userId", size: 36, required: false },
-    );
-    if (creado.message) return `atributo userId: ${creado.message}`;
-    console.log("    atributo userId creado");
+    const creado = await api("POST", `${ruta}/attributes/string`, {
+      key: "userId",
+      size: 36,
+      required: false,
+    });
+    if (creado.message)
+      return `no se pudo crear el atributo userId: ${creado.message}`;
+
+    let disponible = false;
     for (let intento = 0; intento < 30; intento += 1) {
       await esperar(1000);
-      const { attributes: ahora = [] } = await api(
-        "GET",
-        `/databases/${DATABASE}/collections/${coleccionId}/attributes`,
-      );
-      if (ahora.find((a) => a.key === "userId")?.status === "available") break;
+      const { attributes: ahora = [] } = await api("GET", `${ruta}/attributes`);
+      if (ahora.find((a) => a.key === "userId")?.status === "available") {
+        disponible = true;
+        break;
+      }
     }
+    if (!disponible) {
+      return "el atributo userId no llegó a estar disponible en 30 s";
+    }
+    console.log("    atributo userId creado");
   }
 
-  const { indexes = [] } = await api(
-    "GET",
-    `/databases/${DATABASE}/collections/${coleccionId}/indexes`,
-  );
+  const { indexes = [] } = await api("GET", `${ruta}/indexes`);
   if (!indexes.some((i) => i.key === "userId")) {
-    const creado = await api(
-      "POST",
-      `/databases/${DATABASE}/collections/${coleccionId}/indexes`,
-      {
-        key: "userId",
-        type: "key",
-        attributes: ["userId"],
-        orders: ["asc"],
-      },
-    );
-    console.log(
-      creado.message
-        ? `    indice userId: ${creado.message}`
-        : "    indice userId creado",
-    );
+    const creado = await api("POST", `${ruta}/indexes`, {
+      key: "userId",
+      type: "key",
+      attributes: ["userId"],
+      orders: ["asc"],
+    });
+    if (creado.message)
+      return `no se pudo crear el índice userId: ${creado.message}`;
+    console.log("    indice userId creado");
+  }
+
+  const { indexes: finales = [] } = await api("GET", `${ruta}/indexes`);
+  const indice = finales.find((i) => i.key === "userId");
+  if (indice?.status !== "available") {
+    return `el índice userId no está disponible (estado: ${indice?.status ?? "ausente"})`;
   }
   return null;
 }
 
-/** Avisa de documentos que no tengan dueño: serían invisibles o públicos. */
+/**
+ * Revisa TODOS los documentos, paginando.
+ *
+ * Se pagina porque Appwrite devuelve 25 documentos si no se le pide nada: sin
+ * paginar, a partir del 26 ninguno se revisaba y el script decía "todo bien".
+ *
+ * Un documento correcto necesita tres cosas del MISMO usuario (`read`, `update`
+ * y `delete`) y que su `userId` sea el de ese dueño. Si le falta el `update` o
+ * el `delete`, su dueño lo ve pero no puede moverlo ni borrarlo, y la app se
+ * comporta como si no fuera suyo.
+ */
 async function revisarDocumentos(coleccionId) {
-  const { documents = [], total = 0 } = await api(
-    "GET",
-    `/databases/${DATABASE}/collections/${coleccionId}/documents`,
-  );
-  const sinDueno = documents.filter(
-    (d) => !(d.$permissions ?? []).some((p) => p.startsWith('read("user:')),
-  );
-  if (sinDueno.length > 0) {
-    console.log(
-      `    AVISO: ${sinDueno.length} de ${total} documentos sin dueño. Son invisibles para\n` +
-        "    todos, incluido su dueño. Asígnalos antes de seguir.",
+  const ruta = `/databases/${DATABASE}/collections/${coleccionId}/documents`;
+  const PAGINA = 100;
+
+  let offset = 0;
+  let total = 0;
+  let revisados = 0;
+  let problemas = 0;
+
+  // Las consultas de Appwrite viajan como JSON: `limit(100)` no es válido aquí.
+  const consulta = (metodo, valor) =>
+    `queries[]=${encodeURIComponent(JSON.stringify({ method: metodo, values: [valor] }))}`;
+
+  for (;;) {
+    const pagina = await api(
+      "GET",
+      `${ruta}?${consulta("limit", PAGINA)}&${consulta("offset", offset)}`,
     );
-  } else if (total > 0) {
-    console.log(`    ${total} documentos, todos con dueño`);
+
+    if (pagina.message) {
+      console.log(`    no se pudieron leer los documentos: ${pagina.message}`);
+      return 1;
+    }
+
+    total = pagina.total ?? 0;
+    const documentos = pagina.documents ?? [];
+
+    for (const documento of documentos) {
+      revisados += 1;
+      const permisos = documento.$permissions ?? [];
+      const conLectura = permisos.find((permiso) =>
+        permiso.startsWith('read("user:'),
+      );
+      const dueno = conLectura
+        ? /user:([^"]+)/.exec(conLectura)?.[1]
+        : undefined;
+
+      const completo =
+        dueno !== undefined &&
+        permisos.includes(`update("user:${dueno}")`) &&
+        permisos.includes(`delete("user:${dueno}")`) &&
+        documento.userId === dueno;
+
+      if (!completo) {
+        problemas += 1;
+        console.log(
+          `    AVISO: ${documento.$id} no está completo (userId=${documento.userId ?? "vacío"}, ` +
+            `permisos=${JSON.stringify(permisos)})`,
+        );
+      }
+    }
+
+    offset += documentos.length;
+    if (documentos.length === 0 || offset >= total) break;
   }
-  return sinDueno.length;
+
+  if (problemas === 0 && total > 0) {
+    console.log(
+      `    ${revisados} de ${total} documentos, todos completos y con su dueño`,
+    );
+  }
+  return problemas;
 }
 
 let problemas = 0;

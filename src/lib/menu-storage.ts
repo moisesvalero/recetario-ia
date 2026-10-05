@@ -124,6 +124,14 @@ export async function addToMenu(input: MenuEntryInput): Promise<MenuEntry> {
   return entry;
 }
 
+/**
+ * Quita una entrada del menú.
+ *
+ * No comprueba el dueño a mano: el documento lleva su propio permiso
+ * `delete("user:<id>")` y el servidor rechaza el borrado si quien lo intenta no
+ * es su dueño. La comprobación vive en un solo sitio (los permisos del
+ * documento) en vez de repartirse por cada operación.
+ */
 export async function removeFromMenu(entryId: string): Promise<void> {
   if (isAppwriteActive()) {
     await databases.deleteDocument(
@@ -138,6 +146,7 @@ export async function removeFromMenu(entryId: string): Promise<void> {
   writeEntries(entries);
 }
 
+/** Mueve una entrada de hueco. Igual que al borrar, el permiso del documento manda. */
 export async function moveEntry(
   entryId: string,
   day: number,
