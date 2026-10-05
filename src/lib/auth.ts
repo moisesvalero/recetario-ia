@@ -1,5 +1,5 @@
 import { account, databases, APPWRITE_CONFIG } from "./appwrite";
-import { ID, Query } from "appwrite";
+import { ID, Permission, Query, Role } from "appwrite";
 
 export interface User {
   id: string;
@@ -265,6 +265,18 @@ export async function updateCurrentUser(
   return updatedUser;
 }
 
+/**
+ * Permisos de una receta guardada: solo su dueño puede leerla, cambiarla o
+ * borrarla. La colección ya no concede lectura general.
+ */
+function permisosDe(usuarioId: string) {
+  return [
+    Permission.read(Role.user(usuarioId)),
+    Permission.update(Role.user(usuarioId)),
+    Permission.delete(Role.user(usuarioId)),
+  ];
+}
+
 // RECETAS GUARDADAS POR USUARIO
 export async function getSavedRecipes(): Promise<SavedRecipe[]> {
   if (isAppwriteActive()) {
@@ -272,17 +284,20 @@ export async function getSavedRecipes(): Promise<SavedRecipe[]> {
     if (!currentUser) return [];
 
     try {
+      // Se filtra por dueño en la consulta: antes se listaba todo y se le
+      // asignaba el id del usuario actual a cada documento, así que cada
+      // usuario veía las recetas de los demás como si fueran suyas.
       const response = await databases.listDocuments(
         APPWRITE_CONFIG.databaseId,
         APPWRITE_CONFIG.collectionRecetas,
-        [Query.limit(100)],
+        [Query.equal("userId", currentUser.id), Query.limit(100)],
       );
 
       return response.documents.map((doc) => {
         const recipeData = JSON.parse(doc.recipeJson);
         return {
           id: doc.$id,
-          userId: currentUser.id,
+          userId: doc.userId,
           recipe: recipeData,
           savedAt: doc.$createdAt,
         };
@@ -319,8 +334,10 @@ export async function saveRecipe(recipe: any): Promise<SavedRecipe> {
       APPWRITE_CONFIG.collectionRecetas,
       ID.unique(),
       {
+        userId: currentUser.id,
         recipeJson: JSON.stringify(recipe),
       },
+      permisosDe(currentUser.id),
     );
 
     return {
@@ -362,6 +379,20 @@ export async function saveRecipe(recipe: any): Promise<SavedRecipe> {
 
 export async function deleteSavedRecipe(id: string): Promise<void> {
   if (isAppwriteActive()) {
+    const currentUser = getCurrentUser();
+    if (!currentUser) throw new Error("Debes iniciar sesión");
+
+    // Se comprueba la propiedad antes de borrar: los permisos del documento ya
+    // lo impedirían, pero así el error es claro en lugar de un 401 sin explicar.
+    const doc = await databases.getDocument(
+      APPWRITE_CONFIG.databaseId,
+      APPWRITE_CONFIG.collectionRecetas,
+      id,
+    );
+    if (doc.userId !== currentUser.id) {
+      throw new Error("Esa receta no es tuya");
+    }
+
     await databases.deleteDocument(
       APPWRITE_CONFIG.databaseId,
       APPWRITE_CONFIG.collectionRecetas,
