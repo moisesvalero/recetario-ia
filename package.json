@@ -28,7 +28,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "ai": "^5.0.76",
     "appwrite": "^26.1.0",
-    "astro": "^7.2.8",
+    "astro": "^7.3.6",
     "svelte": "^5.57.1",
     "tailwindcss": "^4.3.3",
     "zod": "^3.25.76"
