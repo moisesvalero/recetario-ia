@@ -21,7 +21,7 @@
     "verificar": "pnpm lint && pnpm check && pnpm test && pnpm format:check && pnpm build"
   },
   "dependencies": {
-    "@ai-sdk/google": "^2.0.20",
+    "@ai-sdk/google": "^4.0.88",
     "@ai-sdk/openai": "^2.0.52",
     "@astrojs/svelte": "^8.0.0",
     "@astrojs/vercel": "^11.0.3",
