@@ -1,5 +1,15 @@
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 export function exportToPdf(recipe: any) {
   const iframe = document.createElement("iframe");
+  iframe.setAttribute("sandbox", "allow-same-origin allow-modals");
   iframe.style.position = "fixed";
   iframe.style.right = "0";
   iframe.style.bottom = "0";
@@ -8,14 +18,15 @@ export function exportToPdf(recipe: any) {
   iframe.style.border = "0";
   document.body.appendChild(iframe);
 
-  const totalMinutes = recipe.prepMinutes + recipe.cookMinutes;
+  const totalMinutes =
+    Number(recipe.prepMinutes || 0) + Number(recipe.cookMinutes || 0);
 
   const ingredientsHtml = recipe.ingredients
     .map(
       (ing: any) => `
       <li style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px;">
-        <span style="font-weight: 500; color: #334155;">${ing.item}</span>
-        <span style="color: #64748b; font-weight: 600;">${ing.amount}</span>
+        <span style="font-weight: 500; color: #334155;">${escapeHtml(ing.item)}</span>
+        <span style="color: #64748b; font-weight: 600;">${escapeHtml(ing.amount)}</span>
       </li>
     `,
     )
@@ -28,7 +39,7 @@ export function exportToPdf(recipe: any) {
         <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background-color: #f97316; color: white; font-weight: bold; font-size: 11px; shrink: 0;">
           ${idx + 1}
         </span>
-        <span style="color: #475569; font-weight: 500;">${step.text}</span>
+        <span style="color: #475569; font-weight: 500;">${escapeHtml(step.text)}</span>
       </li>
     `,
     )
@@ -40,7 +51,7 @@ export function exportToPdf(recipe: any) {
       <div style="margin-top: 24px; padding: 16px; background-color: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px;">
         <h3 style="margin-top: 0; color: #c2410c; font-size: 14px; font-weight: bold;">💡 Consejos útiles</h3>
         <ul style="margin: 0; padding-left: 18px; font-size: 12px; color: #7c2d12; line-height: 1.6;">
-          ${recipe.tips.map((t: string) => `<li>${t}</li>`).join("")}
+          ${recipe.tips.map((t: string) => `<li>${escapeHtml(t)}</li>`).join("")}
         </ul>
       </div>
     `
@@ -50,7 +61,7 @@ export function exportToPdf(recipe: any) {
     <!DOCTYPE html>
     <html>
     <head>
-      <title>${recipe.title}</title>
+      <title>${escapeHtml(recipe.title)}</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body {
@@ -128,13 +139,13 @@ export function exportToPdf(recipe: any) {
         <span style="font-size: 24px;">👨‍🍳</span>
         <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">Recetario IA - PDF</span>
       </div>
-      <h1>${recipe.title}</h1>
-      <p class="description">${recipe.description}</p>
+      <h1>${escapeHtml(recipe.title)}</h1>
+      <p class="description">${escapeHtml(recipe.description)}</p>
       
       <div class="meta-row">
         <span class="meta-item">⏱ Tiempo total: ${totalMinutes} min</span>
-        <span class="meta-item">✓ Dificultad: ${recipe.difficulty}</span>
-        <span class="meta-item">🍽 Porciones: ${recipe.servings} porciones</span>
+        <span class="meta-item">✓ Dificultad: ${escapeHtml(recipe.difficulty)}</span>
+        <span class="meta-item">🍽 Porciones: ${escapeHtml(recipe.servings)} porciones</span>
       </div>
 
       <div class="columns">

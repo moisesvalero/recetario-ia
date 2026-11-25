@@ -56,18 +56,8 @@ const { title } = Astro.props;
     <CookieConsent client:idle />
     <PwaInstallBanner client:idle />
 
-    <!-- Registro de Service Worker para PWA con Auto-update forzado y limpieza de caché -->
+    <!-- Registro de Service Worker para PWA con Auto-update -->
     <script is:inline>
-      if ("caches" in window) {
-        caches.keys().then((keys) => {
-          keys.forEach((key) => {
-            if (key.startsWith("umami-cache-") && key !== "umami-cache-v5") {
-              caches.delete(key);
-            }
-          });
-        });
-      }
-
       if (
         "serviceWorker" in navigator &&
         window.location.hostname !== "localhost"

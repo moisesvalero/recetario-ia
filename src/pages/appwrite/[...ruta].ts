@@ -52,10 +52,48 @@ function galletasDe(cabeceras: Headers): string[] {
   return suelta ? [suelta] : [];
 }
 
+const APPWRITE_BASE = new URL(`${APPWRITE}/`);
+const PREFIJOS_PERMITIDOS = new Set([
+  "account",
+  "databases",
+  "storage",
+  "avatars",
+]);
+
 export const ALL: APIRoute = async ({ request, params }) => {
   const ruta = (params.ruta ?? "").replace(/^\/+/, "");
+  if (
+    !ruta ||
+    ruta.includes("\\") ||
+    ruta.split("/").some((seg) => seg === "." || seg === "..")
+  ) {
+    return new Response(JSON.stringify({ message: "Ruta no permitida" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  const primerSegmento = ruta.split("/")[0]?.toLowerCase() ?? "";
+  if (!PREFIJOS_PERMITIDOS.has(primerSegmento)) {
+    return new Response(JSON.stringify({ message: "Endpoint no permitido" }), {
+      status: 403,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
   const entrada = new URL(request.url);
-  const destino = `${APPWRITE}/${ruta}${entrada.search}`;
+  const destinoUrl = new URL(ruta, APPWRITE_BASE);
+  if (
+    destinoUrl.origin !== APPWRITE_BASE.origin ||
+    !destinoUrl.pathname.startsWith(APPWRITE_BASE.pathname)
+  ) {
+    return new Response(JSON.stringify({ message: "Ruta fuera de ámbito" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+  destinoUrl.search = entrada.search;
+  const destino = destinoUrl.toString();
 
   const cabeceras = new Headers();
   for (const [nombre, valor] of request.headers) {

@@ -149,14 +149,13 @@
       }
       // Actualizar en el historial
       const index = history.findIndex(
-        (h) => h.title === title || h.recipe.title === title,
+        (h: any) => h.title === title || h.recipe?.title === title,
       );
       if (index !== -1) {
-        history[index] = {
-          ...history[index],
-          title: updated.title,
-          recipe: updated,
-        };
+        const current = history[index] as any;
+        history[index] = current.recipe
+          ? { ...current, title: updated.title, recipe: updated }
+          : { ...current, ...updated };
         localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
       }
       refreshTabData();
